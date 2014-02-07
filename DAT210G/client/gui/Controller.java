@@ -5,32 +5,31 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Controller {
 	
 	private GUI gui;
-
-	
-	private ArrayList<JPanel> imagePanelList;	// List with panels containing single images.
+	private ArrayList<SingleImage> imageList;	// List with panels containing single images.
 	
 	public Controller() {
 		gui = new GUI();
 
-		imagePanelList = new ArrayList<>();
+		imageList = new ArrayList<>();
+		
+		
 	}
 	
 	public void insertImageIntoList(JLabel image) {
-		SingleImagePanel singleImagePanel = new SingleImagePanel(image);
+		SingleImage singleImagePanel = new SingleImage(image);
 		
 		singleImagePanel.addImageListener(new ImageClickListener());
 		
-		imagePanelList.add(singleImagePanel);
+		imageList.add(singleImagePanel);
 	}
 	
 	public void pushImagesToGUI() {
-		gui.drawImagesFromList(imagePanelList);
+		gui.drawImagesFromList(imageList);
 	}
 	
 	class ImageClickListener implements MouseListener{
@@ -40,8 +39,11 @@ public class Controller {
 		public void mouseClicked(MouseEvent e) {
 			// TODO Auto-generated method stub
 			System.out.println("mouse clicked");
+			gui.setSingleImageMode();
+			System.out.println(e.getSource());
+
 			
-			System.out.println();
+			
 		}
 
 		@Override
@@ -85,6 +87,7 @@ public class Controller {
 				}
 				
 				controller.pushImagesToGUI();
+				
 			}
 		});
 	}

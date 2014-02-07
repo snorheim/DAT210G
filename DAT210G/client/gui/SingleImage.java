@@ -5,16 +5,16 @@ import java.awt.event.MouseListener;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-public class SingleImagePanel extends JPanel {
+public class SingleImage extends JPanel {
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String name;
+	private String name;	// for testing
 	
-	public SingleImagePanel(JLabel image) {
-		this.name = image.getText();
+	public SingleImage(JLabel image) {
+		this.name = image.getText();	// for testing
 		
 		this.add(image);
 	}
