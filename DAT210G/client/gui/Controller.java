@@ -1,5 +1,7 @@
 package gui;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 import javax.swing.JLabel;
@@ -22,6 +24,7 @@ public class Controller {
 	public void insertImageIntoList(JLabel image) {
 		SingleImagePanel singleImagePanel = new SingleImagePanel(image);
 		
+		singleImagePanel.addImageListener(new ImageClickListener());
 		
 		imagePanelList.add(singleImagePanel);
 	}
@@ -30,7 +33,43 @@ public class Controller {
 		gui.drawImagesFromList(imagePanelList);
 	}
 	
-	
+	class ImageClickListener implements MouseListener{
+
+
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("mouse clicked");
+			
+			System.out.println();
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			//System.out.println("mouse pressed");
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			//System.out.println("mouse released");
+		}
+
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			//System.out.println("mouse entered");
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			//System.out.println("mouse exited");
+		}
+		
+	}
+
 	
 	
 	public static void main(String[] args) {

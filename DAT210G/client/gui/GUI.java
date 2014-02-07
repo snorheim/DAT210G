@@ -56,7 +56,6 @@ public class GUI extends JFrame {
 	private void initSingleImageSidebar() {
 		singleImageSidebar.setLayout(new BoxLayout(singleImageSidebar, BoxLayout.PAGE_AXIS));
 		
-		singleImageSidebar.add(new JButton("Gallery"));
 		singleImageSidebar.add(new JButton("Next"));
 		singleImageSidebar.add(new JButton("Previous"));
 		singleImageSidebar.add(new JButton("Rotate clockwise"));
@@ -81,20 +80,6 @@ public class GUI extends JFrame {
 			imageViewPanel.add(imagePanel);			
 		}
 		imageViewPanel.repaint();
-	}
-	
-	public void drawSingleImage(JPanel image) {
-					
-		imageViewPanel.add(image);			
-		
-		imageViewPanel.repaint();
-	}
-	
-	public void showSingleImage(JPanel image) {
-		
-		this.remove(multiImageSidebar);
-		this.add(singleImageSidebar, BorderLayout.WEST);
-		drawSingleImage(image);
 	}
 	
 }
