@@ -31,6 +31,9 @@ public class JsonClient {
 	public BufferedImage receiveImageFromServer(){
 		return httpClient.receiveImage();
 	}
+	public void sendImageToServer(BufferedImage image, String type){
+		httpClient.sendImage(image, type);
+	}
 	public void closeHttpConnection(){
 		httpClient.closeConnection();
 	}

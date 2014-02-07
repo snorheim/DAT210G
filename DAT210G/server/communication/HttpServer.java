@@ -59,6 +59,15 @@ public class HttpServer implements Runnable {
 			e.printStackTrace();
 		}
 	}
+	public BufferedImage receiveImage(){
+		BufferedImage image = null;
+		try {
+			image = ImageIO.read(connection.getInputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return image;
+	}
 	public static void main(String[] args) {
 		int port = 19999;
 		int count = 0;

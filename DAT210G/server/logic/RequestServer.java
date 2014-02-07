@@ -38,6 +38,9 @@ public class RequestServer {
 	public void sendImageResponse(BufferedImage image, String type){
 		jsonServer.getHttpServer().sendImage(image, type);
 	}
+	public BufferedImage receiveImage(){
+		return jsonServer.getHttpServer().receiveImage();
+	}
 	public void execute(){
 		Class<RequestMethods> requestMethodsClass = RequestMethods.class;	
 		Class[] parameterTypes = new Class[3];

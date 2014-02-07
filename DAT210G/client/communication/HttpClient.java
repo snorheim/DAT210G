@@ -46,6 +46,13 @@ public class HttpClient {
 			e.printStackTrace();
 		}
 	}
+	public void sendImage(BufferedImage image,String type){
+		try {
+			ImageIO.write(image, type, connection.getOutputStream());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public void closeConnection(){
 		try {
 			connection.close();

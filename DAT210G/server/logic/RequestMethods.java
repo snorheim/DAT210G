@@ -45,4 +45,8 @@ public class RequestMethods {
 	public static void rotate90CounterClock(RequestServer request, int imageId, String detail){
 
 	}
+	public static void addNewImage(RequestServer request, int imageId, String detail){
+		BufferedImage image = request.receiveImage();
+		System.out.print(image.toString());
+	}
 }
