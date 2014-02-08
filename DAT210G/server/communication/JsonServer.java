@@ -39,5 +39,4 @@ public class JsonServer {
 		outGoingString = json.toJson(outGoingResponse);
 		httpServer.sendData(outGoingString);
 	}
-
 }

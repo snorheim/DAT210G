@@ -5,7 +5,7 @@ public class ResponseClient {
 	private int imageId;
 	private int[] imageIdArray;
 	private String[] stringArray;
-	
+
 	public ResponseClient(boolean success){
 		this.success = success;
 	}
@@ -34,6 +34,24 @@ public class ResponseClient {
 		return stringArray;
 	}
 	public String toString(){
-		return "Success: " + success + " ImageId: " + imageId;
+		String str = "Success: " + success + ", imageId: " + imageId + ", imageIdArray: ";
+		if (imageIdArray == null){
+			str += "NULL,";
+		}
+		else{
+			for (int i = 0; i < imageIdArray.length; i++){
+				str += imageIdArray[i] + ",";
+			}
+		}
+		str += " stringArray: ";
+		if (stringArray == null){
+			str += "NULL";
+		}
+		else{
+			for (int i = 0; i < stringArray.length ; i++){
+				str += stringArray[i] + ",";
+			}
+		}
+		return str;
 	}
 }

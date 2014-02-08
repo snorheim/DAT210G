@@ -3,12 +3,13 @@ package logic;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 import javax.imageio.ImageIO;
 
 public class RequestMethods {
 
 	public static void getAllImages(RequestServer request, int imageId, String detail){
-
+		
 	}
 	public static void getThumbnail(RequestServer request, int imageId, String detail){
 		request.sendJsonResponse(new ResponseServer(true));
@@ -19,7 +20,7 @@ public class RequestMethods {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		request.sendImageResponse(image,"JPEG");
+		request.sendImageResponse(image, "JPEG");
 	}
 	public static void getLargeImage(RequestServer request, int imageId, String detail){
 
@@ -46,7 +47,6 @@ public class RequestMethods {
 
 	}
 	public static void addNewImage(RequestServer request, int imageId, String detail){
-		BufferedImage image = request.receiveImage();
-		System.out.print(image.toString());
+
 	}
 }

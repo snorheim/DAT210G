@@ -3,7 +3,6 @@ package communication;
 import java.net.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-
 import javax.imageio.ImageIO;
 
 public class HttpServer implements Runnable {

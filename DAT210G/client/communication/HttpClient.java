@@ -13,7 +13,6 @@ public class HttpClient {
 	private boolean connected = false;
 
 	public HttpClient(){
-		System.out.println("Client started");
 		connect();
 	}
 	public boolean getConnected(){
@@ -24,13 +23,14 @@ public class HttpClient {
 			InetAddress address = InetAddress.getByName(host);
 			connection = new Socket(address, port);
 			connected = true;
+			System.out.println("Client connected to " + host + ":" + port);
 		} catch (UnknownHostException e) {
 			connected = false;
-			System.err.println("Not able to connect to " + host);
+			System.err.println("Not able to connect to " + host + ":" + port);
 			return;
 		} catch (IOException e) {
 			connected = false;
-			System.err.println("Not able to connect to " + host);
+			System.err.println("Not able to connect to " + host + ":" + port);
 			return;
 		}
 	}
@@ -49,13 +49,6 @@ public class HttpClient {
 	public void sendImage(BufferedImage image,String type){
 		try {
 			ImageIO.write(image, type, connection.getOutputStream());
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	public void closeConnection(){
-		try {
-			connection.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -84,6 +77,13 @@ public class HttpClient {
 			e.printStackTrace();
 		}
 		return image;
+	}
+	public void closeConnection(){
+		try {
+			connection.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
 
