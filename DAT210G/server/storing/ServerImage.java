@@ -83,22 +83,21 @@ public class ServerImage {
 	 * @return
 	 */
 
-	public boolean saveThumbnailImage(String fileName) {
+	public boolean saveThumbnailImageToFile(String fileName) {
 		BufferedImage temp = resizeToThumbnail(bufferedImage);
-		return saveBufferedImage(temp, defaultPath + "\\thumb", fileName);
+		return saveToFile(temp, defaultPath + "\\thumb", fileName);
 	}
 
 	/**
 	 * TODO:
 	 * 
-	 * @param bufferedImage
 	 * @param fileName
 	 * @return
 	 */
 
-	public boolean saveMediumImage(BufferedImage bufferedImage, String fileName) {
+	public boolean saveMediumImageToFile(String fileName) {
 		BufferedImage temp = resizeToMedium(bufferedImage);
-		return saveBufferedImage(temp, defaultPath + "\\medium", fileName);
+		return saveToFile(temp, defaultPath + "\\medium", fileName);
 	}
 
 	/**
@@ -111,8 +110,8 @@ public class ServerImage {
 	 * @return
 	 */
 
-	public boolean saveFullImage(String fileName) {
-		return saveBufferedImage(bufferedImage, defaultPath + "\\full",
+	public boolean saveImageToFile(String fileName) {
+		return saveToFile(bufferedImage, defaultPath + "\\full",
 				fileName);
 	}
 
@@ -131,11 +130,11 @@ public class ServerImage {
 	 * @return Returnerer en boolsk verdi om bildet lykkes i å bli lagret.
 	 */
 
-	private boolean saveBufferedImage(BufferedImage bufferedImage,
+	private boolean saveToFile(BufferedImage bufferedImage,
 			String filePath, String fileName) {
 		boolean success = false;
 		try {
-			File output = new File(filePath + "\\" + fileName);
+			File output = new File(filePath + "\\" + fileName + ".png");
 			success = ImageIO.write(bufferedImage, "png", output);
 
 		} catch (IOException e) {

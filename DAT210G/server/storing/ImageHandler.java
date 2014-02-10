@@ -36,18 +36,23 @@ public class ImageHandler {
 	/**
 	 * Testmetode:
 	 */
-	public void loadImages() {
-		File file = new File(defaultPath.toString());
-		for (File f : file.listFiles()) {
-			if (f.getName().endsWith(".png")) {
-				System.out.println(f.getName());
+	public void fetchImages() {
+		File directory = new File(defaultPath.toString());
+		for (File imageFile : directory.listFiles()) {
+			if (imageFile.getName().endsWith(".png")) {
+
+				BufferedImage bufferedImage = load(imageFile);
+
+				createServerImage("TITLE PLACEHOLDER",
+						"DESCRIPTION PLACEHOLDER", new GregorianCalendar(), -1,
+						bufferedImage);
 			}
 		}
 	}
 
 	/**
-	 * Sørger for at nødvendige mapper for lagring av bilder eksisterer, lager
-	 * dem om nødvendig.
+	 * Soerger for at noedvendige mapper for lagring av bilder eksisterer, lager
+	 * dem om noedvendig.
 	 * 
 	 * 
 	 * @throws FileNotFoundException
@@ -59,56 +64,72 @@ public class ImageHandler {
 		File fullFolder = new File(defaultPath + "\\full");
 
 		/*
-		 * mkdirs() lager mappene som spesifisert ovenfor, om en mappe ikke blir
-		 * lagd kan det være at den allerede eksisterer, eller av en annen grunn
-		 * feiler.
-		 */
-		boolean success = (thumbFolder.mkdirs() && mediumFolder.mkdirs()
-				&& fullFolder.mkdirs() && imageFolder.mkdirs());
-
-		System.out.println("Folders were made: " + success);
-
-		/*
-		 * exists() sjekker om mappen faktisk eksisterer på maskinen, om den
-		 * ikke gjør det har vi ikke grunnlag til å lagre bildene, og da skal
-		 * det oppstå en feilmelding
+		 * exists() sjekker om mappen faktisk eksisterer paa maskinen, om den
+		 * ikke gjoer det har vi ikke grunnlag til aa lagre bildene, og da skal
+		 * det oppstaa en feilmelding
 		 */
 
-		success = (imageFolder.exists() && thumbFolder.exists()
+		boolean success = (imageFolder.exists() && thumbFolder.exists()
 				&& mediumFolder.exists() && fullFolder.exists());
 
 		System.out.println("Folders exist: " + success);
 
+		/*
+		 * mkdirs() lager mappene som spesifisert ovenfor, om en mappe ikke blir
+		 * lagd kan det vaere at den allerede eksisterer, eller av en annen
+		 * grunn feiler.
+		 */
+		if (!success) {
+			success = (thumbFolder.mkdirs() && mediumFolder.mkdirs()
+					&& fullFolder.mkdirs() && imageFolder.mkdirs());
+
+			System.out.println("Folders were made: " + success);
+		}
 		if (!success)
 			throw new FileNotFoundException(
 					"Image-containing folder was not found and could not be made!");
 	}
 
 	/**
-	 * Metoden forsøker å lese og laste inn et bilde med navn filename og sti
-	 * defaultPath og returnerer et BufferedImage.
+	 * Metoden forsoeker aa lese og laste inn en bildefil med navn filename og
+	 * sti defaultPath og returnerer et BufferedImage.
 	 * 
 	 * 
-	 * @Param filename Navn og filtype til bildefilen en vil hente ut. Ett
-	 *        eksempel: "bilde1.jpg".
+	 * @Param file Filen som skal leses og lastes inn.
 	 * 
 	 * @return Returnerer et BufferedImage av bildet.
 	 */
 
-	private BufferedImage load(String filename) {
+	private BufferedImage load(File file) {
 		BufferedImage bufferedImage = null;
 		try {
-			File file;
-			file = new File(defaultPath + "\\" + filename);
 			bufferedImage = ImageIO.read(file);
-			System.out.println("Image was found and successfully read: "
-					+ (bufferedImage != null));
+			System.out.println("Imagefile " + file.getName()
+					+ " was found and successfully read");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
 		return bufferedImage;
 	}
+
+	/**
+	 * Metoden tar inn all informasjon om et bilde (Tittel, beskrivelse,
+	 * klokkeslett og dato for takning, rating, og selve bildet i form av et
+	 * buffered image.
+	 * 
+	 * @param title
+	 *            Tittelen til bildet
+	 * @param description
+	 *            Beskrivelsen til bildet
+	 * @param timeTaken
+	 *            Klokkeslett og dato for naar bildet er tatt, lagret i et
+	 *            GregorianCalendar objekt
+	 * @param rating
+	 *            Hvor mye brukeren har gitt bilde i rating
+	 * @param bufferedImage
+	 *            Bildet som et buffered image
+	 */
 
 	public void createServerImage(String title, String description,
 			GregorianCalendar timeTaken, int rating, BufferedImage bufferedImage) {
@@ -118,22 +139,42 @@ public class ImageHandler {
 		imageList.add(serverImage);
 	}
 
-	public void saveAll() {
+	/**
+	 * Lagrer alle bildene i tre versjoner; original stoerrelse, medium
+	 * stoerrelse og thumbnail stoerrelse. Referer til THUMBNAIL_WIDTH,
+	 * THUMBNAIL_HEIGHT, MEDIUM_WIDTH, MEDIUM_HEIGHT i ServerImage klassen for
+	 * dimensjon
+	 * 
+	 * Alle bildene blir lagret i hver sin mappe (full/, medium/ og thumb/)
+	 */
+
+	public boolean saveAll() {
 		for (ServerImage serverImage : imageList) {
-			serverImage.saveFullImage(serverImage.title);
+			if (!serverImage.saveImageToFile(serverImage.title))
+				return false;
+			if (!serverImage.saveMediumImageToFile(serverImage.title))
+				return false;
+			if (!serverImage.saveThumbnailImageToFile(serverImage.title))
+				return false;
 		}
+		return true;
 	}
 
 	public static void main(String[] args) {
 		ImageHandler imageHandler = new ImageHandler();
-
-		imageHandler.loadImages();
+		System.out.println();
+		System.out.println("Fetching images:");
+		imageHandler.fetchImages();
 
 		int size;
-		System.out.println(size = imageHandler.imageList.size());
+		System.out.println("Total images: "
+				+ (size = imageHandler.imageList.size()));
+		System.out.println("\nImages:");
 		for (int i = 0; i < size; i++) {
 			System.out.println(imageHandler.imageList.get(i));
 		}
+
+		imageHandler.saveAll();
 
 	}
 }
