@@ -1,4 +1,4 @@
-package storing;
+package logic;
 
 import java.io.File;
 import org.apache.commons.imaging.Imaging;
@@ -96,7 +96,7 @@ public class ReadExif {
 	}
 
 	public static void main(String[] args) {
-		ReadExif read = new ReadExif("C:\\dev\\image2.JPG");
+		ReadExif read = new ReadExif("C:\\dev\\image3.JPG");
 		System.out.println("Title: "+ read.getExifTitle());
 		System.out.println("Comment: "+ read.getExifComment());
 		System.out.println("Rating: "+ read.getExifRating());

@@ -78,10 +78,11 @@ public class WriteExif {
 			e.printStackTrace();
 		}
 	}
-	public void setExifRating(short rating){
+	public void setExifRating(int rating){
 		try {
+			short ratingShort = Short.parseShort(Integer.toString(rating));
 			exifDirectory.removeField(MicrosoftTagConstants.EXIF_TAG_RATING);
-			exifDirectory.add(MicrosoftTagConstants.EXIF_TAG_RATING, rating);
+			exifDirectory.add(MicrosoftTagConstants.EXIF_TAG_RATING, ratingShort);
 		} catch (ImageWriteException e) {
 			e.printStackTrace();
 		}
@@ -106,6 +107,14 @@ public class WriteExif {
 		try {
 			exifDirectory.removeField(MicrosoftTagConstants.EXIF_TAG_XPSUBJECT);
 			exifDirectory.add(MicrosoftTagConstants.EXIF_TAG_XPSUBJECT, subject);
+		} catch (ImageWriteException e) {
+			e.printStackTrace();
+		}
+	}
+	public void setExifDateTimeTaken(String dateTime){
+		try {
+			exifDirectory.removeField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+			exifDirectory.add(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL, dateTime);
 		} catch (ImageWriteException e) {
 			e.printStackTrace();
 		}
@@ -138,14 +147,14 @@ public class WriteExif {
 
 	public static void main(String[] args) {
 
-		WriteExif exif = new WriteExif("C:\\dev\\image.jpeg");
+		WriteExif exif = new WriteExif("C:\\dev\\image3.JPG");
 		exif.setExifTitle("Ny tittel");
 		exif.setExifComment("Ny kommentar!");
 		exif.setExifTags("USA;Norge;julen2010");
 		exif.setExifAuthor("Ny author!");
 		exif.setExifSubject("Nytt subject!!");
-		short shrt = 2;
-		exif.setExifRating(shrt);
+		exif.setExifDateTimeTaken("2013:07:16 16:29:38");
+		exif.setExifRating(5);
 		exif.writeToImage();
 
 	}
