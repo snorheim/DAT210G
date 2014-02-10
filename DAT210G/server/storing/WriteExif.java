@@ -39,14 +39,14 @@ public class WriteExif {
 		try {
 			IImageMetadata metadata = Imaging.getMetadata(imageFile);
 			JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
-			if (null != jpegMetadata) {
+			if (jpegMetadata != null) {
 				TiffImageMetadata exif = jpegMetadata.getExif();				
-				if (null != exif) {
+				if (exif != null) {
 					metaDataOutPutSet = exif.getOutputSet();
 					exifDirectory = metaDataOutPutSet.getOrCreateExifDirectory();
 				}
 			}
-			if (null == metaDataOutPutSet) {
+			if (metaDataOutPutSet == null) {
 				metaDataOutPutSet = new TiffOutputSet();
 				exifDirectory = metaDataOutPutSet.getOrCreateExifDirectory();
 			}
@@ -55,7 +55,8 @@ public class WriteExif {
 		} catch (ImageWriteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Not able to open file: " + imageFileString);
+			return;
 		}
 	}
 	public void setExifTitle(String title){
@@ -70,7 +71,7 @@ public class WriteExif {
 		try {
 			exifDirectory.removeField(MicrosoftTagConstants.EXIF_TAG_XPCOMMENT);
 			exifDirectory.add(MicrosoftTagConstants.EXIF_TAG_XPCOMMENT, comment);
-			
+
 			exifDirectory.removeField(ExifTagConstants.EXIF_TAG_USER_COMMENT);
 			exifDirectory.add(ExifTagConstants.EXIF_TAG_USER_COMMENT, comment);
 		} catch (ImageWriteException e) {
@@ -137,7 +138,7 @@ public class WriteExif {
 
 	public static void main(String[] args) {
 
-		WriteExif exif = new WriteExif("C:\\dev\\image2.JPG");
+		WriteExif exif = new WriteExif("C:\\dev\\image.jpeg");
 		exif.setExifTitle("Ny tittel");
 		exif.setExifComment("Ny kommentar!");
 		exif.setExifTags("USA;Norge;julen2010");

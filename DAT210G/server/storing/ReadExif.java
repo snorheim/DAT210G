@@ -7,6 +7,7 @@ import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.IImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
 import org.apache.commons.imaging.formats.tiff.TiffImageMetadata;
+import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 import org.apache.commons.imaging.formats.tiff.constants.MicrosoftTagConstants;
 
 public class ReadExif {
@@ -22,17 +23,19 @@ public class ReadExif {
 				exifMetaData = jpegMetadata.getExif();				
 			}
 		} catch (ImageReadException e) {
-			e.printStackTrace();
+			System.err.println("Not able to open file: " + imageLocation);
+			return;
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.err.println("Not able to open file: " + imageLocation);
+			return;
 		}
 	}	
 	public String getExifTitle(){
 		String str = null;
 		try {
 			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPTITLE);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
 		}
 		return str;
 	}
@@ -40,8 +43,8 @@ public class ReadExif {
 		short[] shortRating = null;
 		try {
 			shortRating = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_RATING);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return -1;
 		}
 		if (shortRating == null){
 			return -1;
@@ -52,8 +55,8 @@ public class ReadExif {
 		String str = null;
 		try {
 			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPCOMMENT);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
 		}
 		return str;
 	}
@@ -61,8 +64,8 @@ public class ReadExif {
 		String str = null;
 		try {
 			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPAUTHOR);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
 		}
 		return str;
 	}
@@ -70,38 +73,41 @@ public class ReadExif {
 		String str = null;
 		try {
 			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPSUBJECT);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
 		}
 		return str;
 	}
-	public String[] getExifTags(){
+	public String getExifTags(){
 		String str = null;
 		try {
 			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPKEYWORDS);
-		} catch (ImageReadException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			return null;
+		}
+		return str;
+	}
+	public String getExifDateTimeTaken(){
+		String[] str = null;
+		try {
+			str = exifMetaData.getFieldValue(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+		} catch (Exception e) {
+			return null;
 		}
 		if (str == null){
 			return null;
 		}
-		return str.split(";");
+		return str[0];
 	}
 
 	public static void main(String[] args) {
-		ReadExif read = new ReadExif("C:\\dev\\image2.JPG");
-		System.out.println("Title: "+read.getExifTitle());
-		System.out.println("Comment: "+read.getExifComment());
-		System.out.println("Rating: "+read.getExifRating());
-		System.out.println("Subject: "+read.getExifSubject());
-		System.out.println("Author: "+read.getExifAuthor());
-
-		String[] str = read.getExifTags();
-		if (str != null){
-			for (int i=0;i<str.length;i++){
-				System.out.println("Tag: " + str[i]);
-			}
-		}
-
+		ReadExif read = new ReadExif("C:\\dev\\image2.jpg");
+		System.out.println("Title: "+ read.getExifTitle());
+		System.out.println("Comment: "+ read.getExifComment());
+		System.out.println("Rating: "+ read.getExifRating());
+		System.out.println("Subject: "+ read.getExifSubject());
+		System.out.println("Author: "+ read.getExifAuthor());
+		System.out.println("Date taken: " + read.getExifDateTimeTaken());
+		System.out.println("Tags: " + read.getExifTags());
 	}
 }
