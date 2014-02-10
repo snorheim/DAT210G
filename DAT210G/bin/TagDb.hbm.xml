@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="logic.TagDb" table="tag">
+	<id name="tag" column="tag" type="string"/>
+	
+	<set name="pics" table="tag_picture">
+		<key column="tagId"/>
+		<many-to-many column="picId" class="logic.PictureDb"/>
+	</set>
+	
+</class>
+</hibernate-mapping>
