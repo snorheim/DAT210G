@@ -1,8 +1,6 @@
 package gui;
 
 import java.awt.Dimension;
-import java.util.ArrayList;
-
 import javax.swing.JPanel;
 
 public class ImageView extends JPanel {
@@ -15,27 +13,19 @@ public class ImageView extends JPanel {
 	
 	public ImageView() {
 		
-		this.setBounds(0, 0, 200, 2000);  
-		this.setPreferredSize(new Dimension(200, 2000));
+		  
+		this.setPreferredSize(new Dimension(600, 6000));
 		
 	}
 	
-	public ImageView(ArrayList<JPanel> imageList) {
+	
+	public void addSingleImage(SingleImage singleImageJPanel) {
 		
-		this();
-		
-		for(JPanel image : imageList) {
-			this.add(image);
-		}
-		
+		this.add(singleImageJPanel);
 	}
 	
-	public void drawImages(ArrayList<SingleImage> imageList) {
-		
-		for (SingleImage image : imageList) {
-			this.add(image);
-		}
-		
+	public void clearView() {
+		this.removeAll();
 	}
 
 }

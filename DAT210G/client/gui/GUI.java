@@ -1,8 +1,6 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.util.ArrayList;
-
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 
@@ -36,9 +34,8 @@ public class GUI extends JFrame {
 
 	}
 	
-
-	public void drawImagesFromList(ArrayList<SingleImage> imageList) {
-		imageView.drawImages(imageList);
+	public void insertImage(SingleImage singleImageJPanel) {
+		imageView.addSingleImage(singleImageJPanel);
 	}
 	
 	public void setMultiImageMode() {
@@ -47,6 +44,8 @@ public class GUI extends JFrame {
 	
 	public void setSingleImageMode() {
 		sidebar.setSingleImageMode();
+		imageView.clearView();
 	}
+	
 	
 }
