@@ -1,8 +1,6 @@
 package storing;
 
 import java.io.File;
-import java.io.IOException;
-import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.IImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
@@ -22,10 +20,7 @@ public class ReadExif {
 			if (jpegMetadata != null) {
 				exifMetaData = jpegMetadata.getExif();				
 			}
-		} catch (ImageReadException e) {
-			System.err.println("Not able to open file: " + imageLocation);
-			return;
-		} catch (IOException e) {
+		} catch (Exception e) {
 			System.err.println("Not able to open file: " + imageLocation);
 			return;
 		}
@@ -101,7 +96,7 @@ public class ReadExif {
 	}
 
 	public static void main(String[] args) {
-		ReadExif read = new ReadExif("C:\\dev\\image2.jpg");
+		ReadExif read = new ReadExif("C:\\dev\\image2.JPG");
 		System.out.println("Title: "+ read.getExifTitle());
 		System.out.println("Comment: "+ read.getExifComment());
 		System.out.println("Rating: "+ read.getExifRating());
