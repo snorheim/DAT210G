@@ -47,6 +47,6 @@ public class RequestMethods {
 
 	}
 	public static void addNewImage(RequestServer request, int imageId, String detail){
-
+		
 	}
 }

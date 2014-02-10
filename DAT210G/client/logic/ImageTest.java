@@ -5,7 +5,7 @@ import communication.JsonClient;
 
 public class ImageTest {
 
-	public static void main(String[] args) {						
+	public static void main(String[] args) {
 		JsonClient json = new JsonClient(new RequestClient("getThumbnail", 12));
 		if (json.sendJsonToServer()){
 			ResponseClient response1 = json.receiveJsonFromServer();
@@ -15,6 +15,8 @@ public class ImageTest {
 				System.out.println(image.toString());
 			}
 			json.closeHttpConnection();
-		}	
+		}
+
+		
 	}
 }
