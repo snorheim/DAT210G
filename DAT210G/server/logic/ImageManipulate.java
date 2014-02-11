@@ -30,7 +30,8 @@ public class ImageManipulate {
 	
 	public static void main(String[] args) {
 		// Test
-
+		
+		
 	}
 
 }
