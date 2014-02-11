@@ -53,9 +53,9 @@ public class testSkrivBilde {
 		
 		
 		//legg en eller flere tags til flere bilde;
-//		Integer pic1 = 1;
-//		Integer pic2 = 2;
-//		Integer pic3 = 3;
+//		Integer pic1 = 7;
+//		Integer pic2 = 8;
+//		Integer pic3 = 9;
 //		ArrayList<Integer> picL = new ArrayList<>();
 //		picL.add(pic1);
 //		picL.add(pic2);
