@@ -2,36 +2,55 @@ package gui;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Controller {
 	
 	private GUI gui;
-
 	
-	private ArrayList<JPanel> imagePanelList;	// List with panels containing single images.
+	// for testing
+	private BufferedImage thumbnail = null;
+	private BufferedImage fullsize = null;
 	
 	public Controller() {
+		
+		
+		loadImages();
+		
 		gui = new GUI();
-
-		imagePanelList = new ArrayList<>();
+		
+		insertImages();
+		
 	}
 	
-	public void insertImageIntoList(JLabel image) {
-		SingleImagePanel singleImagePanel = new SingleImagePanel(image);
+	private void insertImages() {
 		
-		singleImagePanel.addImageListener(new ImageClickListener());
+		for (int i = 0; i < 500; i++) {
+			SingleImage temp = new SingleImage(thumbnail, i);
+			temp.addMouseListener(new ImageClickListener());
+			gui.insertImage(temp);
+		}
 		
-		imagePanelList.add(singleImagePanel);
 	}
 	
-	public void pushImagesToGUI() {
-		gui.drawImagesFromList(imagePanelList);
+	private void loadImages() {
+		
+		try {
+			thumbnail = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\DAT210G\\DAT210G\\client\\gui\\funny-dog-thumb.jpg"));
+			fullsize = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\DAT210G\\DAT210G\\client\\gui\\funny-dog.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
+	
 	
 	class ImageClickListener implements MouseListener{
 
@@ -40,8 +59,14 @@ public class Controller {
 		public void mouseClicked(MouseEvent e) {
 			// TODO Auto-generated method stub
 			System.out.println("mouse clicked");
+			gui.setSingleImageMode();
+			System.out.println(e.getSource().toString());
+			SingleImage test = (SingleImage) e.getSource();
+			gui.setSingleImageMode();
+			System.out.println(test.getImageID());
+			gui.insertImage(test);
 			
-			System.out.println();
+			
 		}
 
 		@Override
@@ -78,13 +103,9 @@ public class Controller {
 			@Override
 			public void run() {
 				Controller controller  = new Controller();
-				String labelName;
-				for (int i = 0; i < 500; i++) {
-					labelName = "Image #" + String.valueOf(i);
-					controller.insertImageIntoList(new JLabel(labelName));
-				}
 				
-				controller.pushImagesToGUI();
+				
+				
 			}
 		});
 	}
