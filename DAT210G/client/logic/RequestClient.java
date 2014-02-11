@@ -20,5 +20,5 @@ public class RequestClient {
 		this.order = order;
 		this.imageId = imageId;
 		this.detail = detail;
-	}	
+	}
 }
