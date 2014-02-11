@@ -94,15 +94,4 @@ public class ReadExif {
 		}
 		return str[0];
 	}
-
-	public static void main(String[] args) {
-		ReadExif read = new ReadExif("C:\\dev\\image3.JPG");
-		System.out.println("Title: "+ read.getExifTitle());
-		System.out.println("Comment: "+ read.getExifComment());
-		System.out.println("Rating: "+ read.getExifRating());
-		System.out.println("Subject: "+ read.getExifSubject());
-		System.out.println("Author: "+ read.getExifAuthor());
-		System.out.println("Date taken: " + read.getExifDateTimeTaken());
-		System.out.println("Tags: " + read.getExifTags());
-	}
 }

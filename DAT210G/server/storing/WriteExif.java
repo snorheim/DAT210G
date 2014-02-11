@@ -144,18 +144,4 @@ public class WriteExif {
 			}
 		}
 	}
-
-	public static void main(String[] args) {
-
-		WriteExif exif = new WriteExif("C:\\dev\\image3.JPG");
-		exif.setExifTitle("Ny tittel");
-		exif.setExifComment("Ny kommentar!");
-		exif.setExifTags("USA;Norge;julen2010");
-		exif.setExifAuthor("Ny author!");
-		exif.setExifSubject("Nytt subject!!");
-		exif.setExifDateTimeTaken("2013:07:16 16:29:38");
-		exif.setExifRating(5);
-		exif.writeToImage();
-
-	}
 }
