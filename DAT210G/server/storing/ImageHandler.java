@@ -10,19 +10,23 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
+import com.sun.jmx.snmp.defaults.DefaultPaths;
+
+
 public class ImageHandler {
 
-	public Path defaultPath;
-	public ArrayList<ServerImage> imageList;
+	public static ImageHandler IMAGE_HANDLER = new ImageHandler();
+	// TODO: Sett egen defaultPath, kompatibilitet med andre OS?
+	public Path defaultPath= Paths.get(".\\img");
+	public ArrayList<ServerImage> imageList = new ArrayList<ServerImage>();;
 
 	public ImageHandler() {
 		init();
 
 	}
 
-	private void init() {
-		// TODO: Sett egen defaultPath, kompatibilitet med andre OS?
-		defaultPath = Paths.get(".\\img");
+	private void init() { 
+		
 		imageList = new ArrayList<ServerImage>();
 
 		try {
@@ -88,10 +92,12 @@ public class ImageHandler {
 					"Image-containing folder was not found and could not be made!");
 	}
 
-	public static BufferedImage load(String filepath) {
-		File imageFile = new File(filepath);
+	public BufferedImage load(String filepath) {
+		System.out.println("File path: " + defaultPath + filepath);
+		File imageFile = new File(defaultPath + filepath);
 		if (imageFile.exists())
 			return load(imageFile);
+		System.out.println("yolo swag");
 		return null;
 	}
 
@@ -133,7 +139,7 @@ public class ImageHandler {
 	public void createServerImage(int ID, String fileExtension,
 			BufferedImage bufferedImage) {
 		ServerImage serverImage;
-		serverImage = new ServerImage(imageList.size(), fileExtension,
+		serverImage = new ServerImage(ID, fileExtension,
 				bufferedImage, defaultPath);
 		imageList.add(serverImage);
 	}

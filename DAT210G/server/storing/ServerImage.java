@@ -138,7 +138,7 @@ public class ServerImage {
 			String fileName) {
 		boolean success = false;
 		try {
-			File output = new File(filePath + "\\" + fileName + ".png");
+			File output = new File(filePath + "\\" + fileName + "." + fileExtension);
 			// TODO: andre filtyper enn png ?
 			success = ImageIO.write(bufferedImage, fileExtension, output);
 

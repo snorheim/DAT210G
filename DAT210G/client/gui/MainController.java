@@ -2,7 +2,7 @@ package gui;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-
+// Ja, her starter vi GUI
 /**
  * Created by Ronnie on 11.02.14.
  */
@@ -26,11 +26,6 @@ public class MainController {
         singleImgController = new SingleImgController(this);
 
         mainView = new MainView(manyImgController.getSidebarPanel(), manyImgController.getImageAreaPanel(), screenSize);
-
-
-
-
-
 
     }
 

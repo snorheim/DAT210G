@@ -23,6 +23,7 @@ public class ManyImageAreaPanel extends JPanel implements AdjustmentListener, Co
     private double visibleRows;
     private int columns = 3;    //TODO: Kan kanskje brukes for zoom?
     private int rows;
+    private int[] imageIdArray;
 
     private BoundedRangeModel brm;
     private ManyImgController manyImgController;
@@ -40,7 +41,7 @@ public class ManyImageAreaPanel extends JPanel implements AdjustmentListener, Co
     private GridLayout gridLayout;
 
     public ManyImageAreaPanel(ManyImgController manyImgController, int[] imageIdArray) {
-
+    	this.imageIdArray = imageIdArray;
         this.manyImgController = manyImgController;
 
         thumbnails = new BufferedImage[imageIdArray.length];
@@ -114,7 +115,7 @@ public class ManyImageAreaPanel extends JPanel implements AdjustmentListener, Co
 
             thumbnailPanels[i].removeAll();
             thumbnailPanels[i].setImageID(i);
-            thumbnailPanels[i].add(new Thumbnail(manyImgController.getThumbnail(i),i));
+            thumbnailPanels[i].add(new Thumbnail(manyImgController.getThumbnail(imageIdArray[i]),imageIdArray[i]));
 
 
 

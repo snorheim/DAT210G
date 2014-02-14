@@ -108,6 +108,10 @@ public class testSkrivBilde {
 //			// TODO Auto-generated catch block
 //			e.printStackTrace();
 //		}
+//		PictureDb p = new PictureDb("test", "test", 3, "2014-02-02 10:10:10", "", "", "\\thumb\\3.png");
+//		WriteToDatabase.writeOnePic(p);
+//		PictureDb p = ReadFromDatabase.getPictureBasedOnId(1);
+//		System.out.println(p.getThumbnailFileLocation());
 	}
 
 }

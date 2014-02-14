@@ -26,6 +26,7 @@ public class HttpServer implements Runnable {
 			while((character = inStreamReader.read()) != 13) {
 				inComingString.append((char)character);
 			}
+			System.out.println("Server received: " + inComingString.toString());
 			@SuppressWarnings("unused")
 			JsonServer json = new JsonServer(this,inComingString.toString());
 		}
@@ -46,6 +47,7 @@ public class HttpServer implements Runnable {
 			BufferedOutputStream bufferOutputStream = new BufferedOutputStream(connection.getOutputStream());
 			OutputStreamWriter outStreamWriter = new OutputStreamWriter(bufferOutputStream);
 			outStreamWriter.write(outGoingString + (char) 13);
+			System.out.println("Server sent: " + outGoingString);
 			outStreamWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();

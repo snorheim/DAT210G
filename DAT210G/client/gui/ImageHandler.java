@@ -1,11 +1,17 @@
 package gui;
 
 import javax.imageio.ImageIO;
+
+import communication.JsonClient;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import logic.RequestClient;
+import logic.ResponseClient;
 
 /**
  * Created by Ronnie on 12.02.14.
@@ -15,64 +21,89 @@ import java.util.ArrayList;
  */
 public class ImageHandler {
 
-    private int[] imageIdArray;
+	private int[] imageIdArray;
 
-    public ImageHandler() {
+	public ImageHandler() {
 
-        imageIdArray = getAllImages();
-    }
+		imageIdArray = getAllImages();
+	}
 
-    public int[] getAllImages() {
+	public int[] getAllImages() {
+		int[] allImageId = null;
+		JsonClient getAllImagesJson = new JsonClient(new RequestClient("getAllImages"));
+		if (getAllImagesJson.sendJsonToServer()){
+			ResponseClient getAllImagesResponse = getAllImagesJson.receiveJsonFromServer();
+			if (getAllImagesResponse.getSuccess()){
+				allImageId = getAllImagesResponse.getImageIdArray();
+			}
+			getAllImagesJson.closeHttpConnection();
+		}
+		return allImageId;
+	}
 
-        imageIdArray = new int[2000];  // la oss si serveren har 2000 bilder
+	public BufferedImage getThumbnail(int imageID) {
+		BufferedImage image = null;
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getThumbnail", imageID));
+		if (getThumbnailJson.sendJsonToServer()){
+			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
+			if (getThumbnailResponse.getSuccess()){
+				image = getThumbnailJson.receiveImageFromServer();
+			}
+			getThumbnailJson.closeHttpConnection();
+		}
+		return image;
+	}
+	public void SendImageToServer(File fileToSend){
+		int nextAvailableId = -1;
+		BufferedImage image = null;
+		String fileType = null;
+		
+		try {
+			image = ImageIO.read(fileToSend);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	
+		JsonClient sendImageJson1 = new JsonClient(new RequestClient("getNextImageId"));
+		if (sendImageJson1.sendJsonToServer()){
+			ResponseClient sendImageResponse1 = sendImageJson1.receiveJsonFromServer();
+			nextAvailableId = sendImageResponse1.getImageId();
+			System.out.println("Next available id: "+nextAvailableId);
+			sendImageJson1.closeHttpConnection();
+		}
+		
+		int i = fileToSend.getAbsolutePath().lastIndexOf('.');
+		if (i > 0) {
+		    fileType = fileToSend.getAbsolutePath().substring(i+1);
+		    System.out.println("Filtype til nytt bilde: " + fileType + " id: " + nextAvailableId);
+		}
+		
+		if (nextAvailableId != -1){
+	
+			JsonClient sendImageJson = new JsonClient(new RequestClient("addNewImage", nextAvailableId, fileType));
+			if (sendImageJson.sendJsonToServer()){ 
+				sendImageJson.sendImageToServer(image, fileType);
+				sendImageJson.closeHttpConnection();
+			}
+		}
+		
+	}
 
-        for (int i = 0; i < imageIdArray.length - 1; i++) {
-            imageIdArray[i] = i;
-        }
+	public BufferedImage getLargeImage(int imageID) {
 
-       return imageIdArray;
-    }
+		BufferedImage temp;
 
-    public BufferedImage getThumbnail(int imageID) {
+		System.out.println("Returnerer bilde med id: " + imageID);
 
-        BufferedImage temp;
+		try {
+			temp = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\ProsjektGUI\\res\\funny-dog.jpg"));
+			return temp;
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 
-        System.out.println("Returnerer bilde med id: " + imageID);
-
-
-
-
-
-        try {
-            temp = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\ProsjektGUI\\res\\funny-dog-thumb.jpg"));
-            Graphics2D g = (Graphics2D) temp.createGraphics();
-            g.setColor(Color.RED);
-            g.drawString(String.valueOf(imageID), 10, 10); // For å teste ManyImageAreaPanel virker skikkelig
-
-
-            return temp;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public BufferedImage getLargeImage(int imageID) {
-
-        BufferedImage temp;
-
-        System.out.println("Returnerer bilde med id: " + imageID);
-
-        try {
-            temp = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\ProsjektGUI\\res\\funny-dog.jpg"));
-            return temp;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
+		return null;
+	}
 
 
 }
