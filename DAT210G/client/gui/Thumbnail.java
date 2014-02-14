@@ -1,4 +1,4 @@
-package gui.manyimg.model;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;

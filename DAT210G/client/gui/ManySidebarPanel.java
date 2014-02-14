@@ -1,4 +1,4 @@
-package gui.manyimg.view;
+package gui;
 
 import javax.swing.*;
 import java.awt.*;

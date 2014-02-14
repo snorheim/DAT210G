@@ -1,8 +1,4 @@
-package gui.singleimg.controller;
-
-import gui.MainController;
-import gui.singleimg.view.SingleImageAreaPanel;
-import gui.singleimg.view.SingleSidebarPanel;
+package gui;
 
 import java.awt.image.BufferedImage;
 

@@ -1,11 +1,7 @@
-package gui.manyimg.controller;
-
-import gui.MainController;
-import gui.manyimg.model.HelperPanel;
-import gui.manyimg.view.ManyImageAreaPanel;
-import gui.manyimg.view.ManySidebarPanel;
+package gui;
 
 import javax.swing.*;
+
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;

@@ -1,8 +1,5 @@
 package gui;
 
-import gui.manyimg.controller.ManyImgController;
-import gui.singleimg.controller.SingleImgController;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -56,6 +53,7 @@ public class MainController {
         return imageHandler;
     }
 
+    
     public static void main(String[] args) {
 
         EventQueue.invokeLater(new Runnable() {

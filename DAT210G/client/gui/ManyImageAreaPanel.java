@@ -1,11 +1,8 @@
-package gui.manyimg.view;
-
-import gui.manyimg.controller.ManyImgController;
-import gui.manyimg.model.Thumbnail;
-import gui.manyimg.model.HelperPanel;
+package gui;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;

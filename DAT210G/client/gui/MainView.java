@@ -1,13 +1,14 @@
 package gui;
 
 
-import gui.manyimg.view.ManyImageAreaPanel;
-import gui.manyimg.view.ManySidebarPanel;
-import gui.singleimg.view.SingleImageAreaPanel;
-import gui.singleimg.view.SingleSidebarPanel;
+
+
+
+
 
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
