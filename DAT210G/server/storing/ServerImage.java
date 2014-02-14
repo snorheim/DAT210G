@@ -22,8 +22,7 @@ public class ServerImage {
 	public String title;
 	public String description;
 	public int rating;
-	// TODO:
-	public String fileextension;
+	public String fileExtension;
 
 	public ArrayList<String> tags;
 
@@ -31,16 +30,18 @@ public class ServerImage {
 
 	public ServerImage(int ID, String fileExtension,
 			BufferedImage bufferedImage, Path defaultPath) {
-		this(ID, null, null, null, -1, bufferedImage, defaultPath);
+		this(ID, null, null, null, -1, fileExtension, bufferedImage,
+				defaultPath);
 	}
 
 	public ServerImage(int ID, String title, String description,
-			GregorianCalendar timeTaken, int rating,
+			GregorianCalendar timeTaken, int rating, String fileExtension,
 			BufferedImage bufferedImage, Path defaultPath) {
 		this.ID = ID;
 		this.title = title;
 		this.description = description;
 		this.bufferedImage = bufferedImage;
+		this.fileExtension = fileExtension;
 
 		this.timeTaken = timeTaken;
 		this.rating = rating;
@@ -88,9 +89,9 @@ public class ServerImage {
 	 * @return
 	 */
 
-	public boolean saveThumbnailImageToFile(String fileName) {
+	public boolean saveThumbnailImageToFile() {
 		BufferedImage temp = resizeToThumbnail(bufferedImage);
-		return saveToFile(temp, defaultPath + "\\thumb", fileName);
+		return saveToFile(temp, defaultPath + "\\thumb", ID + "");
 	}
 
 	/**
@@ -101,9 +102,9 @@ public class ServerImage {
 	 * @return Returnerer om metoden har hatt suksess
 	 */
 
-	public boolean saveMediumImageToFile(String fileName) {
+	public boolean saveMediumImageToFile() {
 		BufferedImage temp = resizeToMedium(bufferedImage);
-		return saveToFile(temp, defaultPath + "\\medium", fileName);
+		return saveToFile(temp, defaultPath + "\\medium", ID + "");
 	}
 
 	/**
@@ -114,8 +115,8 @@ public class ServerImage {
 	 * @return Boolsk verdi om metoden har hatt suksess
 	 */
 
-	public boolean saveImageToFile(String fileName) {
-		return saveToFile(bufferedImage, defaultPath + "\\full", fileName);
+	public boolean saveImageToFile() {
+		return saveToFile(bufferedImage, defaultPath + "\\full", ID + "");
 	}
 
 	/**
@@ -139,7 +140,7 @@ public class ServerImage {
 		try {
 			File output = new File(filePath + "\\" + fileName + ".png");
 			// TODO: andre filtyper enn png ?
-			success = ImageIO.write(bufferedImage, "png", output);
+			success = ImageIO.write(bufferedImage, fileExtension, output);
 
 		} catch (IOException e) {
 			e.printStackTrace();

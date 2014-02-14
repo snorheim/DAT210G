@@ -39,6 +39,7 @@ public class ImageHandler {
 		File directory = new File(defaultPath.toString());
 		for (File imageFile : directory.listFiles()) {
 			// TODO: andre filer enn png
+			System.out.println(imageFile.getName());
 			if (imageFile.getName().endsWith(".png")) {
 
 				BufferedImage bufferedImage = load(imageFile);
@@ -148,11 +149,11 @@ public class ImageHandler {
 
 	public boolean saveAll() {
 		for (ServerImage serverImage : imageList) {
-			if (!serverImage.saveImageToFile(serverImage.title))
+			if (!serverImage.saveImageToFile())
 				return false;
-			if (!serverImage.saveMediumImageToFile(serverImage.title))
+			if (!serverImage.saveMediumImageToFile())
 				return false;
-			if (!serverImage.saveThumbnailImageToFile(serverImage.title))
+			if (!serverImage.saveThumbnailImageToFile())
 				return false;
 		}
 		return true;
