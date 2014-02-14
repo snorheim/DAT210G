@@ -38,6 +38,7 @@ public class ImageHandler {
 	public void fetchImages() {
 		File directory = new File(defaultPath.toString());
 		for (File imageFile : directory.listFiles()) {
+			// TODO: andre filer enn png
 			if (imageFile.getName().endsWith(".png")) {
 
 				BufferedImage bufferedImage = load(imageFile);
