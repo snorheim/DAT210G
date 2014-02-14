@@ -2,12 +2,12 @@
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-<class name="logic.TagDb" table="tag">
+<class name="storing.TagDb" table="tag">
 	<id name="tag" column="tag" type="string"/>
 	
 	<set name="pics" table="tag_picture">
 		<key column="tagId"/>
-		<many-to-many column="picId" class="logic.PictureDb"/>
+		<many-to-many column="picId" class="storing.PictureDb"/>
 	</set>
 	
 </class>
