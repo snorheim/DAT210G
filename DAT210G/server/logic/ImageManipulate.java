@@ -16,7 +16,9 @@ public class ImageManipulate {
 		
 		double theta = Math.PI / 2;
 	
+		//bildeposisjon
 		AffineTransform xform = AffineTransform.getRotateInstance(theta, W / 2, W / 2);
+		
 		Graphics2D g = (Graphics2D) Rotert.createGraphics();
 		g.drawImage(orginal, xform, null);
 		g.dispose();
