@@ -18,15 +18,21 @@ public class ServerImage {
 
 	public final int ID;
 	public final BufferedImage bufferedImage;
-	public final GregorianCalendar timeTaken;
+	public GregorianCalendar timeTaken;
 	public String title;
 	public String description;
 	public int rating;
-	public String filetype;
+	// TODO:
+	public String fileextension;
 
 	public ArrayList<String> tags;
 
 	private Path defaultPath;
+
+	public ServerImage(int ID, String fileExtension,
+			BufferedImage bufferedImage, Path defaultPath) {
+		this(ID, null, null, null, -1, bufferedImage, defaultPath);
+	}
 
 	public ServerImage(int ID, String title, String description,
 			GregorianCalendar timeTaken, int rating,
@@ -76,9 +82,8 @@ public class ServerImage {
 	}
 
 	/**
-	 * TODO:
+	 * Lagrer en thumbnail til "<defaultpath>\thumb"
 	 * 
-	 * @param bufferedImage
 	 * @param fileName
 	 * @return
 	 */
@@ -89,10 +94,11 @@ public class ServerImage {
 	}
 
 	/**
-	 * TODO:
+	 * Lagrer mediumstørrelsebilde til "<defaultpath>\thumb"
 	 * 
 	 * @param fileName
-	 * @return
+	 *            Navn på filen som lagres, uten filtype
+	 * @return Returnerer om metoden har hatt suksess
 	 */
 
 	public boolean saveMediumImageToFile(String fileName) {
@@ -101,18 +107,15 @@ public class ServerImage {
 	}
 
 	/**
-	 * Lagrer bildet i original størrelse i mappen full. Identisk til
-	 * saveBufferedImage()
+	 * Lagrer bildet i original størrelse i mappen "<defaultPath>\full".
 	 * 
-	 * @param bufferedImage
-	 *            bildet som skal lagres
 	 * @param fileName
-	 * @return
+	 *            Navn på filen som skal lagres i mappen, uten filtype
+	 * @return Boolsk verdi om metoden har hatt suksess
 	 */
 
 	public boolean saveImageToFile(String fileName) {
-		return saveToFile(bufferedImage, defaultPath + "\\full",
-				fileName);
+		return saveToFile(bufferedImage, defaultPath + "\\full", fileName);
 	}
 
 	/**
@@ -130,11 +133,12 @@ public class ServerImage {
 	 * @return Returnerer en boolsk verdi om bildet lykkes i å bli lagret.
 	 */
 
-	private boolean saveToFile(BufferedImage bufferedImage,
-			String filePath, String fileName) {
+	private boolean saveToFile(BufferedImage bufferedImage, String filePath,
+			String fileName) {
 		boolean success = false;
 		try {
 			File output = new File(filePath + "\\" + fileName + ".png");
+			// TODO: andre filtyper enn png ?
 			success = ImageIO.write(bufferedImage, "png", output);
 
 		} catch (IOException e) {
@@ -153,7 +157,7 @@ public class ServerImage {
 	 * @return Gir tilbake et objekt av typen BufferedImage
 	 */
 
-	private static BufferedImage toBufferedImage(Image img) {
+	private BufferedImage toBufferedImage(Image img) {
 		if (img instanceof BufferedImage) {
 			return (BufferedImage) img;
 		}

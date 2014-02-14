@@ -7,14 +7,12 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.GregorianCalendar;
 
 import javax.imageio.ImageIO;
 
 public class ImageHandler {
 
 	public Path defaultPath;
-
 	public ArrayList<ServerImage> imageList;
 
 	public ImageHandler() {
@@ -23,6 +21,7 @@ public class ImageHandler {
 	}
 
 	private void init() {
+		// TODO: Sett egen defaultPath, kompatibilitet med andre OS?
 		defaultPath = Paths.get(".\\img");
 		imageList = new ArrayList<ServerImage>();
 
@@ -42,10 +41,7 @@ public class ImageHandler {
 			if (imageFile.getName().endsWith(".png")) {
 
 				BufferedImage bufferedImage = load(imageFile);
-
-				createServerImage("TITLE PLACEHOLDER",
-						"DESCRIPTION PLACEHOLDER", new GregorianCalendar(), -1,
-						bufferedImage);
+				createServerImage(imageList.size(), "png", bufferedImage);
 			}
 		}
 	}
@@ -80,14 +76,21 @@ public class ImageHandler {
 		 * grunn feiler.
 		 */
 		if (!success) {
-			success = (thumbFolder.mkdirs() && mediumFolder.mkdirs()
-					&& fullFolder.mkdirs() && imageFolder.mkdirs());
+			success = (thumbFolder.mkdirs() && mediumFolder.mkdirs() && fullFolder
+					.mkdirs());
 
 			System.out.println("Folders were made: " + success);
 		}
 		if (!success)
 			throw new FileNotFoundException(
 					"Image-containing folder was not found and could not be made!");
+	}
+
+	public static BufferedImage load(String filepath) {
+		File imageFile = new File(filepath);
+		if (imageFile.exists())
+			return load(imageFile);
+		return null;
 	}
 
 	/**
@@ -100,7 +103,7 @@ public class ImageHandler {
 	 * @return Returnerer et BufferedImage av bildet.
 	 */
 
-	private BufferedImage load(File file) {
+	private static BufferedImage load(File file) {
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(file);
@@ -114,28 +117,22 @@ public class ImageHandler {
 	}
 
 	/**
-	 * Metoden tar inn all informasjon om et bilde (Tittel, beskrivelse,
-	 * klokkeslett og dato for takning, rating, og selve bildet i form av et
-	 * buffered image.
+	 * Metoden oppretter en instans av serverImage med gitt ID, filtype og et
+	 * bilde
 	 * 
-	 * @param title
-	 *            Tittelen til bildet
-	 * @param description
-	 *            Beskrivelsen til bildet
-	 * @param timeTaken
-	 *            Klokkeslett og dato for naar bildet er tatt, lagret i et
-	 *            GregorianCalendar objekt
-	 * @param rating
-	 *            Hvor mye brukeren har gitt bilde i rating
+	 * @param ID
+	 *            ID tildelt av databasen
+	 * @param fileExtension
+	 *            Filtypen til bildet (jpeg, png, ... )
 	 * @param bufferedImage
-	 *            Bildet som et buffered image
+	 *            Bildet som et bufferedImage
 	 */
 
-	public void createServerImage(String title, String description,
-			GregorianCalendar timeTaken, int rating, BufferedImage bufferedImage) {
+	public void createServerImage(int ID, String fileExtension,
+			BufferedImage bufferedImage) {
 		ServerImage serverImage;
-		serverImage = new ServerImage(imageList.size(), title, description,
-				timeTaken, rating, bufferedImage, defaultPath);
+		serverImage = new ServerImage(imageList.size(), fileExtension,
+				bufferedImage, defaultPath);
 		imageList.add(serverImage);
 	}
 
@@ -159,6 +156,8 @@ public class ImageHandler {
 		}
 		return true;
 	}
+
+	// Tester metodene:
 
 	public static void main(String[] args) {
 		ImageHandler imageHandler = new ImageHandler();
