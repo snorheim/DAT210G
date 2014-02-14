@@ -5,48 +5,45 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 public class ImageManipulate {
-
+	
 	public static BufferedImage RotateImage90DegreesClockwise(BufferedImage imageFile) {
-		int H =imageFile.getHeight();
-		int W =imageFile.getWidth();
+		int imageHeight =imageFile.getHeight();
+		int imageWidth =imageFile.getWidth();
 		
 		BufferedImage orginal = imageFile;
 		
-		BufferedImage Rotert = new BufferedImage(H, W, BufferedImage.TYPE_INT_RGB);
+		BufferedImage Rotert = new BufferedImage(imageHeight, imageWidth, BufferedImage.TYPE_INT_RGB);
 		
 		double theta = Math.PI / 2;
 	
-		//bildeposisjon
-		AffineTransform xform = AffineTransform.getRotateInstance(theta, H / 2, H / 2);
+		AffineTransform coordinateClass = AffineTransform.getRotateInstance(theta, imageHeight / 2, imageHeight / 2);
 		
-		Graphics2D g = (Graphics2D) Rotert.createGraphics();
-		g.drawImage(orginal, xform, null);
-		g.dispose();
+		Graphics2D graphic2DClass = (Graphics2D) Rotert.createGraphics();
+		graphic2DClass.drawImage(orginal, coordinateClass, null);
+		graphic2DClass.dispose();
 	
 		return Rotert;
 	
 	}
 	
 	public static BufferedImage RotateImage90DegreesCounterClockwise(BufferedImage imageFile) {
-		int H =imageFile.getHeight();
-		int W =imageFile.getWidth();
+		int imageHeight =imageFile.getHeight();
+		int imageWidth =imageFile.getWidth();
 		
 		BufferedImage orginal = imageFile;
 		
-		BufferedImage Rotert = new BufferedImage(H, W, BufferedImage.TYPE_INT_RGB);
+		BufferedImage Rotert = new BufferedImage(imageHeight, imageWidth, BufferedImage.TYPE_INT_RGB);
 		
 		double theta = Math.PI / 2*3;
 	
-		//bildeposisjon
-		AffineTransform xform = AffineTransform.getRotateInstance(theta, W / 2, W / 2);
+		AffineTransform coordinateClass = AffineTransform.getRotateInstance(theta, imageWidth / 2, imageWidth / 2);
 		
-		Graphics2D g = (Graphics2D) Rotert.createGraphics();
-		g.drawImage(orginal, xform, null);
-		g.dispose();
+		Graphics2D graphic2DClass = (Graphics2D) Rotert.createGraphics();
+		graphic2DClass.drawImage(orginal, coordinateClass, null);
+		graphic2DClass.dispose();
 	
 		return Rotert;
-	
+		
 	}
-	
 
 }
