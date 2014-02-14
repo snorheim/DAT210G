@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class ImageManipulate {
 
-	public BufferedImage RotateImage90Degrees(BufferedImage imageFile) {
+	public BufferedImage RotateImage90DegreesClockwise(BufferedImage imageFile) {
 		int H =imageFile.getHeight();
 		int W =imageFile.getWidth();
 		
