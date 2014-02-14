@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 
 public class ImageManipulate {
 
-	public BufferedImage RotateImage90DegreesClockwise(BufferedImage imageFile) {
+	public static BufferedImage RotateImage90DegreesClockwise(BufferedImage imageFile) {
 		int H =imageFile.getHeight();
 		int W =imageFile.getWidth();
 		
@@ -15,6 +15,27 @@ public class ImageManipulate {
 		BufferedImage Rotert = new BufferedImage(H, W, BufferedImage.TYPE_INT_RGB);
 		
 		double theta = Math.PI / 2;
+	
+		//bildeposisjon
+		AffineTransform xform = AffineTransform.getRotateInstance(theta, H / 2, H / 2);
+		
+		Graphics2D g = (Graphics2D) Rotert.createGraphics();
+		g.drawImage(orginal, xform, null);
+		g.dispose();
+	
+		return Rotert;
+	
+	}
+	
+	public static BufferedImage RotateImage90DegreesCounterClockwise(BufferedImage imageFile) {
+		int H =imageFile.getHeight();
+		int W =imageFile.getWidth();
+		
+		BufferedImage orginal = imageFile;
+		
+		BufferedImage Rotert = new BufferedImage(H, W, BufferedImage.TYPE_INT_RGB);
+		
+		double theta = Math.PI / 2*3;
 	
 		//bildeposisjon
 		AffineTransform xform = AffineTransform.getRotateInstance(theta, W / 2, W / 2);
@@ -27,9 +48,5 @@ public class ImageManipulate {
 	
 	}
 	
-	public static void main(String[] args) {
-		// Test
-		
-	}
 
 }
