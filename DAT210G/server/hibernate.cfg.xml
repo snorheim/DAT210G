@@ -6,7 +6,7 @@
 	<session-factory>
 		<property name="show_sql">true</property>
 		<property name="format_sql">true</property>
-		<property name="dialect">logic.SQLiteDialect</property>
+		<property name="dialect">storing.SQLiteDialect</property>
 		<property name="connection.driver_class">org.sqlite.JDBC</property>
 		<property name="connection.url">jdbc:sqlite:pictureDB.db</property>
 		<property name="connection.username"></property>

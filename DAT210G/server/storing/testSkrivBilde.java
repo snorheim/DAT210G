@@ -1,4 +1,4 @@
-package logic;
+package storing;
 
 
 import java.awt.Desktop;
@@ -100,14 +100,21 @@ public class testSkrivBilde {
 //			System.out.println(t.getTag());
 //		}
 		
-		PictureDb pic = ReadFromDatabase.getPictureBasedOnId(1);
-		Desktop dk = Desktop.getDesktop();
-		try {
-			dk.open(new File(pic.getFileLocation()));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+//		PictureDb p = new PictureDb("test", "test", 3, "2014-02-02 10:10:10", "test", "test", "test");
+//		WriteToDatabase.writeOnePic(p);
+		
+//		PictureDb pic = ReadFromDatabase.getPictureBasedOnId(1);
+//		Desktop dk = Desktop.getDesktop();
+//		try {
+//			dk.open(new File(pic.getFileLocation()));
+//		} catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		
+//		PictureDb pic = ReadFromDatabase.getPictureBasedOnId(2);
+//		System.out.println(pic.getId() + ", " + pic.getTitle() + ", " + pic.getFileLocation());
+		
 	}
 
 }
