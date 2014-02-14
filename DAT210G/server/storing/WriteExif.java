@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
@@ -59,6 +61,9 @@ public class WriteExif {
 			return;
 		}
 	}
+	public void setMetaDataOutPutSet(TiffOutputSet metadaOutputSet){
+		this.metaDataOutPutSet = metadaOutputSet;
+	}
 	public void setExifTitle(String title){
 		try {
 			exifDirectory.removeField(MicrosoftTagConstants.EXIF_TAG_XPTITLE);
@@ -111,11 +116,13 @@ public class WriteExif {
 			e.printStackTrace();
 		}
 	}
-	public void setExifDateTimeTaken(String dateTime){
+	public void setExifDateTimeTaken(String dateTime){		
 		try {
+			Date date = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(dateTime);
+			dateTime = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").format(date);
 			exifDirectory.removeField(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
 			exifDirectory.add(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL, dateTime);
-		} catch (ImageWriteException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
