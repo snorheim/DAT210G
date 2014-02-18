@@ -60,8 +60,20 @@ public class ServerImage {
 	 * @return Bildet i mediumstørrelse.
 	 */
 	private BufferedImage resizeToMedium(BufferedImage bufferedImage) {
-		Image tempImage = bufferedImage.getScaledInstance(MEDIUM_WIDTH,
-				MEDIUM_HEIGHT, BufferedImage.SCALE_FAST);
+		int oldWidth = bufferedImage.getWidth();
+		int oldHeight = bufferedImage.getHeight();
+		int newHeight, newWidth;
+		double ratio = (double) oldWidth / (double) oldHeight;
+		if (ratio <= 1.0) {
+			newWidth = MEDIUM_WIDTH;
+			newHeight = (int) (MEDIUM_HEIGHT * ratio);
+		} else {
+			newWidth = (int) (MEDIUM_WIDTH * ratio);
+			newHeight = MEDIUM_HEIGHT;
+		}
+
+		Image tempImage = bufferedImage.getScaledInstance(newWidth, newHeight,
+				BufferedImage.SCALE_FAST);
 		BufferedImage scaledImage = toBufferedImage(tempImage);
 		return scaledImage;
 	}
@@ -76,8 +88,20 @@ public class ServerImage {
 	 * @return Bildet i thumbnailstørrelse.
 	 */
 	public BufferedImage resizeToThumbnail(BufferedImage bufferedImage) {
-		Image tempImage = bufferedImage.getScaledInstance(THUMBNAIL_WIDTH,
-				THUMBNAIL_HEIGHT, BufferedImage.SCALE_FAST);
+		int oldWidth = bufferedImage.getWidth();
+		int oldHeight = bufferedImage.getHeight();
+		int newHeight, newWidth;
+		double ratio = (double) oldWidth / (double) oldHeight;
+		if (ratio <= 1.0) {
+			newWidth = THUMBNAIL_WIDTH;
+			newHeight = (int) (THUMBNAIL_HEIGHT * ratio);
+		} else {
+			newWidth = (int) (THUMBNAIL_WIDTH * ratio);
+			newHeight = THUMBNAIL_HEIGHT;
+		}
+
+		Image tempImage = bufferedImage.getScaledInstance(newWidth, newHeight,
+				BufferedImage.SCALE_FAST);
 		BufferedImage scaledImage = toBufferedImage(tempImage);
 		return scaledImage;
 	}
@@ -138,7 +162,8 @@ public class ServerImage {
 			String fileName) {
 		boolean success = false;
 		try {
-			File output = new File(filePath + "\\" + fileName + "." + fileExtension);
+			File output = new File(filePath + "\\" + fileName + "."
+					+ fileExtension);
 			// TODO: andre filtyper enn png ?
 			success = ImageIO.write(bufferedImage, fileExtension, output);
 

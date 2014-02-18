@@ -10,14 +10,11 @@ import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
 
-import com.sun.jmx.snmp.defaults.DefaultPaths;
-
-
 public class ImageHandler {
 
 	public static ImageHandler IMAGE_HANDLER = new ImageHandler();
 	// TODO: Sett egen defaultPath, kompatibilitet med andre OS?
-	public Path defaultPath= Paths.get(".\\img");
+	public Path defaultPath = Paths.get(".\\img");
 	public ArrayList<ServerImage> imageList = new ArrayList<ServerImage>();;
 
 	public ImageHandler() {
@@ -25,8 +22,8 @@ public class ImageHandler {
 
 	}
 
-	private void init() { 
-		
+	private void init() {
+
 		imageList = new ArrayList<ServerImage>();
 
 		try {
@@ -97,7 +94,6 @@ public class ImageHandler {
 		File imageFile = new File(defaultPath + filepath);
 		if (imageFile.exists())
 			return load(imageFile);
-		System.out.println("yolo swag");
 		return null;
 	}
 
@@ -139,8 +135,8 @@ public class ImageHandler {
 	public void createServerImage(int ID, String fileExtension,
 			BufferedImage bufferedImage) {
 		ServerImage serverImage;
-		serverImage = new ServerImage(ID, fileExtension,
-				bufferedImage, defaultPath);
+		serverImage = new ServerImage(ID, fileExtension, bufferedImage,
+				defaultPath);
 		imageList.add(serverImage);
 	}
 
