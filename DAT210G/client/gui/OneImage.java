@@ -35,14 +35,14 @@ public class OneImage extends JPanel {
 	public void paint(Graphics graphics) {
 		Graphics2D g = (Graphics2D) graphics;
 
-		//g.setFont(new Font("Arial", Font.PLAIN, 24));
-		//g.setColor(Color.RED);
+		g.setFont(new Font("Arial", Font.PLAIN, 24));
+		g.setColor(Color.RED);
 
 		g.drawImage(image, 0, 0, image.getWidth(), image.getHeight(), null);
-		//g.drawString(Integer.toString(imageId), image.getWidth() / 2,
-		//		image.getHeight() / 2);
+		g.drawString(Integer.toString(imageId), image.getWidth() / 2,
+				image.getHeight() / 2);
 
-		//g.drawString("null", 50, 50);
+		g.drawString("null", 50, 50);
 
 	}
 

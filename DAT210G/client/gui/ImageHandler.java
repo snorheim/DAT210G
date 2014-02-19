@@ -57,13 +57,13 @@ public class ImageHandler {
 		int nextAvailableId = -1;
 		BufferedImage image = null;
 		String fileType = null;
-
+		
 		try {
 			image = ImageIO.read(fileToSend);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
+	
 		JsonClient sendImageJson1 = new JsonClient(new RequestClient("getNextImageId"));
 		if (sendImageJson1.sendJsonToServer()){
 			ResponseClient sendImageResponse1 = sendImageJson1.receiveJsonFromServer();
@@ -71,35 +71,38 @@ public class ImageHandler {
 			System.out.println("Next available id: "+nextAvailableId);
 			sendImageJson1.closeHttpConnection();
 		}
-
+		
 		int i = fileToSend.getAbsolutePath().lastIndexOf('.');
 		if (i > 0) {
-			fileType = fileToSend.getAbsolutePath().substring(i+1);
-			System.out.println("Filtype til nytt bilde: " + fileType + " id: " + nextAvailableId);
+		    fileType = fileToSend.getAbsolutePath().substring(i+1);
+		    System.out.println("Filtype til nytt bilde: " + fileType + " id: " + nextAvailableId);
 		}
-
+		
 		if (nextAvailableId != -1){
-
+	
 			JsonClient sendImageJson = new JsonClient(new RequestClient("addNewImage", nextAvailableId, fileType));
 			if (sendImageJson.sendJsonToServer()){ 
 				sendImageJson.sendImageToServer(image, fileType);
 				sendImageJson.closeHttpConnection();
 			}
 		}
-
+		
 	}
 
 	public BufferedImage getLargeImage(int imageID) {
-		BufferedImage image = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getLargeImage", imageID));
-		if (getThumbnailJson.sendJsonToServer()){
-			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
-			if (getThumbnailResponse.getSuccess()){
-				image = getThumbnailJson.receiveImageFromServer();
-			}
-			getThumbnailJson.closeHttpConnection();
+
+		BufferedImage temp;
+
+		System.out.println("Returnerer bilde med id: " + imageID);
+
+		try {
+			temp = ImageIO.read(new File("C:\\Users\\Ronnie\\Documents\\GitHub\\ProsjektGUI\\res\\funny-dog.jpg"));
+			return temp;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		return image;
+
+		return null;
 	}
 
 
