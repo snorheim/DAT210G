@@ -53,6 +53,19 @@ public class HttpClient {
 			e.printStackTrace();
 		}
 	}
+	public void sendFile(File file){
+	    long length = file.length();
+	    if (length > Integer.MAX_VALUE) {
+	        System.out.println("File is too large.");
+	    }
+	    byte[] bytes = new byte[(int) length];
+	    try {
+			DataOutputStream dataOutPut = new DataOutputStream(connection.getOutputStream());
+			dataOutPut.write(bytes);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	public String receiveData(){
 		StringBuffer inComingString = new StringBuffer();
 		try {
