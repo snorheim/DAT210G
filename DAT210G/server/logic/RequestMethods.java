@@ -70,7 +70,7 @@ public class RequestMethods {
 		System.out.println("IMAGE WAS SAVED: "+ wasCreatedSuccesful);
 		if (wasCreatedSuccesful){
 			String fullPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\full\\" + imageId + "." + detail;
-			String medPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\med\\"+ imageId + "." + detail;
+			String medPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\medium\\"+ imageId + "." + detail;
 			String thumbPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\thumb\\"+ imageId + "." + detail;
 			PictureDb picDb = new PictureDb("test import", "test import", 1, "2014-02-02 10:10:10", fullPath, medPath, thumbPath);
 			boolean dbWriteSuccesful = WriteToDatabase.writeOnePic(picDb);
