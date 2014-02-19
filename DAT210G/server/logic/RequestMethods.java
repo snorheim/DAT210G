@@ -21,14 +21,20 @@ public class RequestMethods {
 	public static void getThumbnail(RequestServer request, int imageId, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
 		String fileLocation = pictureDb.getThumbnailFileLocation();
-		String[] destFileStringSplit = fileLocation.split("\\.");
+		String[] filetypeSplit = fileLocation.split("\\.");
 		BufferedImage thumbnailImage = ImageHandler.IMAGE_HANDLER.load(fileLocation);
 
 		request.sendJsonResponse(new ResponseServer(true));
-		request.sendImageResponse(thumbnailImage, destFileStringSplit[1]);
+		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
 	}
 	public static void getLargeImage(RequestServer request, int imageId, String detail){
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
+		String fileLocation = pictureDb.getMediumFileLocation();
+		String[] filetypeSplit = fileLocation.split("\\.");
+		BufferedImage thumbnailImage = ImageHandler.IMAGE_HANDLER.load(fileLocation);
 
+		request.sendJsonResponse(new ResponseServer(true));
+		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
 	}
 	public static void getImagesWithTag(RequestServer request, int imageId, String detail){
 

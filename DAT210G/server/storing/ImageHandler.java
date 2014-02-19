@@ -93,8 +93,8 @@ public class ImageHandler {
 	}
 
 	public BufferedImage load(String filepath) {
-		System.out.println("File path: " + defaultPath + filepath);
-		File imageFile = new File(defaultPath + filepath);
+		System.out.println("File path: " + filepath);
+		File imageFile = new File(filepath);
 		if (imageFile.exists())
 			return load(imageFile);
 		System.out.println("yolo swag");
