@@ -36,6 +36,15 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
 	}
+	public static void getFullImage(RequestServer request, int imageId, String detail){
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
+		String fileLocation = pictureDb.getFileLocation();
+		String[] filetypeSplit = fileLocation.split("\\.");
+		BufferedImage fullImage = ImageHandler.IMAGE_HANDLER.load(fileLocation);
+
+		request.sendJsonResponse(new ResponseServer(true));
+		request.sendImageResponse(fullImage, filetypeSplit[filetypeSplit.length - 1]);
+	}
 	public static void getImagesWithTag(RequestServer request, int imageId, String detail){
 
 	}
