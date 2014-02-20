@@ -69,11 +69,6 @@ public class HttpServer implements Runnable {
 		}
 		return image;
 	}
-	public File receiveFile(){
-		DataInputStream dataInput = new DataInputStream(connection.getInputStream());
-		byte[] bytes = new byte[1024];
-		dataInput.read(bytes);
-	}
 	public static void main(String[] args) {
 		int port = 19999;
 		int count = 0;
