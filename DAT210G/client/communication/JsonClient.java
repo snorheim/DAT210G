@@ -34,6 +34,9 @@ public class JsonClient {
 	public void sendImageToServer(BufferedImage image, String type){
 		httpClient.sendImage(image, type);
 	}
+	public void sendFileToServer(String filePath) throws Exception{
+		httpClient.sendFile(filePath);
+	}
 	public void closeHttpConnection(){
 		httpClient.closeConnection();
 	}

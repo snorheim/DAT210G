@@ -81,4 +81,14 @@ public class RequestMethods {
 		}
 		request.sendJsonResponse(new ResponseServer(false));
 	}
+	public static void addNewFullImage(RequestServer request, int imageId, String detail){
+		System.out.println("ImageID til server: " + imageId);
+		try {
+			request.receiveFile(detail);
+		} catch (Exception e) {
+			request.sendJsonResponse(new ResponseServer(false));
+			return;
+		}
+		request.sendJsonResponse(new ResponseServer(true));
+	}
 }

@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import javax.imageio.ImageIO;
 
+import storing.ImageHandler;
+
 public class HttpServer implements Runnable {
 
 	private Socket connection;
@@ -69,6 +71,42 @@ public class HttpServer implements Runnable {
 		}
 		return image;
 	}
+	public File receiveFile(String fileType) throws Exception {
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
+		String fileFullPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\TEMPIMAGE." + fileType;
+		//System.out.println("Receiving image to file: " + fileFullPath);
+		byte[] byteSize = new byte[4];
+		int offset = 0;
+		while (offset < byteSize.length) {
+			int bytesRead = bufferedInputStream.read(byteSize, offset, byteSize.length - offset);
+			offset += bytesRead;
+		}
+		int fileSize;
+		fileSize = (int) (byteSize[0] & 0xff) << 24 
+				| (int) (byteSize[1] & 0xff) << 16 
+				| (int) (byteSize[2] & 0xff) << 8
+				| (int) (byteSize[3] & 0xff);
+		//System.out.println("Incoming image is: " + fileSize + " bytes long");
+		if (fileSize < 0 | fileSize > 20000000){
+			throw new Exception();
+		}
+		byte[] data = new byte[8 * 1024];
+		int bytesToRead;
+		FileOutputStream fileOutputStream = new FileOutputStream(fileFullPath);
+		BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+		while (fileSize > 0){
+			if (fileSize > data.length) bytesToRead = data.length;
+			else bytesToRead = fileSize;
+			int bytesRead = bufferedInputStream.read(data, 0, bytesToRead);
+			if (bytesRead > 0){
+				bufferedOutputStream.write(data, 0, bytesRead);
+				fileSize -= bytesRead;
+				//System.out.println("Left to receive: " + fileSize + " bytes");
+			}
+		}
+		bufferedOutputStream.close();
+		return new File(fileFullPath);
+	}
 	public static void main(String[] args) {
 		int port = 19999;
 		int count = 0;
@@ -93,7 +131,7 @@ public class HttpServer implements Runnable {
 			} catch (Exception e) {
 				System.err.println("Not able to close server on port " + port);
 			}
-			
+
 		}
 	}
 }

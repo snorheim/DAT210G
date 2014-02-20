@@ -53,6 +53,45 @@ public class HttpClient {
 			e.printStackTrace();
 		}
 	}
+	public void sendFile(String filePath) throws Exception {
+		OutputStream outputStream = connection.getOutputStream();
+		File outGoingFile = new File(filePath);
+		int fileSize = (int) outGoingFile.length();
+		System.out.println("Sender fil: " + filePath + ": " + outGoingFile.length());
+		if (fileSize < outGoingFile.length()){
+			System.out.println("File is too big");
+			throw new IOException("File is too big");
+		}
+		byte[] byteSize = new byte[4];
+		byteSize[0] = (byte) ((fileSize & 0xff000000) >> 24);
+		byteSize[1] = (byte) ((fileSize & 0x00ff0000) >> 16);
+		byteSize[2] = (byte) ((fileSize & 0x0000ff00) >> 8);
+		byteSize[3] = (byte) (fileSize & 0x000000ff);
+		outputStream.write(byteSize, 0, 4);
+
+		boolean noMemoryLimitation = true;
+
+		FileInputStream fileInputStream = new FileInputStream(outGoingFile);
+		BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+		try {
+			if (noMemoryLimitation){
+				byte[] outBuffer = new byte[fileSize];
+				int bRead = bufferedInputStream.read(outBuffer, 0, outBuffer.length);
+				outputStream.write(outBuffer, 0, bRead);
+			}
+			else {
+				int bRead = 0;
+				byte[] outBuffer = new byte[8 * 1024];
+				while ((bRead = bufferedInputStream.read(outBuffer, 0, outBuffer.length)) > 0){
+					outputStream.write(outBuffer, 0, bRead);
+				}
+			}
+			outputStream.flush();
+		}
+		finally {
+			bufferedInputStream.close();
+		}
+	}
 	public String receiveData(){
 		StringBuffer inComingString = new StringBuffer();
 		try {

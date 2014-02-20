@@ -1,6 +1,7 @@
 package logic;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import communication.JsonServer;
@@ -40,6 +41,9 @@ public class RequestServer {
 	}
 	public BufferedImage receiveImage(){
 		return jsonServer.getHttpServer().receiveImage();
+	}
+	public File receiveFile(String fileType) throws Exception{
+		return jsonServer.getHttpServer().receiveFile(fileType);
 	}
 	public void execute(){
 		Class<RequestMethods> requestMethodsClass = RequestMethods.class;	
