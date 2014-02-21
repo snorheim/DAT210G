@@ -101,9 +101,7 @@ public class Controller {
 
 			for (int i = 0; i < imageIdArray.length; i++) {
 				currentImages.add(i,
-						new OneImage(
-								imageHandler.getThumbnail(imageIdArray[i]),
-								imageIdArray[i]));
+						new OneImage(imageHandler.getThumbnail(imageIdArray[i]), imageIdArray[i], imageHandler.getMetaData(i)));
 				currentImages.get(i).addImageMouseListener(mouseClickHandler);
 			}
 
@@ -128,8 +126,7 @@ public class Controller {
 
 		BufferedImage temp = imageHandler.getLargeImage(5);
 
-		currentSingleImage = new OneImage(imageHandler.getLargeImage(imageId),
-				imageId);
+		currentSingleImage = new OneImage(imageHandler.getLargeImage(imageId), imageId, imageHandler.getMetaData(imageId));
 
 		return currentSingleImage;
 

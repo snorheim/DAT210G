@@ -13,6 +13,7 @@ public class OneImage extends JPanel {
 	private int imageId;
 	private BufferedImage image;
 	private Dimension size;
+	private String[] metaData;
 
 	/**
 	 * Constructor
@@ -22,14 +23,19 @@ public class OneImage extends JPanel {
 	 * @param imageId
 	 *            An ID number for image
 	 */
-	public OneImage(BufferedImage image, int imageId) {
+	public OneImage(BufferedImage image, int imageId, String[] metaData) {
 
+		this.metaData = metaData;
 		this.image = image;
 		this.imageId = imageId;
 		this.size = new Dimension(image.getWidth(), image.getHeight());
 		this.setMinimumSize(size);
 		this.setPreferredSize(size);
 
+	}
+
+	public String[] getMetaData() {
+		return metaData;
 	}
 
 	public void paint(Graphics graphics) {
