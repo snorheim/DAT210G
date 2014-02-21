@@ -69,12 +69,19 @@ public class ButtonHandler {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Clicked Next Button");
+				
+				
+				
+				controller.setSingleImageMode(controller.getCurrentImageId() + 1);
+				
 			}
 		});
 		sidebarPanel.getPrevBtn().addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Clicked Previous button");
+				
+				controller.setSingleImageMode(controller.getCurrentImageId() + 1);
 			}
 		});
 		sidebarPanel.getRotLeftBtn().addActionListener(new ActionListener() {
