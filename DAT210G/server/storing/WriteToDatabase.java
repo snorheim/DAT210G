@@ -8,7 +8,7 @@ import org.hibernate.Transaction;
 
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
-	
+
 	public static boolean writeOnePic(PictureDb pic){
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -26,7 +26,7 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
+
 	public static boolean writeManyPics(ArrayList<PictureDb> picList) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -46,7 +46,7 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
+
 	public static boolean writeTag(TagDb tag) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -64,7 +64,7 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
+
 	public static boolean writeManyTags(ArrayList<TagDb> tagList) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -84,10 +84,13 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
+
 	//hvis picture allerede har taggen ikke gjor noe. hvis tag ikke finnes: lag den.
 	//legg tag til bilde
 	public static boolean addTagToPic(int picId, String tag) {
+		TagDb tagDb = new TagDb(tag);
+		boolean makeTag = writeTag(tagDb);
+
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
@@ -104,9 +107,10 @@ public class WriteToDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
+
 		return successfulTransfer;
 	}
-	
+
 	//sjekk hvilke tags bilde har: legg matchende tags til en ny liste, legg saa inn de nye tagsene her
 	//tags fra database som ikke matchet noe i taglisten fjernes.
 	//sjekk om tags finnes, hvis ikke: legg til db, og saa connect dem til bildet
@@ -134,30 +138,30 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
+
 	//on hold pga trenger gjerne ikke denne: trenger sjekking av eksisterende tags osv.
-//	public static boolean addManyTagsToManyPics(ArrayList<Integer> picIdList, ArrayList<String> tagList) {
-//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-//		Transaction dbTransaction = null;
-//		try {
-//			dbTransaction = dbSession.beginTransaction();
-//			for (Integer picId: picIdList) {
-//				PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
-//				for (String tag: tagList) {
-//					TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
-//					picFromDb.addTag(tagFromDb);
-//				}
-//			}
-//			dbTransaction.commit();
-//			successfulTransfer = true;
-//		} catch (HibernateException e) {
-//			successfulTransfer = false;
-//			if (dbTransaction != null) dbTransaction.rollback();
-//		} finally {
-//			dbSession.close();
-//			HibernateUtil.shutdown();
-//		}
-//		return successfulTransfer;
-//	}
-	
+	//	public static boolean addManyTagsToManyPics(ArrayList<Integer> picIdList, ArrayList<String> tagList) {
+	//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+	//		Transaction dbTransaction = null;
+	//		try {
+	//			dbTransaction = dbSession.beginTransaction();
+	//			for (Integer picId: picIdList) {
+	//				PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
+	//				for (String tag: tagList) {
+	//					TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
+	//					picFromDb.addTag(tagFromDb);
+	//				}
+	//			}
+	//			dbTransaction.commit();
+	//			successfulTransfer = true;
+	//		} catch (HibernateException e) {
+	//			successfulTransfer = false;
+	//			if (dbTransaction != null) dbTransaction.rollback();
+	//		} finally {
+	//			dbSession.close();
+	//			HibernateUtil.shutdown();
+	//		}
+	//		return successfulTransfer;
+	//	}
+
 }

@@ -2,6 +2,8 @@ package storing;
 
 import java.util.Set;
 
+import antlr.collections.List;
+
 
 
 public class PictureDb {
@@ -96,6 +98,10 @@ public class PictureDb {
 
 	public void setThumbnailFileLocation(String thumbnailFileLocation) {
 		this.thumbnailFileLocation = thumbnailFileLocation;
+	}
+	
+	public String getTagString() {
+		return ReadFromDatabase.getAllTagsForAPicture(id);
 	}
 	
 	public Set<TagDb> getTags() {

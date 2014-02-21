@@ -12,8 +12,8 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class ReadFromDatabase {
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public static List<TagDb> getAllTags() {
 		List<TagDb> tagList = null;
@@ -31,8 +31,8 @@ public class ReadFromDatabase {
 		}
 		return tagList;
 	}
-	
-	
+
+
 	public static int findNextPicId() {
 		int nextPicId = 0;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -50,8 +50,8 @@ public class ReadFromDatabase {
 		}
 		return nextPicId;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getAllPictures() {
 		List<PictureDb> picList = null;
@@ -69,10 +69,10 @@ public class ReadFromDatabase {
 		}
 		return picList;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
-	public static List<PictureDb> getPicturesBasedOnTag(String tag) {
+	public static int[] getPicturesBasedOnTag(String tag) {
 		List<PictureDb> picList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -88,11 +88,15 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
+		}   
+		int[] imageIdArray = new int[picList.size()];
+		for (int i = 0; i < imageIdArray.length; i++) {
+			imageIdArray[i] = picList.get(i).getId();
 		}
-		return picList;
+		return imageIdArray;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getPicturesBasedOnManyTags(ArrayList<String> tagList) {
 		List<PictureDb> picList = null;
@@ -115,8 +119,8 @@ public class ReadFromDatabase {
 		}
 		return picList;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getPicturesBasedOnRating(int rating) {
 		List<PictureDb> picList = null;
@@ -136,8 +140,8 @@ public class ReadFromDatabase {
 		}
 		return picList;
 	}
-	
-	
+
+
 	public static PictureDb getPictureBasedOnId(int picId) {
 		PictureDb picture = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -156,10 +160,10 @@ public class ReadFromDatabase {
 		}
 		return picture;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
-	public static List<Integer> getAllPicIds() {
+	public static int[] getAllPicIds() {
 		List<Integer> picIdList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -174,12 +178,16 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return picIdList;
+		int[] tempArray = new int[picIdList.size()];
+		for (int i = 0; i < tempArray.length; i ++){
+			tempArray[i] = picIdList.get(i);
+		}
+		return tempArray;
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
-	public static List<TagDb> getAllTagsForAPicture(int picId) {
+	public static String getAllTagsForAPicture(int picId) {
 		List<TagDb> tagList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -196,6 +204,10 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return tagList;
+		String allTagsAsString = "";
+		for (TagDb tag: tagList) {
+			allTagsAsString += tag.getTag() + ";";
+		}
+		return allTagsAsString;
 	}
 }

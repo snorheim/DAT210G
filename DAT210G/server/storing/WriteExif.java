@@ -33,7 +33,7 @@ public class WriteExif {
 	public WriteExif(String imageFileString){	
 		imageFile = new File(imageFileString);
 		String[] destFileStringSplit = imageFileString.split("\\.");
-		String destFileString = destFileStringSplit[0] + "METADATATEMP." + destFileStringSplit[1];
+		String destFileString = "." + destFileStringSplit[destFileStringSplit.length-2] + "METADATATEMP." + destFileStringSplit[destFileStringSplit.length-1];
 		destImageFile = new File(destFileString);
 		outPutStream = null;
 		canThrow = false;
