@@ -6,18 +6,18 @@ public class TagDb {
 	private String tag;
 	private Set<PictureDb> pics;
 	
+	public TagDb(){}
+	
+	public TagDb(String tag){
+		this.tag = tag;
+	}
+	
 	public Set<PictureDb> getPics() {
 		return pics;
 	}
 
 	public void setPics(Set<PictureDb> pics) {
 		this.pics = pics;
-	}
-
-	public TagDb(){}
-	
-	public TagDb(String tag){
-		this.tag = tag;
 	}
 
 	public String getTag() {
