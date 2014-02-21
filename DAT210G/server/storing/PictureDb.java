@@ -97,7 +97,7 @@ public class PictureDb {
 	public void setThumbnailFileLocation(String thumbnailFileLocation) {
 		this.thumbnailFileLocation = thumbnailFileLocation;
 	}
-
+	
 	public Set<TagDb> getTags() {
 		return tags;
 	}
@@ -105,7 +105,4 @@ public class PictureDb {
 	public void setTags(Set<TagDb> tags) {
 		this.tags = tags;
 	}
-	
-	
-	
 }

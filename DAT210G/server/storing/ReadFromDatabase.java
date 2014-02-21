@@ -39,7 +39,7 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("select max(id) from PictureDb");
+			Query query = dbSession.createQuery("SELECT max(id) FROM PictureDb");
 			nextPicId = (int) query.uniqueResult() + 1;
 			dbTransaction.commit();
 		} catch (HibernateException e) {
