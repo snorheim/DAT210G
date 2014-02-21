@@ -157,6 +157,10 @@ public class Controller {
 			
 		} 
 	}
+	
+	public int getCurrentImageId() {
+		return currentSingleImage.getImageId();
+	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub

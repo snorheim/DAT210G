@@ -1,6 +1,7 @@
 package gui;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 /**
@@ -9,7 +10,7 @@ import java.awt.*;
 public class ImageAreaPanel extends JPanel {
 
 	private JPanel thumbnailsPanel;
-	private JPanel singleImagePanel;
+	private SingleImagePanel singleImagePanel;	
 	private Controller controller;
 
 	private OneImage currentSingleImageId; // Image shown if in singleImageMode
@@ -18,6 +19,7 @@ public class ImageAreaPanel extends JPanel {
 		setBackground(Color.DARK_GRAY);
 
 		this.thumbnailsPanel = thumbnailsPanel;
+		singleImagePanel = new SingleImagePanel();
 
 		addThumbnailsPanel();
 		addSingleImagePanel();
@@ -30,9 +32,8 @@ public class ImageAreaPanel extends JPanel {
 
 	}
 
-	private void addSingleImagePanel() {
-
-		singleImagePanel = new JPanel();
+	private void addSingleImagePanel() {		
+					
 		add(singleImagePanel);
 
 	}
@@ -46,10 +47,10 @@ public class ImageAreaPanel extends JPanel {
 	public void setSingleImageMode(OneImage image) {
 		currentSingleImageId = image;
 		thumbnailsPanel.setVisible(false);
-		singleImagePanel.setVisible(true);
-
+		singleImagePanel.setVisible(true);		
+		
 		singleImagePanel.removeAll();
-		singleImagePanel.add(currentSingleImageId);
+		singleImagePanel.setImage(image);
 
 		revalidate();
 	}
