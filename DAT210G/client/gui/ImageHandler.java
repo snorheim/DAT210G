@@ -91,7 +91,7 @@ public class ImageHandler {
 
 	public BufferedImage getLargeImage(int imageID) {
 		BufferedImage image = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getLargeImage", imageID));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "800;600"));
 		if (getThumbnailJson.sendJsonToServer()){
 			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()){
