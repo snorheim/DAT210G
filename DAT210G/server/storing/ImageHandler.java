@@ -17,7 +17,7 @@ import net.coobird.thumbnailator.Thumbnails;
 
 public class ImageHandler {
 
-	public static ImageHandler IMAGE_HANDLER = new ImageHandler();
+	private static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 100, MEDIUM_SIZE = 250;
 	public Path defaultPath;
@@ -362,15 +362,23 @@ public class ImageHandler {
 		return null;
 	}
 
+	public static ImageHandler getInstance() {
+		if (instance == null)
+			instance = new ImageHandler();
+		return instance;
+
+	}
+
 	// Tester metodene:
 
 	public static void main(String[] args) {
-		File[] directory = IMAGE_HANDLER.defaultPath.toFile().listFiles();
+		ImageHandler ih = ImageHandler.getInstance();
+		File[] directory = ih.defaultPath.toFile().listFiles();
 		int id = 0;
 		for (File file : directory) {
 			if (file.getName().endsWith(".png")) {
 				System.out.println("Images were saved: \t\t"
-						+ IMAGE_HANDLER.saveAndDispose(id, file));
+						+ ih.saveAndDispose(id, file));
 				id++;
 			}
 		}
