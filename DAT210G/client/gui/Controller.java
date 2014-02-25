@@ -28,6 +28,7 @@ public class Controller {
 
 	private int[] imageIdArray = null;
 	private ArrayList<OneImage> currentImages;
+
 	private OneImage currentSingleImage; // Single image shown in
 											// singleImageMode, eg. NOT a
 											// thumbnail.
@@ -121,6 +122,11 @@ public class Controller {
 		
 
 	}
+	
+	public ArrayList<OneImage> getCurrentImages() {
+		return currentImages;
+	}
+
 
 	private OneImage getBigImage(int imageId) {
 

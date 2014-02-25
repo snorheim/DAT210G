@@ -71,8 +71,12 @@ public class ButtonHandler {
 				System.out.println("Clicked Next Button");
 				
 				
-				
-				controller.setSingleImageMode(controller.getCurrentImageId() + 1);
+				int temp = controller.getCurrentImageId() + 1;
+				if (temp > controller.getCurrentImages().size()) {
+					controller.setSingleImageMode(controller.getCurrentImages().get(0).getImageId());
+				} else {
+					controller.setSingleImageMode(temp);
+				}
 				
 			}
 		});
@@ -81,7 +85,12 @@ public class ButtonHandler {
 			public void actionPerformed(ActionEvent e) {
 				System.out.println("Clicked Previous button");
 				
-				controller.setSingleImageMode(controller.getCurrentImageId() + 1);
+				int temp = controller.getCurrentImageId() - 1;
+				if (temp < controller.getCurrentImages().size()) {
+					controller.setSingleImageMode(controller.getCurrentImages().get(0).getImageId());
+				} else {
+					controller.setSingleImageMode(temp);
+				}
 			}
 		});
 		sidebarPanel.getRotLeftBtn().addActionListener(new ActionListener() {

@@ -33,12 +33,23 @@ public class SidebarPanel extends JPanel {
 	private JButton importBtn;
 	private JButton refreshBtn;
 	private OneImage currentSingleImageId; // Image shown if in singleImageMode
+	private JPanel treePanel;
 
 	public SidebarPanel() {
-
+				
+		this.setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		
+		
 		addThumbnailsComponents();
 		addSingleImageComponents();
-
+		makeTreePanel();
+		
+	}
+	
+	private void makeTreePanel() {
+		treePanel = new JPanel();
+		treePanel.add(new JLabel("her skal mappestruktur"));
+		add(treePanel);
 	}
 
 	private void addSingleImageComponents() {
@@ -199,9 +210,10 @@ public class SidebarPanel extends JPanel {
 		m.gridx = 0;
 		m.gridy = 7;
 		m.gridwidth = 2;
-		thumbnailsPanel.add(refreshBtn, m);
-
+		thumbnailsPanel.add(refreshBtn, m);		
+		
 		add(thumbnailsPanel);
+		
 	}
 
 	/**
