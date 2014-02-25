@@ -71,6 +71,45 @@ public class HttpServer implements Runnable {
 		}
 		return image;
 	}
+	public void sendImageToAndroid(String fileName) throws Exception {
+		OutputStream os = connection.getOutputStream();
+		File myFile = new File(fileName);
+		int fSize = (int) myFile.length();
+		System.out.println("Sender fil: " + fileName + ": " + myFile.length());
+		if (fSize < myFile.length()){
+			System.out.println("File is too big'");
+			throw new IOException("File is too big.");
+		}
+		byte[] bSize = new byte[4];
+		bSize[0] = (byte) ((fSize & 0xff000000) >> 24);
+		bSize[1] = (byte) ((fSize & 0x00ff0000) >> 16);
+		bSize[2] = (byte) ((fSize & 0x0000ff00) >> 8);
+		bSize[3] = (byte) (fSize & 0x000000ff);
+		os.write(bSize, 0, 4);
+
+		boolean noMemoryLimitation = true;
+
+		FileInputStream fis = new FileInputStream(myFile);
+		BufferedInputStream bis = new BufferedInputStream(fis);
+		try {
+			if (noMemoryLimitation){
+				byte[] outBuffer = new byte[fSize];
+				int bRead = bis.read(outBuffer, 0, outBuffer.length);
+				os.write(outBuffer, 0, bRead);
+			}
+			else {
+				int bRead = 0;
+				byte[] outBuffer = new byte[8 * 1024];
+				while ((bRead = bis.read(outBuffer, 0, outBuffer.length)) > 0){
+					os.write(outBuffer, 0, bRead);
+				}
+			}
+			os.flush();
+		}
+		finally {
+			bis.close();
+		}
+	}
 	public File receiveFile(String fileType) throws Exception {
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
 		String fileFullPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\TEMPIMAGE." + fileType;

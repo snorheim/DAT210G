@@ -26,6 +26,15 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
 	}
+	public static void getThumbnailToAndroid(RequestServer request, int imageId, String detail){
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
+		String fileLocation = pictureDb.getThumbnailFileLocation();
+		String[] fileNameSplit = fileLocation.split("\\.");
+		String[] fileType = {fileNameSplit[fileNameSplit.length - 1]};
+
+		request.sendJsonResponse(new ResponseServer(true, imageId, fileType));
+		request.sendImageResponseToAndroid(fileLocation);
+	}
 	public static void getLargeImage(RequestServer request, int imageId, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
 		String fileLocation = pictureDb.getMediumFileLocation();
@@ -34,6 +43,15 @@ public class RequestMethods {
 
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
+	}
+	public static void getLargeImageToAndroid(RequestServer request, int imageId, String detail){
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
+		String fileLocation = pictureDb.getThumbnailFileLocation();
+		String[] fileNameSplit = fileLocation.split("\\.");
+		String[] fileType = {fileNameSplit[fileNameSplit.length - 1]};
+
+		request.sendJsonResponse(new ResponseServer(true, imageId, fileType));
+		request.sendImageResponseToAndroid(fileLocation);
 	}
 	public static void getFullImage(RequestServer request, int imageId, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
