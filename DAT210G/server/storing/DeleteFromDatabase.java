@@ -43,6 +43,27 @@ public class DeleteFromDatabase {
 		return tagsToPic;
 	}
 	
+	public static boolean deleteTagFromPicture(int pictureId, String tag) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			PictureDb pictureFromDb = (PictureDb) dbSession.load(PictureDb.class, pictureId);
+			pictureFromDb.getTags().remove(tag);
+			TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
+			tagFromDb.getPics().remove(pictureFromDb);
+			dbTransaction.commit();
+			succesful = true;
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+			succesful = false;
+		} finally {
+ 			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return succesful;
+	}
+	
 //	public static boolean deleteTagsFromPic(int picId) {
 //		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 //		Transaction dbTransaction = null;

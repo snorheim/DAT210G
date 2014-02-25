@@ -1,6 +1,7 @@
 package storing;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 
@@ -31,6 +32,27 @@ public class testSkrivBilde {
 //		boolean rmTag = DeleteFromDatabase.deleteTagsFromPic(1);
 //		System.out.println(rmTag);
 		
+		
+//		ArrayList<String> t = new ArrayList<>();
+//		t.add("host");
+//		t.add("heidetteer mega test");
+//		t.add("sommer");
+//		for (String tag: t) {
+//			boolean ok = WriteToDatabase.addTagToPic(3, tag);
+//			System.out.println(ok);
+//		}
+		
+//		boolean rmT = DeleteFromDatabase.deleteTagFromPicture(1, "jul");
+//		System.out.println(rmT);
+		
+//		List<PictureDb> list = ReadFromDatabase.getPicturesBasedOnDate("201");
+//		for (PictureDb p: list) {
+////			if (p.getRating() == 1) {
+//
+//				System.out.println(p.getId());
+////			}
+//		}
+//		
 	}
 
 }

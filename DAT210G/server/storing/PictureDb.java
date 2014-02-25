@@ -2,8 +2,6 @@ package storing;
 
 import java.util.Set;
 
-import antlr.collections.List;
-
 
 
 public class PictureDb {
