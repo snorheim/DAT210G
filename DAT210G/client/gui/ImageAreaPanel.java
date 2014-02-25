@@ -40,18 +40,23 @@ public class ImageAreaPanel extends JPanel {
 
 	public void setThumbnailsMode() {
 		singleImagePanel.setVisible(false);
-		thumbnailsPanel.setVisible(true);
+		thumbnailsPanel.setVisible(true);		
 		revalidate();
 	}
 
 	public void setSingleImageMode(OneImage image) {
 		currentSingleImageId = image;
+		
+		System.out.println(image.getMetaData().toString());
+		
+		
 		thumbnailsPanel.setVisible(false);
 		singleImagePanel.setVisible(true);		
 		
 		singleImagePanel.removeAll();
 		singleImagePanel.setImage(image);
-
+		singleImagePanel.updateMetaDataInTextFields(currentSingleImageId.getMetaData());
+		
 		revalidate();
 	}
 

@@ -71,6 +71,7 @@ public class Controller {
 		getBigImage(imageId);
 		sidebarPanel.setSingleImageMode(currentSingleImage);
 		imageAreaPanel.setSingleImageMode(currentSingleImage);
+		
 
 	}
 
@@ -102,7 +103,7 @@ public class Controller {
 
 			for (int i = 0; i < imageIdArray.length; i++) {
 				currentImages.add(i,
-						new OneImage(imageHandler.getThumbnail(imageIdArray[i]), imageIdArray[i], imageHandler.getMetaData(i)));
+						new OneImage(imageHandler.getThumbnail(imageIdArray[i]), imageIdArray[i], imageHandler.getMetaData(i+1)));
 				currentImages.get(i).addImageMouseListener(mouseClickHandler);
 			}
 

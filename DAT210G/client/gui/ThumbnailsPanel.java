@@ -18,6 +18,7 @@ public class ThumbnailsPanel extends JPanel {
 
 	public ThumbnailsPanel() {
 
+		setBackground(Color.DARK_GRAY);
 	}
 
 	public void showThumbnails(ArrayList<OneImage> thumbnails) {

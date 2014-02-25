@@ -86,8 +86,8 @@ public class ButtonHandler {
 				System.out.println("Clicked Previous button");
 				
 				int temp = controller.getCurrentImageId() - 1;
-				if (temp < controller.getCurrentImages().size()) {
-					controller.setSingleImageMode(controller.getCurrentImages().get(0).getImageId());
+				if (temp <= 0) {					
+					controller.setSingleImageMode(controller.getCurrentImages().get(controller.getCurrentImages().size() - 1).getImageId());
 				} else {
 					controller.setSingleImageMode(temp);
 				}

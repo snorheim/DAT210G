@@ -135,7 +135,7 @@ public class SingleImagePanel extends JPanel {
 		
 		add(metaDataPanel, BorderLayout.EAST);
 		
-		updateMetaDataInTextFields();
+		
 		
 		
 		
@@ -152,16 +152,56 @@ public class SingleImagePanel extends JPanel {
 		
 	}
 	
-	private void updateMetaDataInTextFields() {
+	public void updateMetaDataInTextFields(String[] metaData) {
 		
 		
-		System.out.println(theImage.getMetaData().length);
+		System.out.println(metaData.length);
 		
-		ratingJTextField.setText("sdfgsdgs");
-		nameJTextField.setText("dgsdfg");;
-		tagsJTextField.setText("dgsdfg");;
-		dateJTextField.setText("dgsdfg");
+		ratingJTextField.setText(metaData[0]);
+		nameJTextField.setText(metaData[1]);;
+		tagsJTextField.setText(metaData[2]);;
+		dateJTextField.setText(metaData[3]);
 		
+	}
+
+	public JPanel getMetaDataPanel() {
+		return metaDataPanel;
+	}
+
+	public void setMetaDataPanel(JPanel metaDataPanel) {
+		this.metaDataPanel = metaDataPanel;
+	}
+
+	public JTextField getRatingJTextField() {
+		return ratingJTextField;
+	}
+
+	public void setRatingJTextField(JTextField ratingJTextField) {
+		this.ratingJTextField = ratingJTextField;
+	}
+
+	public JTextField getNameJTextField() {
+		return nameJTextField;
+	}
+
+	public void setNameJTextField(JTextField nameJTextField) {
+		this.nameJTextField = nameJTextField;
+	}
+
+	public JTextField getTagsJTextField() {
+		return tagsJTextField;
+	}
+
+	public void setTagsJTextField(JTextField tagsJTextField) {
+		this.tagsJTextField = tagsJTextField;
+	}
+
+	public JTextField getDateJTextField() {
+		return dateJTextField;
+	}
+
+	public void setDateJTextField(JTextField dateJTextField) {
+		this.dateJTextField = dateJTextField;
 	}
 	
 	

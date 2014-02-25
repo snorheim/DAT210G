@@ -107,7 +107,7 @@ public class ImageHandler {
 		
 		String[] metaData = null;	
 		
-		JsonClient getMetaDataJson = new JsonClient(new RequestClient("getMetaData", imageID));
+		JsonClient getMetaDataJson = new JsonClient(new RequestClient("getMetadata", imageID));
 		if (getMetaDataJson.sendJsonToServer()){
 			ResponseClient getMetaDataResponse = getMetaDataJson.receiveJsonFromServer();
 			if (getMetaDataResponse.getSuccess()){
@@ -115,6 +115,10 @@ public class ImageHandler {
 			}
 			getMetaDataJson.closeHttpConnection();
 		}
+		
+		System.out.println(metaData.toString());
+		
+		
 		return metaData;
 	}
 	
