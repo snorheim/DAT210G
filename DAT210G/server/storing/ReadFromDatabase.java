@@ -32,7 +32,6 @@ public class ReadFromDatabase {
 		return tagList;
 	}
 
-
 	public static int findNextPicId() {
 		int nextPicId = 0;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -50,7 +49,6 @@ public class ReadFromDatabase {
 		}
 		return nextPicId;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getAllPictures() {
@@ -141,7 +139,6 @@ public class ReadFromDatabase {
 		return picList;
 	}
 
-
 	public static PictureDb getPictureBasedOnId(int picId) {
 		PictureDb picture = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -160,7 +157,6 @@ public class ReadFromDatabase {
 		}
 		return picture;
 	}
-
 
 	@SuppressWarnings("unchecked")
 	public static int[] getAllPicIds() {
@@ -184,8 +180,7 @@ public class ReadFromDatabase {
 		}
 		return tempArray;
 	}
-
-
+	
 	@SuppressWarnings("unchecked")
 	public static String getAllTagsForAPicture(int picId) {
 		List<TagDb> tagList = null;
@@ -209,5 +204,25 @@ public class ReadFromDatabase {
 			allTagsAsString += tag.getTag() + ";";
 		}
 		return allTagsAsString;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<PictureDb> getPicturesBasedOnDate(String timeDate) {
+		List<PictureDb> pictureList = null;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Criteria criteria = dbSession.createCriteria(PictureDb.class);
+			criteria.add(Restrictions.like("dateTime", "%" + timeDate + "%"));
+			pictureList = criteria.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return pictureList;
 	}
 }

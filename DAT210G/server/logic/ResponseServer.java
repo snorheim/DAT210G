@@ -21,4 +21,9 @@ public class ResponseServer {
 		this.success = success;
 		this.stringArray = stringArray;
 	}
+	public ResponseServer(boolean success, int imageId, String[] stringArray){
+		this.success = success;
+		this.imageId = imageId;
+		this.stringArray = stringArray;
+	}
 }

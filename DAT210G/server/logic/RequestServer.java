@@ -39,6 +39,13 @@ public class RequestServer {
 	public void sendImageResponse(BufferedImage image, String type){
 		jsonServer.getHttpServer().sendImage(image, type);
 	}
+	public void sendImageResponseToAndroid(String fileLocation){
+		try {
+			jsonServer.getHttpServer().sendImageToAndroid(fileLocation);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	public BufferedImage receiveImage(){
 		return jsonServer.getHttpServer().receiveImage();
 	}
