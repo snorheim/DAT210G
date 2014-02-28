@@ -22,6 +22,8 @@
                 <Button fx:id="rotRightBtn" mnemonicParsing="false" onAction="#rotRightBtnAction" text="Rotate Right" />
               </children>
             </VBox>
+            <Label layoutX="32.0" layoutY="291.0" text="Current image" />
+            <Label fx:id="currentImageLabel" layoutX="49.0" layoutY="314.0" text="Label" />
           </children>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
@@ -29,7 +31,7 @@
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
-            <SplitPane dividerPositions="0.7756714060031595" focusTraversable="true" prefHeight="598.0" prefWidth="635.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <SplitPane dividerPositions="0.5434439178515008" focusTraversable="true" prefHeight="598.0" prefWidth="635.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <items>
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                   <children>
@@ -43,6 +45,31 @@
                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
                   <children>
                     <Label layoutX="42.0" layoutY="14.0" text="Meta her" />
+                    <GridPane layoutX="14.0" layoutY="35.0" prefHeight="404.0" prefWidth="258.0">
+                      <children>
+                        <Label text="Title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label text="Description" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label text="Rating" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label text="Date" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label text="Tags" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <TextField fx:id="titleTextField" onAction="#titleTextFieldAction" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <TextField fx:id="descTextField" onAction="#descTextFieldAction" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="ratingTextField" onAction="#ratingTextFieldAction" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="dateTextField" onAction="#dateTextFieldAction" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="tagsTextField" onAction="#tagsTextFieldAction" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                      </children>
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="68.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="190.0" minWidth="10.0" prefWidth="190.0" />
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      </rowConstraints>
+                    </GridPane>
                   </children>
                 </AnchorPane>
               </items>

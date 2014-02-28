@@ -2,9 +2,6 @@ package gui.model;
 
 import gui.MainController;
 
-import java.awt.image.BufferedImage;
-
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,18 +19,17 @@ public class OneImage {
 	private String[] metaData;
 
 	
-	public OneImage(MainController main, BufferedImage bufImage, int imageId) {
+	public OneImage(MainController main, Image image, int imageId) {
 
-		this(main, bufImage, imageId, null);
+		this(main, image, imageId, null);
 		
 
 	}
 
-	public OneImage(MainController main, BufferedImage bufImage, int imageId, String[] metaData) {
+	public OneImage(MainController main, Image image, int imageId, String[] metaData) {
 
 		this.main = main;
 		this.metaData = metaData;
-		Image image =  SwingFXUtils.toFXImage(bufImage, null);
 		imageView = new ImageView(image);
 		this.imageId = imageId;
 		

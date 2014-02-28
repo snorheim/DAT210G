@@ -1,10 +1,9 @@
 package gui;
 
-import java.awt.image.BufferedImage;
-
-import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
@@ -26,6 +25,20 @@ public class SingleModeController {
 	private Button rotLeftBtn;
 	@FXML
 	private Button rotRightBtn;
+	
+	@FXML
+	private TextField titleTextField;
+	@FXML
+	private TextField descTextField;
+	@FXML
+	private TextField ratingTextField;
+	@FXML
+	private TextField dateTextField;
+	@FXML
+	private TextField tagsTextField;
+	
+	@FXML
+	private Label currentImageLabel;
 
 	/**
 	 * Is called by the Main class to give a reference back to itself.
@@ -38,13 +51,14 @@ public class SingleModeController {
 
 	}
 
-	private void displayImage() {
+	private void displayImage() {		
 		anchorPaneForSingle.getChildren().clear();
-		BufferedImage bufImage = main.getServerCommHandler().getLargeImage(
+		Image image = main.getServerCommHandler().getLargeImage(
 				main.getCurrentImageId());
-		Image image = SwingFXUtils.toFXImage(bufImage, null);
+		
 		ImageView imageView = new ImageView(image);
 		anchorPaneForSingle.getChildren().add(imageView);
+		updateMetaFields();
 	}
 
 	@FXML
@@ -69,6 +83,23 @@ public class SingleModeController {
 		
 		displayImage();
 		
+	}
+	
+	private void updateMetaFields() {
+		
+		currentImageLabel.setText(Integer.toString(main.getCurrentImageId()));
+		
+		String[] meta = main.getServerCommHandler().getMetaData(main.getCurrentImageId());
+		
+		System.out.println(meta[0] + " " + meta[1] + " " + meta[2] + " " + meta[3] + " " + meta[4] );
+		
+		titleTextField.setText(meta[0]);
+		descTextField.setText(meta[1]);
+		ratingTextField.setText(meta[2]);
+		dateTextField.setText(meta[3]);
+		tagsTextField.setText(meta[4]);
+		
+	
 	}
 	
 	@FXML
@@ -100,6 +131,29 @@ public class SingleModeController {
 	private void rotLeftBtnAction() {
 		
 	}
+	
+	@FXML
+	private void titleTextFieldAction() {
+		
+	};
+	
+	@FXML
+	private void descTextFieldAction() {
+		
+	};
+	
+	@FXML
+	private void ratingTextFieldAction() {
+		
+	};
+	@FXML
+	private void dateTextFieldAction() {
+		
+	};
+	@FXML
+	private void tagsTextFieldAction() {
+		
+	};
 	
 
 }

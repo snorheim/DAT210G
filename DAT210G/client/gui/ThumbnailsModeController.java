@@ -3,8 +3,7 @@ package gui;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import gui.MainController;
 
 public class ThumbnailsModeController {
@@ -13,15 +12,12 @@ public class ThumbnailsModeController {
 	private MainController main;
 
 	@FXML
-	private AnchorPane anchorPaneForThumb;
+	private FlowPane thumbnailsFlowPane;
 	@FXML
 	private Button importBtn;
 
-	private GridPane grid;
 	private int gridColumns = 4;
 	private int gridRows;
-	private int gridVgap = 10;
-	private int gridHgap = 10;
 	int imgCounter;
 
 	/**
@@ -32,8 +28,7 @@ public class ThumbnailsModeController {
 	public void setMain(MainController main) {
 		this.main = main;
 		makeGridAndDisplayImages();
-		// Add observable list data to the table
-		// personTable.setItems(mainApp.getPersonData());
+	
 
 	}
 
@@ -53,37 +48,38 @@ public class ThumbnailsModeController {
 	@FXML
 	private void handleImportBtn() {
 		System.out.println("Clicked import");
+		main.openFileChooser();
 		
 	}
 
 	private void makeGridAndDisplayImages() {
 
-		gridRows = (main.getImageList().size() / gridColumns);
-
-		System.out.println("hertil");
-		grid = new GridPane();
-		grid.setVgap(gridVgap);
-		grid.setHgap(gridHgap);
-
-		System.out.println("grid rows: " + gridRows);
-		System.out.println("grid columns: " + gridColumns);
-
-		imgCounter = 0;
-
-		for (int i = 0; i < gridRows; i++) {
-
-			for (int j = 0; j < gridColumns; j++) {
-
-				ImageView tempImage = main.getImageList().get(imgCounter)
-						.getImageView();
-
-				grid.add(tempImage, j, i);
-				imgCounter++;
-			}
-
+		thumbnailsFlowPane.getChildren().clear();
+		System.out.println();
+		System.out.println();
+		System.out.println();
+		for (int i = 0; i < main.getImageList().size(); i++) {
+			System.out.print("- [" + i + "]" + " " + "[" + main.getImageList().get(i).getImageId() + "] ");
 		}
+		System.out.println();
+		gridRows = (int) Math.ceil(1.0 * main.getImageList().size() / gridColumns);
+		
+		
+		
+		
+		
+		int numberOfImagesInList = main.getImageList().size();
+		
+		for (int i = 0; i < numberOfImagesInList; i++) {
+			ImageView tempImage = main.getImageList().get(i).getImageView();
+			thumbnailsFlowPane.getChildren().add(tempImage);
+		}
+		
+		
+		
+		
+		
 
-		anchorPaneForThumb.getChildren().add(grid);
-
+		
 	}
 }

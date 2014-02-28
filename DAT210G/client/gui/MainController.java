@@ -1,15 +1,18 @@
 package gui;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import gui.MainController;
 import gui.model.OneImage;
 import gui.model.ServerCommHandler;
-import gui.model.ServerCommHandlerTesting;
 import javafx.application.Application;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +34,7 @@ public class MainController extends Application {
 	public void start(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("DAT210G Photo Gallery");
+		
 
 		try {
 			// Load the root layout from the fxml file
@@ -38,6 +42,7 @@ public class MainController extends Application {
 					MainController.class.getResource("view/RootLayout.fxml"));
 			rootLayout = (BorderPane) loader.load();
 			Scene scene = new Scene(rootLayout);
+			scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
 		} catch (Exception e) {
@@ -70,6 +75,21 @@ public class MainController extends Application {
 			// Exception gets thrown if the fxml file could not be loaded
 			e.printStackTrace();
 		}
+	}
+	
+	public void openFileChooser() {
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Import images");
+				
+		List<File> fileList =
+                fileChooser.showOpenMultipleDialog(primaryStage);
+            if (fileList != null) {
+                for (File file : fileList) {
+                	
+        			serverCommHandler.SendImageToServer(file);
+        			
+                }
+            }
 	}
 	
 	/**
@@ -107,15 +127,28 @@ public class MainController extends Application {
 		
 		imageList.clear();
 		
+		
 		int[] imageIdArray = serverCommHandler.getAllImageIds();		
 
 		for (int i = 0; i < imageIdArray.length; i++) {
-			System.out.println(serverCommHandler.getAllImageIds()[i]);
-			imageList.add(new OneImage(this, serverCommHandler.getThumbnail(imageIdArray[i]), imageIdArray[i]));			
+						
+			Image tempImage = serverCommHandler.getThumbnail(imageIdArray[i]);
+			
+			if (tempImage == null) {
+				System.out.println("image is null sdfsdgsdfgsdfgsdfgsdfgsdfgsdfgsdfgsdfg " + imageIdArray[i]);
+			}
+			
+			imageList.add(new OneImage(this, tempImage , imageIdArray[i]));
 		}
 		
+		for (int i = 0; i < imageIdArray.length; i++) {
+			System.out.print("- [" + i + "]" + " " + "[" + serverCommHandler.getAllImageIds()[i] + "] ");
+		}
+
 		
 	}
+	
+
 	
 	
 
