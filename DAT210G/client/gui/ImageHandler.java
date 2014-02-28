@@ -57,13 +57,11 @@ public class ImageHandler {
 		int nextAvailableId = -1;
 		BufferedImage image = null;
 		String fileType = null;
-
 		try {
 			image = ImageIO.read(fileToSend);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 		JsonClient sendImageJson1 = new JsonClient(new RequestClient("getNextImageId"));
 		if (sendImageJson1.sendJsonToServer()){
 			ResponseClient sendImageResponse1 = sendImageJson1.receiveJsonFromServer();
@@ -71,19 +69,27 @@ public class ImageHandler {
 			System.out.println("Next available id: "+nextAvailableId);
 			sendImageJson1.closeHttpConnection();
 		}
-
 		int i = fileToSend.getAbsolutePath().lastIndexOf('.');
 		if (i > 0) {
 			fileType = fileToSend.getAbsolutePath().substring(i+1);
 			System.out.println("Filtype til nytt bilde: " + fileType + " id: " + nextAvailableId);
 		}
-
 		if (nextAvailableId != -1){
-
-			JsonClient sendImageJson = new JsonClient(new RequestClient("addNewImage", nextAvailableId, fileType));
-			if (sendImageJson.sendJsonToServer()){ 
-				sendImageJson.sendImageToServer(image, fileType);
-				sendImageJson.closeHttpConnection();
+			boolean imageWasSentSuccessful = false;
+			while (imageWasSentSuccessful == false){
+				JsonClient sendImageJson = new JsonClient(new RequestClient("addNewFullImage", nextAvailableId, fileType));
+				if (sendImageJson.sendJsonToServer()){ 
+					//sendImageJson.sendImageToServer(image, fileType);
+					try {
+						System.out.println("Prøver å sende bilde: " + fileToSend.getPath());
+						sendImageJson.sendFileToServer(fileToSend.getPath());
+						ResponseClient response = sendImageJson.receiveJsonFromServer();
+						imageWasSentSuccessful = response.getSuccess();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					sendImageJson.closeHttpConnection();
+				}
 			}
 		}
 
@@ -101,10 +107,10 @@ public class ImageHandler {
 		}
 		return image;
 	}
-	
-	
-	
-	
+
+
+
+
 
 
 }

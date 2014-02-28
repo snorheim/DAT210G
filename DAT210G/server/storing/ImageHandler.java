@@ -19,7 +19,7 @@ public class ImageHandler {
 
 	private static ImageHandler instance = null;
 
-	private static final int THUMBNAIL_SIZE = 100, MEDIUM_SIZE = 250;
+	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
 	public Path defaultPath;
 
 	private ImageHandler() {
