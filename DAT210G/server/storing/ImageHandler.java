@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.WatchEvent;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -19,24 +21,25 @@ public class ImageHandler {
 
 	private static ImageHandler instance = null;
 
-	private static final int THUMBNAIL_SIZE = 100, MEDIUM_SIZE = 250;
+	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
+	private DirectoryWatcher dirWatch;
 	public Path defaultPath;
 
 	private ImageHandler() {
 		init();
-
 	}
 
 	private void init() {
+		log("Initializing...");
 
 		defaultPath = Paths.get(".\\img");
 		log("Default path: " + defaultPath.normalize().toAbsolutePath());
-
 		try {
 			log("Default path ready: \t" + ensureLocation());
 		} catch (FileNotFoundException fnfe) {
 			fnfe.printStackTrace();
 		}
+		dirWatch = new DirectoryWatcher(defaultPath);
 	}
 
 	private void log(String string) {
@@ -81,6 +84,13 @@ public class ImageHandler {
 		if (success)
 			return true;
 		return false;
+	}
+
+	public static void onChange(List<WatchEvent<?>> events) {
+		System.out.println("New events: ");
+		for (WatchEvent event : events) {
+			System.out.println(event.kind() + ": " + event.toString());
+		}
 	}
 
 	/**
@@ -365,6 +375,7 @@ public class ImageHandler {
 	public static ImageHandler getInstance() {
 		if (instance == null)
 			instance = new ImageHandler();
+
 		return instance;
 
 	}
@@ -382,6 +393,8 @@ public class ImageHandler {
 				id++;
 			}
 		}
+
+		System.out.println();
 
 	}
 }
