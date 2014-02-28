@@ -1,14 +1,14 @@
-package gui;
+package gui.model;
 
 import javax.imageio.ImageIO;
 
 import communication.JsonClient;
 
-import java.awt.*;
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+
 
 import logic.RequestClient;
 import logic.ResponseClient;
@@ -16,19 +16,14 @@ import logic.ResponseClient;
 /**
  * Created by Ronnie on 12.02.14.
  *
- *
- * Bare en simulering. Legger inn kode her for å snakke med server.
+ * Denne snakker med HttpClient og JsonClient
+ * 
  */
-public class ImageHandler {
+public class ServerCommHandler {
 
-	private int[] imageIdArray;
+	
 
-	public ImageHandler() {
-
-		imageIdArray = getAllImages();
-	}
-
-	public int[] getAllImages() {
+	public int[] getAllImageIds() {
 		int[] allImageId = null;
 		JsonClient getAllImagesJson = new JsonClient(new RequestClient("getAllImages"));
 		if (getAllImagesJson.sendJsonToServer()){

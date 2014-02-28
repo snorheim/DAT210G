@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SingleModeController">
+  <!-- TODO Add Nodes -->
+  <children>
+    <SplitPane dividerPositions="0.20050125313283207" focusTraversable="true" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <items>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <children>
+            <VBox id="VBox" alignment="TOP_LEFT" spacing="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.topAnchor="5.0">
+              <children>
+                <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#homeBtnAction" text="Home" />
+                <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#nextBtnAction" text="Next" />
+                <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#prevBtnAction" text="Prev" />
+                <Button fx:id="rotLeftBtn" mnemonicParsing="false" onAction="#rotLeftBtnAction" text="Rotate Left" />
+                <Button fx:id="rotRightBtn" mnemonicParsing="false" onAction="#rotRightBtnAction" text="Rotate Right" />
+              </children>
+            </VBox>
+          </children>
+          <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+          </padding>
+        </AnchorPane>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+          <children>
+            <ScrollPane prefHeight="598.0" prefWidth="705.9999000000025" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <content>
+                <AnchorPane id="Content" fx:id="anchorPaneForSingle" minHeight="0.0" minWidth="0.0" padding="$x1" prefHeight="-1.0" prefWidth="-1.0" />
+              </content>
+            </ScrollPane>
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+  </children>
+</AnchorPane>
