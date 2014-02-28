@@ -17,7 +17,7 @@ import net.coobird.thumbnailator.Thumbnails;
 
 public class ImageHandler {
 
-	private static ImageHandler instance = null;
+	public static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 100, MEDIUM_SIZE = 250;
 	public Path defaultPath;
