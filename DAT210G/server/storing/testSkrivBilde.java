@@ -53,6 +53,12 @@ public class testSkrivBilde {
 ////			}
 //		}
 //		
+//		boolean skrivTag = WriteToDatabase.writeTag(new TagDb("M LOLOL"));
+//		
+//		String[] t = ReadFromDatabase.getTagsStartingWith("T");
+//		for (String p: t) {
+//			System.out.println(p);
+//		}
 	}
 
 }

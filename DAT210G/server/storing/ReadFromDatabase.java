@@ -31,7 +31,31 @@ public class ReadFromDatabase {
 		}
 		return tagList;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public static String[] getTagsStartingWith(String tagStart) {
+		List<TagDb> tagsFromDb = null;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		String[] tagStringList = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM TagDb WHERE tag LIKE :tagStart");
+			query.setParameter("tagStart", tagStart.toLowerCase() + "%");
+			tagsFromDb = query.list();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		tagStringList = new String[tagsFromDb.size()];
+		for (int i = 0; i < tagStringList.length; i++) {
+			tagStringList[i] = tagsFromDb.get(i).getTag();
+		}
+		return tagStringList;
+	}
+	
 	public static int findNextPicId() {
 		int nextPicId = 0;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -240,4 +264,6 @@ public class ReadFromDatabase {
 		}
 		return pictureIdArray;
 	}
+	
+	
 }

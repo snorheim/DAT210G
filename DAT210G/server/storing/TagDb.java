@@ -9,7 +9,7 @@ public class TagDb {
 	public TagDb(){}
 	
 	public TagDb(String tag){
-		this.tag = tag;
+		this.tag = tag.toLowerCase();
 	}
 	
 	public Set<PictureDb> getPics() {
@@ -25,7 +25,7 @@ public class TagDb {
 	}
 
 	public void setTag(String tag) {
-		this.tag = tag;
+		this.tag = tag.toLowerCase();
 	}
 	
 	public void addPic(PictureDb pic) {
