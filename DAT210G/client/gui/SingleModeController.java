@@ -61,7 +61,7 @@ public class SingleModeController {
 		int nextImage = currentImage + 1;
 		
 		if (nextImage > numOfImages) {
-			nextImage = 0;
+			nextImage = 1;
 		}
 		
 		main.setCurrentImageId(nextImage);
@@ -80,7 +80,7 @@ public class SingleModeController {
 		
 		int nextImage = currentImage - 1;
 		
-		if (nextImage < 0) {
+		if (nextImage < 1) {
 			nextImage = numOfImages;
 		}
 		

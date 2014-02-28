@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 import gui.MainController;
 import gui.model.OneImage;
+import gui.model.ServerCommHandler;
 import gui.model.ServerCommHandlerTesting;
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -17,12 +18,12 @@ public class MainController extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private ServerCommHandlerTesting serverCommHandler;
+	private ServerCommHandler serverCommHandler;
 	private ArrayList<OneImage> imageList = new ArrayList<>();
 	private int currentImageId;
 
 	public MainController() {
-		serverCommHandler = new ServerCommHandlerTesting();
+		serverCommHandler = new ServerCommHandler();
 		updateImageList();
 	}
 
@@ -110,7 +111,7 @@ public class MainController extends Application {
 
 		for (int i = 0; i < imageIdArray.length; i++) {
 			System.out.println(serverCommHandler.getAllImageIds()[i]);
-			imageList.add(new OneImage(this, serverCommHandler.getThumbnail(imageIdArray[i]), imageIdArray[i]));
+			imageList.add(new OneImage(this, serverCommHandler.getThumbnail(imageIdArray[i]), imageIdArray[i]));			
 		}
 		
 		
@@ -118,7 +119,7 @@ public class MainController extends Application {
 	
 	
 
-	public ServerCommHandlerTesting getServerCommHandler() {
+	public ServerCommHandler getServerCommHandler() {
 		return serverCommHandler;
 	}
 
