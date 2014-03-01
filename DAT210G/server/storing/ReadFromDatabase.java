@@ -265,5 +265,95 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static int[] getImagesInAFolder(int folderId) {
+		int[] imageIdArray;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<PictureDb> pictureFromDb = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:parent");
+			query.setParameter("parent", folderId);
+			pictureFromDb = query.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		imageIdArray = new int[pictureFromDb.size()];
+		for (int i = 0; i < imageIdArray.length; i++) {
+			imageIdArray[i] = pictureFromDb.get(i).getId();
+		}
+		return imageIdArray;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static int[] getFoldersInAFolder(int folderId) {
+		int[] folderIdArray;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<ParentFolderDb> parentsIdList = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE parentId=:folderId");
+			query.setParameter("folderId", folderId);
+			parentsIdList = query.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		folderIdArray = new int[parentsIdList.size()];
+		for (int i = 0; i < folderIdArray.length; i++) {
+			folderIdArray[i] = parentsIdList.get(i).getFolderId();
+		}
+		return folderIdArray;
+	}
+	
+	public static ParentFolderDb getParentInfo(int pictureId) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		ParentFolderDb parentFolderInfo = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM PictureDb WHERE id=:pictureId");
+			query.setParameter("pictureId", pictureId);
+			PictureDb pictureFromDb = (PictureDb) query.uniqueResult();
+			query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId=:parentId");
+			query.setParameter("parentId", pictureFromDb.getParentFolderId());
+			parentFolderInfo = (ParentFolderDb) query.uniqueResult();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return parentFolderInfo;
+	}
+	
+	public static ParentFolderDb getFolderInfo(int folderId) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		ParentFolderDb folder = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId=:folderId");
+			query.setParameter("folderId", folderId);
+			folder = (ParentFolderDb) query.uniqueResult();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return folder;
+	}
 	
 }

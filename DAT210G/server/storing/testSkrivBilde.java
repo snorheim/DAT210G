@@ -1,64 +1,28 @@
 package storing;
 
-import java.util.ArrayList;
-import java.util.List;
-
-
-
 public class testSkrivBilde {
 
 	public static void main(String[] args) {
-//		boolean p = WriteToDatabase.writeTag(new TagDb("mjau"));
-//		System.out.println(p);
+
+//		ParentFolderDb p = new ParentFolderDb(2, "2013", "\\img\\jul\\2013\\");
+//		boolean fold = WriteToDatabase.addNewFolder(p);
+//		System.out.println(fold);
 		
-//		PictureDb p = new PictureDb("hei", "", 3, "", "", "", "");
-//		boolean t = WriteToDatabase.writeOnePic(p);
-//		System.out.println(t);
+//		PictureDb p = new PictureDb("tes6", "tesdatsd5", 3, "2012-10-10 10:10:10", "ds", "ds", "ds", 3);
+//		boolean wr = WriteToDatabase.writeOnePic(p);
+//		System.out.println(wr);
 		
-//		boolean t = WriteToDatabase.addTagToPic(1, "lol");
-//		System.out.println(t);
-		
-//		boolean t = DeleteFromDatabase.deleteTag("mjau");
-//		System.out.println(t);
-		
-//		ArrayList<String> tags = new ArrayList<>();
-//		tags.add("lol");
-//		tags.add("lel");
-//		boolean t = WriteToDatabase.addManyTagsToPic(1, tags);
-		
-//		boolean picDel = DeleteFromDatabase.deletePicture(1);
-//		System.out.println(picDel);
-		
-//		boolean rmTag = DeleteFromDatabase.deleteTagsFromPic(1);
-//		System.out.println(rmTag);
-		
-		
-//		ArrayList<String> t = new ArrayList<>();
-//		t.add("host");
-//		t.add("heidetteer mega test");
-//		t.add("sommer");
-//		for (String tag: t) {
-//			boolean ok = WriteToDatabase.addTagToPic(3, tag);
-//			System.out.println(ok);
-//		}
-		
-//		boolean rmT = DeleteFromDatabase.deleteTagFromPicture(1, "jul");
-//		System.out.println(rmT);
-		
-//		List<PictureDb> list = ReadFromDatabase.getPicturesBasedOnDate("201");
-//		for (PictureDb p: list) {
-////			if (p.getRating() == 1) {
-//
-//				System.out.println(p.getId());
-////			}
-//		}
-//		
-//		boolean skrivTag = WriteToDatabase.writeTag(new TagDb("M LOLOL"));
-//		
-//		String[] t = ReadFromDatabase.getTagsStartingWith("T");
-//		for (String p: t) {
+//		int[] t = ReadFromDatabase.getFoldersInAFolder(2);
+//		for (int p: t) {
 //			System.out.println(p);
 //		}
+		
+//		ParentFolderDb par = ReadFromDatabase.getParentInfo(4);
+//		System.out.println(par.getFolderId() + ", " + par.getParentId() + ", " + par.getFolderName() + ", " + par.getPath());
+		
+//		ParentFolderDb par = ReadFromDatabase.getFolderInfo(4);
+//		System.out.println(par.toString());
+		
 	}
 
 }

@@ -87,6 +87,24 @@ public class WriteToDatabase {
 
 		return successfulTransfer;
 	}
+	
+	public static boolean addNewFolder(ParentFolderDb folder) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			dbSession.save(folder);
+			dbTransaction.commit();
+			successfulTransfer = true;
+		} catch (HibernateException e) {
+			successfulTransfer = false;
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return successfulTransfer;
+	}
 
 	//hvis vi har liste av tags tar vi en for loop og itterer igjennom med addTagToPic, lettest.
 	//	public static boolean addManyTagsToPic(int picId, ArrayList<String> tagList) {
