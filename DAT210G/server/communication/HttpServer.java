@@ -112,8 +112,8 @@ public class HttpServer implements Runnable {
 	}
 	public File receiveFile(String fileType) throws Exception {
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
-		String fileFullPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\TEMPIMAGE." + fileType;
-		//System.out.println("Receiving image to file: " + fileFullPath);
+		String fileFullPath = ImageHandler.getInstance().defaultPath + "\\TEMPIMAGE." + fileType;
+		System.out.println("Receiving image to file: " + fileFullPath);
 		byte[] byteSize = new byte[4];
 		int offset = 0;
 		while (offset < byteSize.length) {
@@ -125,8 +125,8 @@ public class HttpServer implements Runnable {
 				| (int) (byteSize[1] & 0xff) << 16 
 				| (int) (byteSize[2] & 0xff) << 8
 				| (int) (byteSize[3] & 0xff);
-		//System.out.println("Incoming image is: " + fileSize + " bytes long");
-		if (fileSize < 0 | fileSize > 20000000){
+		System.out.println("Incoming image is: " + fileSize + " bytes long");
+		if (fileSize < 1 | fileSize > 20000000){
 			throw new Exception();
 		}
 		byte[] data = new byte[8 * 1024];
