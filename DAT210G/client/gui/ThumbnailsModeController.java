@@ -85,6 +85,7 @@ public class ThumbnailsModeController {
 		thumbnailGridPane.setVgap(10);
 		thumbnailGridPane.gridLinesVisibleProperty();
 		
+		
 		gridRows = (int) Math.ceil(1.0 * model.getImageHashtable().size() / gridColumns);
 		
 		System.out.println(gridColumns + " " + gridRows);
@@ -113,16 +114,8 @@ public class ThumbnailsModeController {
 		
 		
 		
+		
 		anchorPane.getChildren().add(thumbnailGridPane);
-		
-		
-		
-		/*for(Map.Entry<Integer, OneImage> image : model.getImageHashMap().entrySet()) {									
-			
-			//thumbnailsGridPane.getChildren().add(image.getValue().getThumbnail());
-			
-			
-		}*/
 		
 		
 		
