@@ -2,6 +2,7 @@ package gui;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import gui.MainController;
@@ -15,6 +16,16 @@ public class ThumbnailsModeController {
 	private FlowPane thumbnailsFlowPane;
 	@FXML
 	private Button importBtn;
+	@FXML
+	private TextField titleTextField;
+	@FXML
+	private TextField descTextField;
+	@FXML
+	private TextField ratingTextField;
+	@FXML
+	private TextField dateTextField;
+	@FXML
+	private TextField tagsTextField;
 
 	private int gridColumns = 4;
 	private int gridRows;
