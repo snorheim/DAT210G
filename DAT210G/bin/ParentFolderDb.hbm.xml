@@ -6,13 +6,9 @@
 	<id name="folderId" column="folderId" type="integer">
 		<generator class="native"></generator>
 	</id>
-	<property name="parentId" column="parentId" type="integer"></property>
-	<property name="folderName" column="name" type="string"></property>
+	<property name="name" column="name" type="string"></property>
 	<property name="path" column="path" type="string"></property>
-	
-	<!--  <set name="pictures" table="picture" inverse="true">
-		<key column="parentId"/>
-		<many-to-one column="parentId" class="storing.PictureDb"/>
-	</set> -->
+	<property name="lft" column="lft" type="integer"></property>
+	<property name="rgt" column="rgt" type="integer"></property>
 </class>
 </hibernate-mapping>

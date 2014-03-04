@@ -1,10 +1,13 @@
 package storing;
 
+
 import java.util.ArrayList;
 
 import org.hibernate.HibernateException;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
@@ -88,11 +91,45 @@ public class WriteToDatabase {
 		return successfulTransfer;
 	}
 	
-	public static boolean addNewFolder(ParentFolderDb folder) {
+	
+	//TODO: lag om til metode som kan brukes i ensure folder, for aa lage img mappe hvis database er tom
+//	public static boolean addNewFolder(ParentFolderDb folder) {
+//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+//		Transaction dbTransaction = null;
+//		try {
+//			dbTransaction = dbSession.beginTransaction();
+//			dbSession.save(folder);
+//			dbTransaction.commit();
+//			successfulTransfer = true;
+//		} catch (HibernateException e) {
+//			successfulTransfer = false;
+//			if (dbTransaction != null) dbTransaction.rollback();
+//		} finally {
+//			dbSession.close();
+//			HibernateUtil.shutdown();
+//		}
+//		return successfulTransfer;
+//	}
+	
+	public static boolean addFolderInAFolderWithOtherChildren(ParentFolderDb folder, String leftFolder) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE name=:leftFolder");
+			query.setParameter("leftFolder", leftFolder);
+			int right = (int) query.uniqueResult();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :rgtRight");
+			query.setParameter("rgtRight", right);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :rgtRight");
+			query.setParameter("rgtRight", right);
+			query.executeUpdate();
+
+			folder.setLft(right+1);
+			folder.setRgt(right+2);
 			dbSession.save(folder);
 			dbTransaction.commit();
 			successfulTransfer = true;
@@ -105,7 +142,40 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-
+	
+	public static boolean addFolderAsAnOnlyChildToFolder(ParentFolderDb folder, String parentName) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE name=:parentName");
+			query.setParameter("parentName", parentName);
+			int left = (int) query.uniqueResult();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
+			query.setParameter("lftLeft", left);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
+			query.setParameter("lftLeft", left);
+			query.executeUpdate();
+			
+			folder.setLft(left + 1);
+			folder.setRgt(left + 2);
+			dbSession.save(folder);
+			dbTransaction.commit();
+			successfulTransfer = true;
+		} catch (HibernateException e) {
+			successfulTransfer = false;
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return successfulTransfer;
+	}
+	
+	
 	//hvis vi har liste av tags tar vi en for loop og itterer igjennom med addTagToPic, lettest.
 	//	public static boolean addManyTagsToPic(int picId, ArrayList<String> tagList) {
 	//		Session dbSession = HibernateUtil.getSessionFactory().openSession();

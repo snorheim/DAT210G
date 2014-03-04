@@ -1,5 +1,7 @@
 package storing;
 
+import java.util.List;
+
 public class testSkrivBilde {
 
 	public static void main(String[] args) {
@@ -22,7 +24,25 @@ public class testSkrivBilde {
 		
 //		ParentFolderDb par = ReadFromDatabase.getFolderInfo(4);
 //		System.out.println(par.toString());
+//		ParentFolderDb folder = new ParentFolderDb("julen 3001", "\\img\\jul\\julen 3001\\");
+//		boolean t = WriteToDatabase.addFolderAsAnOnlyChildToFolder(folder, "jul");
+//		System.out.println(t);
 		
+//		List<ParentFolderDb> d = ReadFromDatabase.getFolderAndSubFolderInfo("sommer");
+//		
+//		for (ParentFolderDb p: d) {
+//			System.out.println(p.getFolderId());
+//		}
+		
+//		int[] ar = ReadFromDatabase.getFolderAndSubFolderId("jul");
+//		for (int i: ar) {
+//			System.out.println(i);
+//		}
+		
+//		int[] alleBilderFraFolderOgSubfolder = ReadFromDatabase.getPicturesInFolderAndSubFolder("jul");
+//		for (int i: alleBilderFraFolderOgSubfolder) {
+//			System.out.println(i);
+//		}
 	}
 
 }

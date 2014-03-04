@@ -290,52 +290,29 @@ public class ReadFromDatabase {
 		return imageIdArray;
 	}
 	
-	@SuppressWarnings("unchecked")
-	public static int[] getFoldersInAFolder(int folderId) {
-		int[] folderIdArray;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		List<ParentFolderDb> parentsIdList = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE parentId=:folderId");
-			query.setParameter("folderId", folderId);
-			parentsIdList = query.list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null) dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		folderIdArray = new int[parentsIdList.size()];
-		for (int i = 0; i < folderIdArray.length; i++) {
-			folderIdArray[i] = parentsIdList.get(i).getFolderId();
-		}
-		return folderIdArray;
-	}
 	
-	public static ParentFolderDb getParentInfo(int pictureId) {
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		ParentFolderDb parentFolderInfo = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE id=:pictureId");
-			query.setParameter("pictureId", pictureId);
-			PictureDb pictureFromDb = (PictureDb) query.uniqueResult();
-			query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId=:parentId");
-			query.setParameter("parentId", pictureFromDb.getParentFolderId());
-			parentFolderInfo = (ParentFolderDb) query.uniqueResult();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null) dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		return parentFolderInfo;
-	}
+	//kan slettes?
+//	public static ParentFolderDb getParentInfo(int pictureId) {
+//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+//		Transaction dbTransaction = null;
+//		ParentFolderDb parentFolderInfo = null;
+//		try {
+//			dbTransaction = dbSession.beginTransaction();
+//			Query query = dbSession.createQuery("FROM PictureDb WHERE id=:pictureId");
+//			query.setParameter("pictureId", pictureId);
+//			PictureDb pictureFromDb = (PictureDb) query.uniqueResult();
+//			query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId=:parentId");
+//			query.setParameter("parentId", pictureFromDb.getParentFolderId());
+//			parentFolderInfo = (ParentFolderDb) query.uniqueResult();
+//			dbTransaction.commit();
+//		} catch (HibernateException e) {
+//			if (dbTransaction != null) dbTransaction.rollback();
+//		} finally {
+//			dbSession.close();
+//			HibernateUtil.shutdown();
+//		}
+//		return parentFolderInfo;
+//	}
 	
 	public static ParentFolderDb getFolderInfo(int folderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -354,6 +331,97 @@ public class ReadFromDatabase {
 			HibernateUtil.shutdown();
 		}
 		return folder;
+	}
+	
+
+	@SuppressWarnings("unchecked")
+	public static List<ParentFolderDb> getFolderAndSubFolderInfo(String startFolderName) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<ParentFolderDb> foldersFromDb = null;
+		ParentFolderDb st = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE name = :startFolderName");
+			query.setParameter("startFolderName", startFolderName);
+			st = (ParentFolderDb) query.uniqueResult();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
+			query = dbSession.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
+			foldersFromDb = query.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return foldersFromDb;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static int[] getFolderAndSubFolderId(String startFolderName) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		int[] folderIds = null;
+		List<ParentFolderDb> foldersFromDb = null;
+		ParentFolderDb st = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE name = :startFolderName");
+			query.setParameter("startFolderName", startFolderName);
+			st = (ParentFolderDb) query.uniqueResult();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
+			query = dbSession.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
+			foldersFromDb = query.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		folderIds = new int[foldersFromDb.size()];
+		for (int i = 0; i < folderIds.length; i++) {
+			folderIds[i] = foldersFromDb.get(i).getFolderId();
+		}
+		return folderIds; 	
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public static int[] getPicturesInFolderAndSubFolder(String startFolderName) {
+		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
+		int[] folderIds = getFolderAndSubFolderId(startFolderName);
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<PictureDb> tmp = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = null;
+			for (int i: folderIds) {
+				query = dbSession.createQuery("FROM PictureDb WHERE parentId=:folderId");
+				query.setParameter("folderId", i);
+				tmp = query.list();
+				picturesFromDb.addAll(tmp);
+			}
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		int[] pictureIds = new int[picturesFromDb.size()];
+		for (int i = 0; i < pictureIds.length; i++) {
+			pictureIds[i] = picturesFromDb.get(i).getId();
+		}
+		return pictureIds;
 	}
 	
 }

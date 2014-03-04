@@ -1,20 +1,35 @@
 package storing;
 
-import java.util.Set;
+
 
 public class ParentFolderDb {
 	private int folderId;
-	private int parentId;
-	private String folderName;
+	private String name;
 	private String path;
-//	private Set<PictureDb> pictures;
+	private int lft;
+	private int rgt;
 	
 	public ParentFolderDb() {}
 	
-	public ParentFolderDb(int parentId, String folderName, String path) {
-		this.parentId = parentId;
-		this.folderName = folderName;
+	public ParentFolderDb(String folderName, String path) {
+		this.name = folderName;
 		this.path = path;
+	}
+
+	public int getLft() {
+		return lft;
+	}
+
+	public void setLft(int lft) {
+		this.lft = lft;
+	}
+
+	public int getRgt() {
+		return rgt;
+	}
+
+	public void setRgt(int rgt) {
+		this.rgt = rgt;
 	}
 
 	public int getFolderId() {
@@ -25,20 +40,12 @@ public class ParentFolderDb {
 		this.folderId = folderId;
 	}
 
-	public int getParentId() {
-		return parentId;
+	public String getName() {
+		return name;
 	}
 
-	public void setParentId(int parentId) {
-		this.parentId = parentId;
-	}
-
-	public String getFolderName() {
-		return folderName;
-	}
-
-	public void setFolderName(String folderName) {
-		this.folderName = folderName;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public String getPath() {
@@ -49,17 +56,5 @@ public class ParentFolderDb {
 		this.path = path;
 	}
 
-//	public Set<PictureDb> getPictures() {
-//		return pictures;
-//	}
-//
-//	public void setPictures(Set<PictureDb> pictures) {
-//		this.pictures = pictures;
-//	}
-	
-	public String toString() {
-		String info = folderId + ", " + parentId + ", " + folderName + ", " + path;
-		return info;
-	}
 	
 }
