@@ -153,7 +153,7 @@ public class ServerCommHandler {
 	}
 
 
-<<<<<<< HEAD:DAT210G/client/gui/model/ServerCommHandler.java
+
 	public String[] getMetaData(int imageID) {
 
 		String[] metaData = null;	
@@ -172,8 +172,7 @@ public class ServerCommHandler {
 
 		return metaData;
 	}
-=======
->>>>>>> origin/master:DAT210G/client/gui/ImageHandler.java
+
 
 
 

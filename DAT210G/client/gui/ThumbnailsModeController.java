@@ -54,26 +54,7 @@ public class ThumbnailsModeController {
 
 	private void makeGridAndDisplayImages() {
 
-		thumbnailsFlowPane.getChildren().clear();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		for (int i = 0; i < main.getImageList().size(); i++) {
-			System.out.print("- [" + i + "]" + " " + "[" + main.getImageList().get(i).getImageId() + "] ");
-		}
-		System.out.println();
-		gridRows = (int) Math.ceil(1.0 * main.getImageList().size() / gridColumns);
 		
-		
-		
-		
-		
-		int numberOfImagesInList = main.getImageList().size();
-		
-		for (int i = 0; i < numberOfImagesInList; i++) {
-			ImageView tempImage = main.getImageList().get(i).getImageView();
-			thumbnailsFlowPane.getChildren().add(tempImage);
-		}
 		
 		
 		
