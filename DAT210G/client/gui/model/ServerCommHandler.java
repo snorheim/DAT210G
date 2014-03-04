@@ -8,10 +8,17 @@ import javax.imageio.ImageIO;
 import communication.JsonClient;
 
 
+
+
+
+
+
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -146,7 +153,7 @@ public class ServerCommHandler {
 	}
 
 
-
+<<<<<<< HEAD:DAT210G/client/gui/model/ServerCommHandler.java
 	public String[] getMetaData(int imageID) {
 
 		String[] metaData = null;	
@@ -165,7 +172,8 @@ public class ServerCommHandler {
 
 		return metaData;
 	}
-
+=======
+>>>>>>> origin/master:DAT210G/client/gui/ImageHandler.java
 
 
 

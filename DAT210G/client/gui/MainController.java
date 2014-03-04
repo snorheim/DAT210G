@@ -24,7 +24,6 @@ public class MainController extends Application {
 	private ServerCommHandler serverCommHandler;
 	private ArrayList<OneImage> imageList = new ArrayList<>();
 	private int currentImageId;
-	private int currentFolderId;
 
 	public MainController() {
 		serverCommHandler = new ServerCommHandler();
@@ -116,7 +115,7 @@ public class MainController extends Application {
 	}
 
 	/**
-	 * Returns the data as list of OneImage.
+	 * Returns the data as an observable list of OneImage.
 	 * 
 	 * @return
 	 */
@@ -133,16 +132,18 @@ public class MainController extends Application {
 
 		for (int i = 0; i < imageIdArray.length; i++) {
 						
-			Image tempImage = serverCommHandler.getThumbnail(imageIdArray[i]);					
+			Image tempImage = serverCommHandler.getThumbnail(imageIdArray[i]);
+			
+			if (tempImage == null) {
+				System.out.println("image is null sdfsdgsdfgsdfgsdfgsdfgsdfgsdfgsdfgsdfg " + imageIdArray[i]);
+			}
 			
 			imageList.add(new OneImage(this, tempImage , imageIdArray[i]));
 		}
 		
-		/*
 		for (int i = 0; i < imageIdArray.length; i++) {
 			System.out.print("- [" + i + "]" + " " + "[" + serverCommHandler.getAllImageIds()[i] + "] ");
 		}
-		*/
 
 		
 	}
