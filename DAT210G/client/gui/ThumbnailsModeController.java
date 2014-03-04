@@ -1,19 +1,26 @@
 package gui;
 
+import java.util.Map;
+
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.TilePane;
 import gui.MainController;
+import gui.model.Model;
 
 public class ThumbnailsModeController {
 
 	// Reference to the main application
 	private MainController main;
+	
 
 	@FXML
-	private FlowPane thumbnailsFlowPane;
+	private TilePane thumbnailsTilePane;
 	@FXML
 	private Button importBtn;
 	@FXML
@@ -27,17 +34,17 @@ public class ThumbnailsModeController {
 	@FXML
 	private TextField tagsTextField;
 
-	private int gridColumns = 4;
-	private int gridRows;
-	int imgCounter;
+	
+	private Model model;
 
 	/**
 	 * Is called by the Main class to give a reference back to itself.
 	 * 
 	 * @param main
 	 */
-	public void setMain(MainController main) {
+	public void setMain(MainController main, Model model) {
 		this.main = main;
+		this.model = model;
 		makeGridAndDisplayImages();
 	
 
@@ -49,7 +56,7 @@ public class ThumbnailsModeController {
 	@FXML
 	private void handleRefreshBtn() {
 		System.out.println("Clicked refresh");
-		main.updateImageList();
+		model.updateImageHashMap();
 		makeGridAndDisplayImages();
 	}
 
@@ -58,35 +65,24 @@ public class ThumbnailsModeController {
 	 */
 	@FXML
 	private void handleImportBtn() {
-		System.out.println("Clicked import");
+		
 		main.openFileChooser();
 		
 	}
 
 	private void makeGridAndDisplayImages() {
 
-		thumbnailsFlowPane.getChildren().clear();
-		System.out.println();
-		System.out.println();
-		System.out.println();
-		for (int i = 0; i < main.getImageList().size(); i++) {
-			System.out.print("- [" + i + "]" + " " + "[" + main.getImageList().get(i).getImageId() + "] ");
+		thumbnailsTilePane.setPrefColumns(4);
+		thumbnailsTilePane.setPadding(new Insets(5, 0, 5, 0));
+		thumbnailsTilePane.setVgap(10);
+		thumbnailsTilePane.setHgap(10);
+		
+		
+		for(Map.Entry<Integer, ImageView> image : model.getImageHashMap().entrySet()) {									
+			
+			thumbnailsTilePane.getChildren().add(image.getValue());
+			
 		}
-		System.out.println();
-		gridRows = (int) Math.ceil(1.0 * main.getImageList().size() / gridColumns);
-		
-		
-		
-		
-		
-		int numberOfImagesInList = main.getImageList().size();
-		
-		for (int i = 0; i < numberOfImagesInList; i++) {
-			ImageView tempImage = main.getImageList().get(i).getImageView();
-			thumbnailsFlowPane.getChildren().add(tempImage);
-		}
-		
-		
 		
 		
 		

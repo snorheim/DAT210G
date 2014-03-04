@@ -2,10 +2,12 @@ package gui.model;
 
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 import javax.imageio.ImageIO;
 
 import communication.JsonClient;
+
 
 
 import java.awt.Color;
@@ -14,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+
 
 
 
@@ -44,11 +47,14 @@ public class ServerCommHandler {
 				allImageId = getAllImagesResponse.getImageIdArray();
 			}
 			getAllImagesJson.closeHttpConnection();
+		} else {			
+			return null;
 		}
 		return allImageId;
 	}
 
-	public Image getThumbnail(int imageID) {
+	public ImageView getThumbnail(int imageID) {
+				
 		BufferedImage bufImage = null;
 		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getThumbnail", imageID));
 		if (getThumbnailJson.sendJsonToServer()){
@@ -59,7 +65,6 @@ public class ServerCommHandler {
 			getThumbnailJson.closeHttpConnection();
 		}
 
-		 
 
 		Image image = null;
 		
@@ -75,7 +80,8 @@ public class ServerCommHandler {
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		} 
 
-		return image;
+		
+		return new ImageView(image);
 	}
 	public void SendImageToServer(File fileToSend){
 		int nextAvailableId = -1;

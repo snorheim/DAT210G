@@ -1,5 +1,6 @@
 package gui;
 
+import gui.model.Model;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,6 +13,7 @@ public class SingleModeController {
 
 	// Reference to the main application
 	private MainController main;
+	private Model model;
 
 	@FXML
 	private AnchorPane anchorPaneForSingle;
@@ -45,16 +47,17 @@ public class SingleModeController {
 	 * 
 	 * @param main
 	 */
-	public void setMain(MainController main) {
+	public void setMain(MainController main, Model model) {
 		this.main = main;
+		this.model = model;
 		displayImage();
 
 	}
 
 	private void displayImage() {		
 		anchorPaneForSingle.getChildren().clear();
-		Image image = main.getServerCommHandler().getLargeImage(
-				main.getCurrentImageId());
+				
+		Image image = model.getLargeImage(model.getCurrentImageId());
 		
 		ImageView imageView = new ImageView(image);
 		anchorPaneForSingle.getChildren().add(imageView);
@@ -68,17 +71,15 @@ public class SingleModeController {
 	
 	@FXML
 	private void nextBtnAction() {
-		int currentImage = main.getCurrentImageId();
-		int numOfImages = main.getImageList().size();
-				
+						
 		
-		int nextImage = currentImage + 1;
+		int nextImage = model.getCurrentImageId() + 1;
 		
-		if (nextImage > numOfImages) {
+		if (nextImage > model.getImageHashMap().size()) {
 			nextImage = 1;
 		}
 		
-		main.setCurrentImageId(nextImage);
+		model.setCurrentImageId(nextImage);
 		
 		
 		displayImage();
@@ -87,17 +88,13 @@ public class SingleModeController {
 	
 	private void updateMetaFields() {
 		
-		currentImageLabel.setText(Integer.toString(main.getCurrentImageId()));
+		currentImageLabel.setText(Integer.toString(model.getCurrentImageId()));		
 		
-		String[] meta = main.getServerCommHandler().getMetaData(main.getCurrentImageId());
-		
-		System.out.println(meta[0] + " " + meta[1] + " " + meta[2] + " " + meta[3] + " " + meta[4] );
-		
-		titleTextField.setText(meta[0]);
-		descTextField.setText(meta[1]);
-		ratingTextField.setText(meta[2]);
-		dateTextField.setText(meta[3]);
-		tagsTextField.setText(meta[4]);
+		titleTextField.setText(model.getTitleMeta(model.getCurrentImageId()));
+		descTextField.setText(model.getDescMeta(model.getCurrentImageId()));
+		ratingTextField.setText(model.getRatingMeta(model.getCurrentImageId()));
+		dateTextField.setText(model.getDateMeta(model.getCurrentImageId()));
+		tagsTextField.setText(model.getTagsMeta(model.getCurrentImageId()));
 		
 	
 	}
@@ -105,17 +102,14 @@ public class SingleModeController {
 	@FXML
 	private void prevBtnAction() {
 		
-		int currentImage = main.getCurrentImageId();
-		int numOfImages = main.getImageList().size();
-				
+							
+		int prevImage = model.getCurrentImageId() - 1;
 		
-		int nextImage = currentImage - 1;
-		
-		if (nextImage < 1) {
-			nextImage = numOfImages;
+		if (prevImage < 1) {
+			prevImage = model.getImageHashMap().size();
 		}
 		
-		main.setCurrentImageId(nextImage);
+		model.setCurrentImageId(prevImage);
 		
 		
 		displayImage();

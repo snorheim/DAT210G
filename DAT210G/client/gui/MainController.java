@@ -2,17 +2,15 @@ package gui;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import gui.MainController;
-import gui.model.OneImage;
-import gui.model.ServerCommHandler;
+import gui.model.Model;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.fxml.FXMLLoader;
@@ -21,14 +19,20 @@ public class MainController extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private ServerCommHandler serverCommHandler;
-	private ArrayList<OneImage> imageList = new ArrayList<>();
-	private int currentImageId;
-	private int currentFolderId;
+	private Model model;
+	private Boolean contactWithServer;
+	
 
 	public MainController() {
-		serverCommHandler = new ServerCommHandler();
-		updateImageList();
+		model = new Model();
+		
+		contactWithServer = model.updateImageHashMap();
+		
+		if (!contactWithServer) {
+			System.out.println("No contact with server!");
+			Platform.exit();
+		}
+		
 	}
 
 	@Override
@@ -70,7 +74,7 @@ public class MainController extends Application {
 
 			// Give the controller access to the mainController
 			ThumbnailsModeController thumbnailsController = loader.getController();
-			thumbnailsController.setMain(this);
+			thumbnailsController.setMain(this, model);
 
 		} catch (IOException e) {
 			// Exception gets thrown if the fxml file could not be loaded
@@ -84,13 +88,7 @@ public class MainController extends Application {
 				
 		List<File> fileList =
                 fileChooser.showOpenMultipleDialog(primaryStage);
-            if (fileList != null) {
-                for (File file : fileList) {
-                	
-        			serverCommHandler.SendImageToServer(file);
-        			
-                }
-            }
+            model.sendImagesToServer(fileList);
 	}
 	
 	/**
@@ -107,7 +105,7 @@ public class MainController extends Application {
 
 			// Give the controller access to the mainController
 			SingleModeController singleModeController = loader.getController();
-			singleModeController.setMain(this);
+			singleModeController.setMain(this, model);
 
 		} catch (IOException e) {
 			// Exception gets thrown if the fxml file could not be loaded
@@ -115,53 +113,8 @@ public class MainController extends Application {
 		}
 	}
 
-	/**
-	 * Returns the data as list of OneImage.
-	 * 
-	 * @return
-	 */
-	public ArrayList<OneImage> getImageList() {
-		return imageList;
-	}
-
-	public void updateImageList() {
-		
-		imageList.clear();
-		
-		
-		int[] imageIdArray = serverCommHandler.getAllImageIds();		
-
-		for (int i = 0; i < imageIdArray.length; i++) {
-						
-			Image tempImage = serverCommHandler.getThumbnail(imageIdArray[i]);					
-			
-			imageList.add(new OneImage(this, tempImage , imageIdArray[i]));
-		}
-		
-		/*
-		for (int i = 0; i < imageIdArray.length; i++) {
-			System.out.print("- [" + i + "]" + " " + "[" + serverCommHandler.getAllImageIds()[i] + "] ");
-		}
-		*/
-
-		
-	}
-	
 
 	
-	
-
-	public ServerCommHandler getServerCommHandler() {
-		return serverCommHandler;
-	}
-
-	public int getCurrentImageId() {
-		return currentImageId;
-	}
-
-	public void setCurrentImageId(int currentImageId) {
-		this.currentImageId = currentImageId;
-	}
 
 	public static void main(String[] args) {
 		launch(args);
