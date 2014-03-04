@@ -9,9 +9,9 @@
 <AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.ThumbnailsModeController">
   <!-- TODO Add Nodes -->
   <children>
-    <SplitPane dividerPositions="0.3007518796992481" focusTraversable="true" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+    <SplitPane dividerPositions="0.30200501253132833" focusTraversable="true" prefHeight="600.0" prefWidth="800.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <items>
-        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
           <children>
             <Button layoutX="30.0" layoutY="50.0" mnemonicParsing="false" onAction="#handleRefreshBtn" text="Refresh" />
             <Button fx:id="importBtn" layoutX="32.0" layoutY="95.0" mnemonicParsing="false" onAction="#handleImportBtn" text="Import" />
@@ -48,9 +48,9 @@
         </AnchorPane>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="160.0" prefWidth="100.0">
           <children>
-            <ScrollPane prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <ScrollPane id="thumbnailScrollPane" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <content>
-                <TilePane fx:id="thumbnailsTilePane" prefHeight="200.0" prefWidth="200.0" />
+                <AnchorPane fx:id="anchorPane" prefHeight="-1.0" prefWidth="-1.0" />
               </content>
             </ScrollPane>
           </children>

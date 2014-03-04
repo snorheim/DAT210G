@@ -1,24 +1,30 @@
 package gui.model;
 
+import gui.MainController;
+
 import java.io.File;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
+
+
+
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
 public class Model {
 
-	private HashMap<Integer, ImageView> imageHashMap;
+	private Hashtable<Integer, OneImage> imageHashtable;
 	private int currentImageId;
 	private int currentFolderId;
 	private ServerCommHandler serverCommHandler;	
+	private MainController mainController;
 
-	public Model() {
+	public Model(MainController mainController) {
 
+		this.mainController = mainController;
 		serverCommHandler = new ServerCommHandler();
 
 	}
@@ -35,33 +41,24 @@ public class Model {
 		}
 		
 		
-		imageHashMap = new HashMap<Integer, ImageView>();
+		imageHashtable = new Hashtable<Integer, OneImage>();
 		
 		
 		for (int i = 0; i < imageIdArray.length; i++) {
+												
 			
-			ImageView image = getThumbnail(imageIdArray[i]);
-						
-			
-			image.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event event) {
-					System.out.println("clicked image" + event.getSource().hashCode());
-					
-				}
-			});
+			OneImage oneImage = new OneImage(imageIdArray[i], getThumbnail(imageIdArray[i]), this);
 			
 			
-			imageHashMap.put(imageIdArray[i], image);
+			imageHashtable.put(imageIdArray[i], oneImage);
 		}
 								
 		
-		if(imageHashMap.isEmpty()) {
+		if(imageHashtable.isEmpty()) {
 			
 			System.out.println("hashmap is empty");
 		}
-		System.out.println(imageHashMap.toString());
+		System.out.println(imageHashtable.toString());
 		
 		return true;
 		
@@ -95,8 +92,8 @@ public class Model {
 	
 	
 	
-	public HashMap<Integer, ImageView> getImageHashMap() {
-		return imageHashMap;
+	public Hashtable<Integer, OneImage> getImageHashtable() {
+		return imageHashtable;
 	}
 
 
@@ -129,6 +126,7 @@ public class Model {
 
 	public void setCurrentImageId(int currentImageId) {
 		this.currentImageId = currentImageId;
+		mainController.showSingleMode();
 	}
 
 	public int getCurrentFolderId() {
@@ -138,5 +136,7 @@ public class Model {
 	public void setCurrentFolderId(int currentFolderId) {
 		this.currentFolderId = currentFolderId;
 	}
+	
+	
 
 }

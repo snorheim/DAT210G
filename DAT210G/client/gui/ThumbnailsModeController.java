@@ -1,17 +1,20 @@
 package gui;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.TilePane;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
 import gui.MainController;
 import gui.model.Model;
+import gui.model.OneImage;
 
 public class ThumbnailsModeController {
 
@@ -20,7 +23,7 @@ public class ThumbnailsModeController {
 	
 
 	@FXML
-	private TilePane thumbnailsTilePane;
+	private AnchorPane anchorPane;
 	@FXML
 	private Button importBtn;
 	@FXML
@@ -33,6 +36,11 @@ public class ThumbnailsModeController {
 	private TextField dateTextField;
 	@FXML
 	private TextField tagsTextField;
+	
+	private GridPane thumbnailGridPane;
+	
+	private int gridColumns = 4;
+	private int gridRows;
 
 	
 	private Model model;
@@ -71,18 +79,50 @@ public class ThumbnailsModeController {
 	}
 
 	private void makeGridAndDisplayImages() {
-
-		thumbnailsTilePane.setPrefColumns(4);
-		thumbnailsTilePane.setPadding(new Insets(5, 0, 5, 0));
-		thumbnailsTilePane.setVgap(10);
-		thumbnailsTilePane.setHgap(10);
+		
+		thumbnailGridPane = new GridPane();
+		thumbnailGridPane.setHgap(10);
+		thumbnailGridPane.setVgap(10);
+		thumbnailGridPane.gridLinesVisibleProperty();
+		
+		gridRows = (int) Math.ceil(1.0 * model.getImageHashtable().size() / gridColumns);
+		
+		System.out.println(gridColumns + " " + gridRows);
 		
 		
-		for(Map.Entry<Integer, ImageView> image : model.getImageHashMap().entrySet()) {									
+		int imageNum = 1;
+		
+		for (int i = 0; i < gridRows; i++) {
 			
-			thumbnailsTilePane.getChildren().add(image.getValue());
+			for (int j = 0; j < gridColumns; j++) {
+				System.out.println(imageNum);
+				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getThumbnail(), j, i);
+				
+				imageNum++;
+				if (imageNum > model.getImageHashtable().size()) {
+					break;
+				}
+			}
+			
+			if (imageNum > model.getImageHashtable().size()) {
+				break;
+			}
 			
 		}
+		
+		
+		
+		
+		anchorPane.getChildren().add(thumbnailGridPane);
+		
+		
+		
+		/*for(Map.Entry<Integer, OneImage> image : model.getImageHashMap().entrySet()) {									
+			
+			//thumbnailsGridPane.getChildren().add(image.getValue().getThumbnail());
+			
+			
+		}*/
 		
 		
 		

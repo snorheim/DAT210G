@@ -24,7 +24,7 @@ public class MainController extends Application {
 	
 
 	public MainController() {
-		model = new Model();
+		model = new Model(this);
 		
 		contactWithServer = model.updateImageHashMap();
 		

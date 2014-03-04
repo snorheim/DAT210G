@@ -75,7 +75,7 @@ public class SingleModeController {
 		
 		int nextImage = model.getCurrentImageId() + 1;
 		
-		if (nextImage > model.getImageHashMap().size()) {
+		if (nextImage > model.getImageHashtable().size()) {
 			nextImage = 1;
 		}
 		
@@ -106,7 +106,7 @@ public class SingleModeController {
 		int prevImage = model.getCurrentImageId() - 1;
 		
 		if (prevImage < 1) {
-			prevImage = model.getImageHashMap().size();
+			prevImage = model.getImageHashtable().size();
 		}
 		
 		model.setCurrentImageId(prevImage);
