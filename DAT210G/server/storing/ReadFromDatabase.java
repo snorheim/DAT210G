@@ -86,7 +86,7 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			picList = dbSession.createQuery("FROM PictureDb").list();
+			picList = dbSession.createQuery("FROM PictureDb ORDER BY dateTime DESC").list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
@@ -108,6 +108,7 @@ public class ReadFromDatabase {
 			Criteria criteria = dbSession.createCriteria(PictureDb.class);
 			criteria.createAlias("tags", "tag");
 			criteria.add(Restrictions.eq("tag.tag", tag));
+			criteria.addOrder(Order.desc("dateTime"));
 			picList = criteria.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -135,7 +136,7 @@ public class ReadFromDatabase {
 			criteria.createAlias("tags", "tag");
 			criteria.add(Restrictions.in("tag.tag", tagList));
 			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-			criteria.addOrder(Order.asc("id"));
+			criteria.addOrder(Order.desc("dateTime"));
 			picList = criteria.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -156,7 +157,7 @@ public class ReadFromDatabase {
 		int[] pictureIdArray = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE rating>=:rat");
+			Query query = dbSession.createQuery("FROM PictureDb WHERE rating>=:rat ORDER BY rating DESC");
 			query.setParameter("rat", rating);
 			picList = query.list();
 			dbTransaction.commit();
@@ -199,7 +200,7 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT id FROM PictureDb");
+			Query query = dbSession.createQuery("SELECT id FROM PictureDb ORDER BY dateTime DESC");
 			picIdList = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -250,6 +251,7 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			Criteria criteria = dbSession.createCriteria(PictureDb.class);
 			criteria.add(Restrictions.like("dateTime", "%" + timeDate + "%"));
+			criteria.addOrder(Order.desc("dateTime"));
 			pictureList = criteria.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -273,7 +275,7 @@ public class ReadFromDatabase {
 		List<PictureDb> pictureFromDb = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:parent");
+			Query query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:parent ORDER BY dateTime DESC");
 			query.setParameter("parent", folderId);
 			pictureFromDb = query.list();
 			dbTransaction.commit();
@@ -361,6 +363,7 @@ public class ReadFromDatabase {
 		return foldersFromDb;
 	}
 	
+	//TODO: bytte til int startFolderId?
 	@SuppressWarnings("unchecked")
 	public static int[] getFolderAndSubFolderId(String startFolderName) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -393,7 +396,7 @@ public class ReadFromDatabase {
 		return folderIds; 	
 	}
 	
-	
+	//TODO: bytte til int startFolderId?
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesInFolderAndSubFolder(String startFolderName) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
@@ -405,7 +408,7 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = null;
 			for (int i: folderIds) {
-				query = dbSession.createQuery("FROM PictureDb WHERE parentId=:folderId");
+				query = dbSession.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
 				tmp = query.list();
 				picturesFromDb.addAll(tmp);

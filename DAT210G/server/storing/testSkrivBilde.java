@@ -1,5 +1,6 @@
 package storing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class testSkrivBilde {
@@ -42,6 +43,12 @@ public class testSkrivBilde {
 //		int[] alleBilderFraFolderOgSubfolder = ReadFromDatabase.getPicturesInFolderAndSubFolder("jul");
 //		for (int i: alleBilderFraFolderOgSubfolder) {
 //			System.out.println(i);
+//		}
+		
+		
+//		int[] getPic = ReadFromDatabase.getPicturesInFolderAndSubFolder("jul");
+//		for (int p: getPic) {
+//			System.out.println(p);
 //		}
 	}
 
