@@ -13,7 +13,6 @@ import org.hibernate.criterion.Restrictions;
 
 public class ReadFromDatabase {
 
-
 	@SuppressWarnings("unchecked")
 	public static List<TagDb> getAllTags() {
 		List<TagDb> tagList = null;
@@ -292,30 +291,6 @@ public class ReadFromDatabase {
 		return imageIdArray;
 	}
 	
-	
-	//kan slettes?
-//	public static ParentFolderDb getParentInfo(int pictureId) {
-//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-//		Transaction dbTransaction = null;
-//		ParentFolderDb parentFolderInfo = null;
-//		try {
-//			dbTransaction = dbSession.beginTransaction();
-//			Query query = dbSession.createQuery("FROM PictureDb WHERE id=:pictureId");
-//			query.setParameter("pictureId", pictureId);
-//			PictureDb pictureFromDb = (PictureDb) query.uniqueResult();
-//			query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId=:parentId");
-//			query.setParameter("parentId", pictureFromDb.getParentFolderId());
-//			parentFolderInfo = (ParentFolderDb) query.uniqueResult();
-//			dbTransaction.commit();
-//		} catch (HibernateException e) {
-//			if (dbTransaction != null) dbTransaction.rollback();
-//		} finally {
-//			dbSession.close();
-//			HibernateUtil.shutdown();
-//		}
-//		return parentFolderInfo;
-//	}
-	
 	public static ParentFolderDb getFolderInfo(int folderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -335,17 +310,17 @@ public class ReadFromDatabase {
 		return folder;
 	}
 	
-
+	
 	@SuppressWarnings("unchecked")
-	public static List<ParentFolderDb> getFolderAndSubFolderInfo(String startFolderName) {
+	public static List<ParentFolderDb> getFolderAndSubFolderInfo(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		List<ParentFolderDb> foldersFromDb = null;
 		ParentFolderDb st = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE name = :startFolderName");
-			query.setParameter("startFolderName", startFolderName);
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
+			query.setParameter("startFolderId", startFolderId);
 			st = (ParentFolderDb) query.uniqueResult();
 			int leftParent = st.getLft();
 			int rightParent = st.getRgt();
@@ -363,9 +338,8 @@ public class ReadFromDatabase {
 		return foldersFromDb;
 	}
 	
-	//TODO: bytte til int startFolderId?
 	@SuppressWarnings("unchecked")
-	public static int[] getFolderAndSubFolderId(String startFolderName) {
+	public static int[] getFolderAndSubFolderId(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		int[] folderIds = null;
@@ -373,8 +347,8 @@ public class ReadFromDatabase {
 		ParentFolderDb st = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE name = :startFolderName");
-			query.setParameter("startFolderName", startFolderName);
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
+			query.setParameter("startFolderId", startFolderId);
 			st = (ParentFolderDb) query.uniqueResult();
 			int leftParent = st.getLft();
 			int rightParent = st.getRgt();
@@ -396,11 +370,11 @@ public class ReadFromDatabase {
 		return folderIds; 	
 	}
 	
-	//TODO: bytte til int startFolderId?
+	
 	@SuppressWarnings("unchecked")
-	public static int[] getPicturesInFolderAndSubFolder(String startFolderName) {
+	public static int[] getPicturesInFolderAndSubFolder(int startFolderId) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
-		int[] folderIds = getFolderAndSubFolderId(startFolderName);
+		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		List<PictureDb> tmp = null;
@@ -425,6 +399,73 @@ public class ReadFromDatabase {
 			pictureIds[i] = picturesFromDb.get(i).getId();
 		}
 		return pictureIds;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private static List<ParentFolderDb> folderAndSubFolder(int startFolderId) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<ParentFolderDb> foldersFromDb = null;
+		ParentFolderDb st = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
+			query.setParameter("startFolderId", startFolderId);
+			st = (ParentFolderDb) query.uniqueResult();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
+			query = dbSession.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
+			foldersFromDb = query.list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return foldersFromDb;	
+	}
+	
+	public static IsNotOnlyChildObject isFolderOnlyChild(int parentFolderId) {
+		IsNotOnlyChildObject child = new IsNotOnlyChildObject();
+		child.setOnlyChild(true);
+		List<ParentFolderDb> folders = folderAndSubFolder(parentFolderId);
+		if (folders.size() > 1) {
+			child.setOnlyChild(false);
+			child.setLeftChildId(folders.get(1).getFolderId());
+		}
+		return child;
+	}
+	
+	public static class IsNotOnlyChildObject {
+		int leftChildId;
+		boolean isOnlyChild;
+		
+		public IsNotOnlyChildObject(int leftChildId, boolean isNotOnlyChild) {
+			this.leftChildId = leftChildId;
+			this.isOnlyChild = isNotOnlyChild;
+		}
+		
+		public IsNotOnlyChildObject() {}
+		
+		public int getLeftChildId() {
+			return leftChildId;
+		}
+
+		public void setLeftChildId(int leftChildId) {
+			this.leftChildId = leftChildId;
+		}
+
+		public boolean isOnlyChild() {
+			return isOnlyChild;
+		}
+
+		public void setOnlyChild(boolean isOnlyChild) {
+			this.isOnlyChild = isOnlyChild;
+		}
+		
 	}
 	
 }

@@ -92,32 +92,33 @@ public class WriteToDatabase {
 	}
 	
 	
-	//TODO: lag om til metode som kan brukes i ensure folder, for aa lage img mappe hvis database er tom
-//	public static boolean addNewFolder(ParentFolderDb folder) {
-//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-//		Transaction dbTransaction = null;
-//		try {
-//			dbTransaction = dbSession.beginTransaction();
-//			dbSession.save(folder);
-//			dbTransaction.commit();
-//			successfulTransfer = true;
-//		} catch (HibernateException e) {
-//			successfulTransfer = false;
-//			if (dbTransaction != null) dbTransaction.rollback();
-//		} finally {
-//			dbSession.close();
-//			HibernateUtil.shutdown();
-//		}
-//		return successfulTransfer;
-//	}
-	
-	public static boolean addFolderInAFolderWithOtherChildren(ParentFolderDb folder, String leftFolder) {
+	//TODO: brukes ved ensureFolder, snakke med kjelli
+	public static boolean ensureImgFolderDatabase(ParentFolderDb imgFolder) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE name=:leftFolder");
-			query.setParameter("leftFolder", leftFolder);
+			dbSession.save(imgFolder);
+			dbTransaction.commit();
+			successfulTransfer = true;
+		} catch (HibernateException e) {
+			successfulTransfer = false;
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return successfulTransfer;
+	}
+	
+
+	public static boolean addFolderInAFolderWithOtherChildren(ParentFolderDb folder, int leftFolderId) {
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:leftFolderId");
+			query.setParameter("leftFolderId", leftFolderId);
 			int right = (int) query.uniqueResult();
 			
 			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :rgtRight");
@@ -143,13 +144,13 @@ public class WriteToDatabase {
 		return successfulTransfer;
 	}
 	
-	public static boolean addFolderAsAnOnlyChildToFolder(ParentFolderDb folder, String parentName) {
+	public static boolean addFolderAsAnOnlyChildToFolder(ParentFolderDb folder, int parentId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE name=:parentName");
-			query.setParameter("parentName", parentName);
+			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
+			query.setParameter("parentId", parentId);
 			int left = (int) query.uniqueResult();
 			
 			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
@@ -174,77 +175,5 @@ public class WriteToDatabase {
 		}
 		return successfulTransfer;
 	}
-	
-	
-	//hvis vi har liste av tags tar vi en for loop og itterer igjennom med addTagToPic, lettest.
-	//	public static boolean addManyTagsToPic(int picId, ArrayList<String> tagList) {
-	//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-	//		Transaction dbTransaction = null;
-	//		for (String tag: tagList) {
-	//			writeTag(new TagDb(tag));
-	//		}
-	//		try {
-	//			dbTransaction = dbSession.beginTransaction();
-	//			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
-	//			for (String tag: tagList)  {
-	//				TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
-	//				picFromDb.addTag(tagFromDb);
-	//			}
-	//			dbTransaction.commit();
-	//			successfulTransfer = true;
-	//		} catch (HibernateException e) {
-	//			successfulTransfer = false;
-	//			if (dbTransaction != null) dbTransaction.rollback();
-	//		} finally {
-	//			dbSession.close();
-	//			HibernateUtil.shutdown();
-	//		}
-	//		return successfulTransfer;
-	//	}
-
-	//on hold pga trenger gjerne ikke denne: trenger sjekking av eksisterende tags osv.
-	//	public static boolean addManyTagsToManyPics(ArrayList<Integer> picIdList, ArrayList<String> tagList) {
-	//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-	//		Transaction dbTransaction = null;
-	//		try {
-	//			dbTransaction = dbSession.beginTransaction();
-	//			for (Integer picId: picIdList) {
-	//				PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
-	//				for (String tag: tagList) {
-	//					TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
-	//					picFromDb.addTag(tagFromDb);
-	//				}
-	//			}
-	//			dbTransaction.commit();
-	//			successfulTransfer = true;
-	//		} catch (HibernateException e) {
-	//			successfulTransfer = false;
-	//			if (dbTransaction != null) dbTransaction.rollback();
-	//		} finally {
-	//			dbSession.close();
-	//			HibernateUtil.shutdown();
-	//		}
-	//		return successfulTransfer;
-	//	}
-
-	//	public static boolean writeManyTags(ArrayList<TagDb> tagList) {
-	//	Session dbSession = HibernateUtil.getSessionFactory().openSession();
-	//	Transaction dbTransaction = null;
-	//	try {
-	//		dbTransaction = dbSession.beginTransaction();
-	//		for (TagDb tag: tagList) {
-	//			dbSession.save(tag);
-	//		}
-	//		dbTransaction.commit();
-	//		successfulTransfer = true;
-	//	} catch (HibernateException e) {
-	//		successfulTransfer = false;
-	//		if (dbTransaction != null) dbTransaction.rollback();
-	//	} finally {
-	//		dbSession.close();
-	//		HibernateUtil.shutdown();
-	//	}
-	//	return successfulTransfer;
-	//}
 
 }

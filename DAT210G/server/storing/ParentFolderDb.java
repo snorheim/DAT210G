@@ -15,6 +15,13 @@ public class ParentFolderDb {
 		this.name = folderName;
 		this.path = path;
 	}
+	
+	public ParentFolderDb(String folderName, String path, int lft, int rgt) {
+		this.name = folderName;
+		this.path = path;
+		this.lft = lft;
+		this.rgt = rgt;
+	}
 
 	public int getLft() {
 		return lft;

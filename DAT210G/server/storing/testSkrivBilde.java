@@ -3,6 +3,8 @@ package storing;
 import java.util.ArrayList;
 import java.util.List;
 
+import storing.ReadFromDatabase.IsNotOnlyChildObject;
+
 public class testSkrivBilde {
 
 	public static void main(String[] args) {
@@ -29,18 +31,17 @@ public class testSkrivBilde {
 //		boolean t = WriteToDatabase.addFolderAsAnOnlyChildToFolder(folder, "jul");
 //		System.out.println(t);
 		
-//		List<ParentFolderDb> d = ReadFromDatabase.getFolderAndSubFolderInfo("sommer");
-//		
+//		List<ParentFolderDb> d = ReadFromDatabase.getFolderAndSubFolderInfo(2);
 //		for (ParentFolderDb p: d) {
-//			System.out.println(p.getFolderId());
+//			System.out.println(p.getFolderId() + ", " + p.getName());
 //		}
 		
-//		int[] ar = ReadFromDatabase.getFolderAndSubFolderId("jul");
+//		int[] ar = ReadFromDatabase.getFolderAndSubFolderId(2);
 //		for (int i: ar) {
 //			System.out.println(i);
 //		}
 		
-//		int[] alleBilderFraFolderOgSubfolder = ReadFromDatabase.getPicturesInFolderAndSubFolder("jul");
+//		int[] alleBilderFraFolderOgSubfolder = ReadFromDatabase.getPicturesInFolderAndSubFolder(2);
 //		for (int i: alleBilderFraFolderOgSubfolder) {
 //			System.out.println(i);
 //		}
@@ -50,6 +51,29 @@ public class testSkrivBilde {
 //		for (int p: getPic) {
 //			System.out.println(p);
 //		}
+		
+		
+		//TODO: hvordan vi adder folders
+//		ParentFolderDb nyFolder = new ParentFolderDb("sidenavlavestyolo", "\\img\\jul\\yolo\\yolo\\sidenavlavestyolo\\");
+//		
+//		IsNotOnlyChildObject onlyChild = ReadFromDatabase.isFolderOnlyChild(7);
+//		System.out.println(onlyChild.isOnlyChild());
+//		
+//		if (onlyChild.isOnlyChild) {
+//			boolean writ = WriteToDatabase.addFolderAsAnOnlyChildToFolder(nyFolder, 7);
+//			System.out.println(writ + ", only child");
+//		} else {
+//			boolean writ = WriteToDatabase.addFolderInAFolderWithOtherChildren(nyFolder, onlyChild.getLeftChildId());
+//			System.out.println(writ + ", sibling");
+//		}
+		
+		
+//		TODO: legg til i ensure folder fra kjelli
+//		ParentFolderDb p = new ParentFolderDb("img", "\\img\\", 1, 2);
+//		boolean imgFolder = WriteToDatabase.ensureImgFolderDatabase(p);
+//		System.out.println(imgFolder);
+		
+		
 	}
 
 }
