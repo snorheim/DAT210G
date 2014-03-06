@@ -125,7 +125,7 @@ public class ServerCommHandler {
 
 	}
 
-	public Image getLargeImage(int imageID) {
+	public ImageView getLargeImage(int imageID) {
 		BufferedImage bufImage = null;
 		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "800;600"));
 		if (getThumbnailJson.sendJsonToServer()){
@@ -148,9 +148,35 @@ public class ServerCommHandler {
 		Image image = SwingFXUtils.toFXImage(bufImage, null);
 
 
-		return image;
+		return new ImageView(image);
 	}
 
+	
+	public ImageView getMediumImage(int imageID) {
+		BufferedImage bufImage = null;
+		JsonClient getMediumJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "800;600"));
+		if (getMediumJson.sendJsonToServer()){
+			ResponseClient getThumbnailResponse = getMediumJson.receiveJsonFromServer();
+			if (getThumbnailResponse.getSuccess()){
+				bufImage = getMediumJson.receiveImageFromServer();
+			}
+			getMediumJson.closeHttpConnection();
+		}
+
+		// TODO: FOR DEBUG 
+
+		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		Font font = new Font("Verdana", Font.ITALIC, 24);
+		g.setFont(font);
+		g.setColor(Color.RED);
+		g.drawString(String.valueOf(imageID), 20, 20); 
+
+		//TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg blander swing og JavaFX?
+		Image image = SwingFXUtils.toFXImage(bufImage, null);
+
+
+		return new ImageView(image);
+	}
 
 
 	public String[] getMetaData(int imageID) {

@@ -1,23 +1,22 @@
 package gui;
 
-import java.util.Iterator;
-import java.util.Map;
-import java.util.Set;
-
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import gui.MainController;
 import gui.model.Model;
-import gui.model.OneImage;
 
 public class ThumbnailsModeController {
 
+	private static final int SMALL_ZOOM = 10;
+	private static final int MEDIUM_ZOOM = 5;
+	
+	
 	// Reference to the main application
 	private MainController main;
 	
@@ -36,10 +35,13 @@ public class ThumbnailsModeController {
 	private TextField dateTextField;
 	@FXML
 	private TextField tagsTextField;
+	@FXML
+	private Slider zoomSlider;
 	
 	private GridPane thumbnailGridPane;
 	
-	private int gridColumns = 4;
+	
+	private int gridColumns = SMALL_ZOOM;
 	private int gridRows;
 
 	
@@ -53,6 +55,25 @@ public class ThumbnailsModeController {
 	public void setMain(MainController main, Model model) {
 		this.main = main;
 		this.model = model;
+		
+		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
+
+			@Override
+			public void changed(ObservableValue<? extends Number> observable,
+					Number oldValue, Number newValue) {
+					
+				
+				
+				if (newValue.intValue() == 1) {
+					setGridColumns(MEDIUM_ZOOM);					
+				} else if (newValue.intValue() == 0) {
+					setGridColumns(SMALL_ZOOM);					
+				}
+				
+				
+			}
+		});
+		
 		makeGridAndDisplayImages();
 	
 
@@ -80,6 +101,9 @@ public class ThumbnailsModeController {
 
 	private void makeGridAndDisplayImages() {
 		
+		anchorPane.getChildren().clear();
+		
+		
 		thumbnailGridPane = new GridPane();
 		thumbnailGridPane.setHgap(10);
 		thumbnailGridPane.setVgap(10);
@@ -91,6 +115,26 @@ public class ThumbnailsModeController {
 		System.out.println(gridColumns + " " + gridRows);
 		
 		
+		if (getGridColumns() == SMALL_ZOOM) {
+			smallZoomLevelImages();
+		} else if (getGridColumns() == MEDIUM_ZOOM) {
+		
+			mediumZoomLevelImages();
+		
+		}
+		
+		
+		
+		
+		anchorPane.getChildren().add(thumbnailGridPane);
+		
+		
+		
+
+		
+	}
+
+	private void smallZoomLevelImages() {
 		int imageNum = 1;
 		
 		for (int i = 0; i < gridRows; i++) {
@@ -110,16 +154,41 @@ public class ThumbnailsModeController {
 			}
 			
 		}
-		
-		
-		
-		
-		
-		anchorPane.getChildren().add(thumbnailGridPane);
-		
-		
-		
-
-		
 	}
+	
+	private void mediumZoomLevelImages() {
+		int imageNum = 1;
+		
+		for (int i = 0; i < gridRows; i++) {
+			
+			for (int j = 0; j < gridColumns; j++) {
+				System.out.println(imageNum);
+				thumbnailGridPane.add(model.getMediumImage(imageNum), j, i);
+				
+				imageNum++;
+				if (imageNum > model.getImageHashtable().size()) {
+					break;
+				}
+			}
+			
+			if (imageNum > model.getImageHashtable().size()) {
+				break;
+			}
+			
+		}
+	}
+
+	public int getGridColumns() {
+		return gridColumns;
+	}
+
+	public void setGridColumns(int gridColumns) {
+		
+		if(!zoomSlider.isValueChanging()) {
+			this.gridColumns = gridColumns;
+			makeGridAndDisplayImages();
+		}
+	}
+	
+	
 }

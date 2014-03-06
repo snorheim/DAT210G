@@ -3,14 +3,12 @@ package gui.model;
 import gui.MainController;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
 
 
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 
@@ -68,9 +66,11 @@ public class Model {
 		return serverCommHandler.getThumbnail(imageId);
 	}
 
-	// TODO: getMediumImage
-
-	public Image getLargeImage(int imageId) {
+	public ImageView getMediumImage(int imageId) {
+		return serverCommHandler.getMediumImage(imageId);
+	}
+	
+	public ImageView getLargeImage(int imageId) {
 		return serverCommHandler.getLargeImage(imageId);
 	}
 

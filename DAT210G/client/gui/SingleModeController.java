@@ -1,16 +1,12 @@
 package gui;
 
-import javax.swing.border.Border;
-
 import gui.model.Model;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
 
 public class SingleModeController {
 
@@ -60,11 +56,10 @@ public class SingleModeController {
 	private void displayImage() {		
 		
 				
-		Image image = model.getLargeImage(model.getCurrentImageId());
+		ImageView image = model.getLargeImage(model.getCurrentImageId());
+				
 		
-		ImageView imageView = new ImageView(image);
-		
-		anchorPaneForSingle.getChildren().add(imageView);
+		anchorPaneForSingle.getChildren().add(image);
 		
 		
 		updateMetaFields();
