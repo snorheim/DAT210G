@@ -96,7 +96,7 @@ public class ReadFromDatabase {
 		return picList;
 	}
 
-
+	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har tag ut i fra det
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesBasedOnTag(String tag) {
 		List<PictureDb> picList = null;
@@ -123,7 +123,7 @@ public class ReadFromDatabase {
 		return imageIdArray;
 	}
 
-
+	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har tag ut i fra det
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getPicturesBasedOnManyTags(ArrayList<String> tagList) {
 		List<PictureDb> picList = null;
@@ -147,7 +147,7 @@ public class ReadFromDatabase {
 		return picList;
 	}
 
-
+	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har rating
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesBasedOnRating(int rating) {
 		List<PictureDb> picList = null;
@@ -240,6 +240,7 @@ public class ReadFromDatabase {
 		return allTagsAsString;
 	}
 	
+	//TODO: in a folder and subfolder, se tidl todo
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesBasedOnDate(String timeDate) {
 		List<PictureDb> pictureList = null;
@@ -310,7 +311,6 @@ public class ReadFromDatabase {
 		return folder;
 	}
 	
-	
 	@SuppressWarnings("unchecked")
 	public static List<ParentFolderDb> getFolderAndSubFolderInfo(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -370,9 +370,8 @@ public class ReadFromDatabase {
 		return folderIds; 	
 	}
 	
-	
 	@SuppressWarnings("unchecked")
-	public static int[] getPicturesInFolderAndSubFolder(int startFolderId) {
+	public static int[] getPicturesInFolderAndSubFolderId(int startFolderId) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -437,6 +436,32 @@ public class ReadFromDatabase {
 			child.setLeftChildId(folders.get(1).getFolderId());
 		}
 		return child;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<PictureDb> getPicturesInFolderAndSubFolderInfo(int startFolderId) {
+		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
+		int[] folderIds = getFolderAndSubFolderId(startFolderId);
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<PictureDb> tmp = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = null;
+			for (int i: folderIds) {
+				query = dbSession.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
+				query.setParameter("folderId", i);
+				tmp = query.list();
+				picturesFromDb.addAll(tmp);
+			}
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return picturesFromDb;
 	}
 	
 	public static class IsNotOnlyChildObject {

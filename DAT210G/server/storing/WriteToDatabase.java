@@ -92,13 +92,22 @@ public class WriteToDatabase {
 	}
 	
 	
-	//TODO: brukes ved ensureFolder, snakke med kjelli
-	public static boolean ensureImgFolderDatabase(ParentFolderDb imgFolder) {
+	//TODO: brukes ved ensureFolder, snakke med kjelli. HUSK: hvis img folder maa lages paa ny, WIPE DATABASE FORST
+	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		int[] allPicIds = ReadFromDatabase.getAllPicIds();
+		for (int i: allPicIds) {
+			DeleteFromDatabase.deletePicture(i);
+		}
+		ParentFolderDb newImageFolder = new ParentFolderDb("img", "\\img\\", 1, 2);
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			dbSession.save(imgFolder);
+			Query query = dbSession.createQuery("DELETE FROM TagDb");
+			query.executeUpdate();
+			query = dbSession.createQuery("DELETE FROM ParentFolderDb");
+			query.executeUpdate();
+			dbSession.save(newImageFolder);
 			dbTransaction.commit();
 			successfulTransfer = true;
 		} catch (HibernateException e) {

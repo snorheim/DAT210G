@@ -74,6 +74,9 @@ public class testSkrivBilde {
 //		System.out.println(imgFolder);
 		
 		
+//		boolean ensF = WriteToDatabase.ensureImgFolderDatabase();
+//		System.out.println(ensF);
+		
 	}
 
 }
