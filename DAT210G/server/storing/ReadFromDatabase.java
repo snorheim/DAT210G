@@ -39,13 +39,18 @@ public class ReadFromDatabase {
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession.createQuery("SELECT max(id) FROM PictureDb");
-			nextPicId = (int) query.uniqueResult() + 1;
+			if (!(query.uniqueResult() == null)) {
+				nextPicId = (int) query.uniqueResult() + 1;
+			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
+		}
+		if (nextPicId == 0) {
+			return 1;
 		}
 		return nextPicId;
 	}
@@ -120,13 +125,14 @@ public class ReadFromDatabase {
 
 
 	@SuppressWarnings("unchecked")
-	public static List<PictureDb> getPicturesBasedOnRating(int rating) {
+	public static int[] getPicturesBasedOnRating(int rating) {
 		List<PictureDb> picList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		int[] pictureIdArray = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE rating=:rat");
+			Query query = dbSession.createQuery("FROM PictureDb WHERE rating>=:rat");
 			query.setParameter("rat", rating);
 			picList = query.list();
 			dbTransaction.commit();
@@ -136,7 +142,11 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return picList;
+		pictureIdArray = new int[picList.size()];
+		for (int i = 0; i < pictureIdArray.length; i++) {
+			pictureIdArray[i] = picList.get(i).getId();
+		}
+		return pictureIdArray;
 	}
 
 	public static PictureDb getPictureBasedOnId(int picId) {
@@ -207,8 +217,9 @@ public class ReadFromDatabase {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static List<PictureDb> getPicturesBasedOnDate(String timeDate) {
+	public static int[] getPicturesBasedOnDate(String timeDate) {
 		List<PictureDb> pictureList = null;
+		int[] pictureIdArray;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
@@ -223,6 +234,10 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return pictureList;
+		pictureIdArray = new int[pictureList.size()];
+		for (int i = 0; i < pictureIdArray.length; i++) {
+			pictureIdArray[i] = pictureList.get(i).getId();
+		}
+		return pictureIdArray;
 	}
 }
