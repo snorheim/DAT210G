@@ -21,7 +21,10 @@ public class ImageHandler {
 
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
 <<<<<<< HEAD
+<<<<<<< HEAD
 	private DirectoryWatcher dirWatch;
+=======
+>>>>>>> origin/master
 =======
 >>>>>>> origin/master
 	public Path defaultPath;
