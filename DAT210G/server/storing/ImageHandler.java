@@ -10,8 +10,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.WatchEvent;
-import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -54,42 +52,12 @@ public class ImageHandler {
 	 * @throws FileNotFoundException
 	 */
 	private boolean ensureLocation() throws FileNotFoundException {
-		File thumbFolder = new File(defaultPath + "\\thumb");
-		File mediumFolder = new File(defaultPath + "\\medium");
-		File fullFolder = new File(defaultPath + "\\full");
 
-		/*
-		 * exists() sjekker om mappen faktisk eksisterer paa maskinen, om den
-		 * ikke gjoer det har vi ikke grunnlag til aa lagre bildene, og da skal
-		 * det oppstaa en feilmelding
-		 */
-
-		boolean success = (thumbFolder.exists() && mediumFolder.exists() && fullFolder
-				.exists());
-
-		/*
-		 * mkdirs() lager mappene som spesifisert ovenfor, om en mappe ikke blir
-		 * lagd kan det vaere at den allerede eksisterer, eller av en annen
-		 * grunn feiler.
-		 */
-		if (success)
+		if (defaultPath.toFile().exists()) {
 			return true;
-		else {
-			thumbFolder.mkdirs();
-			mediumFolder.mkdirs();
-			fullFolder.mkdirs();
-		}
-		success = (thumbFolder.exists() && mediumFolder.exists() && fullFolder
-				.exists());
-		if (success)
-			return true;
-		return false;
-	}
-
-	public static void onChange(List<WatchEvent<?>> events) {
-		System.out.println("New events: ");
-		for (WatchEvent event : events) {
-			System.out.println(event.kind() + ": " + event.toString());
+		} else {
+			// Sørg for at databasen er tom.
+			return defaultPath.toFile().mkdirs();
 		}
 	}
 

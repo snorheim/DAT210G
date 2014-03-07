@@ -57,7 +57,7 @@ public class DirectoryWatcher implements Runnable {
 				} else if (kind == StandardWatchEventKinds.ENTRY_CREATE) {
 					WatchEvent<Path> eventPath = (WatchEvent<Path>) watchEvent;
 					Path path = eventPath.context();
-					System.out.println("Created: " + path.toAbsolutePath());
+
 				}
 			}
 			key.reset();
