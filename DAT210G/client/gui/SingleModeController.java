@@ -26,7 +26,9 @@ public class SingleModeController {
 	private Button rotLeftBtn;
 	@FXML
 	private Button rotRightBtn;
-
+	@FXML
+	private Button storeMetaBtn;
+	
 	@FXML
 	private TextField titleTextField;
 	@FXML
@@ -135,23 +137,31 @@ public class SingleModeController {
 		anchorPaneForSingle.getChildren().add(image);
 		
 	}
-
+	
 	@FXML
+	private void storeMetaBtnAction() {
+		titleTextFieldAction();
+		descTextFieldAction();
+		ratingTextFieldAction();
+		tagsTextFieldAction();
+	}
+
+	
 	private void titleTextFieldAction() {
 		model.getCurrentOneImage().modifyTitle(titleTextField.getText());
 	};
 
-	@FXML
+	
 	private void descTextFieldAction() {
 		model.getCurrentOneImage().modifyDesc(descTextField.getText());
 	};
 
-	@FXML
+	
 	private void ratingTextFieldAction() {
 		model.getCurrentOneImage().modifyRating(ratingTextField.getText());
 	};
 
-	@FXML
+	
 	private void tagsTextFieldAction() {
 		model.getCurrentOneImage().addTag(tagsTextField.getText());
 	};

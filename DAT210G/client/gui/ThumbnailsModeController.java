@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import gui.MainController;
@@ -13,8 +14,8 @@ import gui.model.Model;
 
 public class ThumbnailsModeController {
 
-	private static final int SMALL_ZOOM = 10;
-	private static final int MEDIUM_ZOOM = 5;
+	private static final int SMALL_ZOOM = 6;
+	private static final int MEDIUM_ZOOM = 3;
 	
 	
 	// Reference to the main application
@@ -37,6 +38,8 @@ public class ThumbnailsModeController {
 	private TextField tagsTextField;
 	@FXML
 	private Slider zoomSlider;
+	@FXML
+	private TreeView treeView;
 	
 	private GridPane thumbnailGridPane;
 	

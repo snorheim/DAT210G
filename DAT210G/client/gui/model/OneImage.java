@@ -11,6 +11,11 @@ public class OneImage {
 	private ImageView image;
 	private Model model;
 	private ServerCommHandler serverCommHandler;
+	private String titleMeta;
+	private String descMeta;
+	private String ratingMeta;
+	private String dateMeta;
+	private String tagsMeta;
 
 	public OneImage(int imageId, ServerCommHandler serverComm, Model model) {
 
@@ -96,25 +101,34 @@ public class OneImage {
 
 	public String getTitleMeta() {
 
-		return serverCommHandler.getMetaData(imageId)[0];
-
+		titleMeta = serverCommHandler.getMetaData(imageId)[0];
+		
+		return titleMeta;
 
 	}
 
 	public String getDescMeta() {
-		return serverCommHandler.getMetaData(imageId)[1];
+		descMeta = serverCommHandler.getMetaData(imageId)[1];
+		
+		return descMeta;
 	}
 
 	public String getRatingMeta() {
-		return serverCommHandler.getMetaData(imageId)[2];
+		ratingMeta = serverCommHandler.getMetaData(imageId)[2];
+		
+		return ratingMeta;
 	}
 
 	public String getDateMeta() {
-		return serverCommHandler.getMetaData(imageId)[3];
+		dateMeta = serverCommHandler.getMetaData(imageId)[3];
+		
+		return dateMeta;
 	}
 
 	public String getTagsMeta() {
-		return serverCommHandler.getMetaData(imageId)[4];
+		tagsMeta = serverCommHandler.getMetaData(imageId)[4];
+		
+		return tagsMeta;
 	}
 	
 	public void modifyTitle(String string) {

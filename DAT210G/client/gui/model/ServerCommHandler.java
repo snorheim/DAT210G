@@ -154,7 +154,7 @@ public class ServerCommHandler {
 	
 	public ImageView getMediumImage(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getMediumJson = new JsonClient(new RequestClient("getLargeImage", imageID));
+		JsonClient getMediumJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "500;500"));
 		if (getMediumJson.sendJsonToServer()){
 			ResponseClient getThumbnailResponse = getMediumJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()){
