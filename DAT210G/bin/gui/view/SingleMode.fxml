@@ -54,7 +54,7 @@
                 <Label text="Rating" />
                 <TextField fx:id="ratingTextField" onAction="#ratingTextFieldAction" prefWidth="200.0" />
                 <Label text="Date" />
-                <TextField fx:id="dateTextField" onAction="#dateTextFieldAction" prefWidth="200.0" />
+                <TextField fx:id="dateTextField" prefWidth="200.0" />
                 <Label text="Tags" />
                 <TextField fx:id="tagsTextField" onAction="#tagsTextFieldAction" prefWidth="200.0" />
               </children>

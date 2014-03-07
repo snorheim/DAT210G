@@ -7,11 +7,6 @@ import java.util.Hashtable;
 import java.util.List;
 
 
-
-
-import javafx.scene.image.ImageView;
-
-
 public class Model {
 
 	private Hashtable<Integer, OneImage> imageHashtable;
@@ -45,7 +40,7 @@ public class Model {
 		for (int i = 0; i < imageIdArray.length; i++) {
 												
 			
-			OneImage oneImage = new OneImage(imageIdArray[i], getThumbnail(imageIdArray[i]), this);
+			OneImage oneImage = new OneImage(imageIdArray[i], serverCommHandler, this);
 			
 			
 			imageHashtable.put(imageIdArray[i], oneImage);
@@ -58,21 +53,13 @@ public class Model {
 		}
 		System.out.println(imageHashtable.toString());
 		
+		
+		
 		return true;
 		
 	}
 
-	public ImageView getThumbnail(int imageId) {
-		return serverCommHandler.getThumbnail(imageId);
-	}
-
-	public ImageView getMediumImage(int imageId) {
-		return serverCommHandler.getMediumImage(imageId);
-	}
 	
-	public ImageView getLargeImage(int imageId) {
-		return serverCommHandler.getLargeImage(imageId);
-	}
 
 	public void sendImagesToServer(List<File> fileList) {
 		
@@ -87,38 +74,18 @@ public class Model {
 		}
 		
 	}
-	
-	
-	
-	
+		
 	
 	public Hashtable<Integer, OneImage> getImageHashtable() {
 		return imageHashtable;
 	}
+	
+	public OneImage getCurrentOneImage() {
+		
+		
+		return imageHashtable.get(currentImageId);
+	}
 
-
-	public String getTitleMeta(int imageId) {
-		
-		return serverCommHandler.getMetaData(imageId)[0];
-		
-		
-	}
-	
-	public String getDescMeta(int imageId) {
-		return serverCommHandler.getMetaData(imageId)[1];
-	}
-	
-	public String getRatingMeta(int imageId) {
-		return serverCommHandler.getMetaData(imageId)[2];
-	}
-	
-	public String getDateMeta(int imageId) {
-		return serverCommHandler.getMetaData(imageId)[3];
-	}
-	
-	public String getTagsMeta(int imageId) {
-		return serverCommHandler.getMetaData(imageId)[4];
-	}
 
 	public int getCurrentImageId() {
 		return currentImageId;

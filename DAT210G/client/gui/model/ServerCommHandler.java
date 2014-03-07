@@ -125,9 +125,9 @@ public class ServerCommHandler {
 
 	}
 
-	public ImageView getLargeImage(int imageID) {
+	public ImageView getFullImage(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "800;600"));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImage", imageID));
 		if (getThumbnailJson.sendJsonToServer()){
 			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()){
@@ -154,7 +154,7 @@ public class ServerCommHandler {
 	
 	public ImageView getMediumImage(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getMediumJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "800;600"));
+		JsonClient getMediumJson = new JsonClient(new RequestClient("getLargeImage", imageID));
 		if (getMediumJson.sendJsonToServer()){
 			ResponseClient getThumbnailResponse = getMediumJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()){
@@ -196,6 +196,131 @@ public class ServerCommHandler {
 
 
 		return metaData;
+	}
+	
+	public Boolean modifyTitle(int imageID, String string) {
+			
+		Boolean success = false;
+
+		JsonClient modifyTitle = new JsonClient(new RequestClient("modifyTitle", imageID, string));
+		if (modifyTitle.sendJsonToServer()){
+			ResponseClient modifyTitleResponse = modifyTitle.receiveJsonFromServer();
+			if (modifyTitleResponse.getSuccess()){
+				success = true;
+			}
+			modifyTitle.closeHttpConnection();
+		}
+		
+		return success;
+		
+	}
+	
+	public Boolean modifyDesc(int imageID, String string) {
+		
+		Boolean success = false;
+
+		JsonClient modifyDescription = new JsonClient(new RequestClient("modifyDescription", imageID, string));
+		if (modifyDescription.sendJsonToServer()){
+			ResponseClient modifyTitleResponse = modifyDescription.receiveJsonFromServer();
+			if (modifyTitleResponse.getSuccess()){
+				success = true;
+			}
+			modifyDescription.closeHttpConnection();
+		}
+		
+		return success;
+		
+	}
+	
+	public Boolean modifyRating(int imageID, String string) {
+		
+		Boolean success = false;
+
+		JsonClient modifyRating = new JsonClient(new RequestClient("modifyRating", imageID, string));
+		if (modifyRating.sendJsonToServer()){
+			ResponseClient modifyTitleResponse = modifyRating.receiveJsonFromServer();
+			if (modifyTitleResponse.getSuccess()){
+				success = true;
+			}
+			modifyRating.closeHttpConnection();
+		}
+		
+		return success;
+		
+	}
+	
+	public Boolean addTag(int imageID, String string) {
+		
+		Boolean success = false;
+
+		JsonClient addTag = new JsonClient(new RequestClient("addTag", imageID, string));
+		if (addTag.sendJsonToServer()){
+			ResponseClient modifyTitleResponse = addTag.receiveJsonFromServer();
+			if (modifyTitleResponse.getSuccess()){
+				success = true;
+			}
+			addTag.closeHttpConnection();
+		}
+		
+		return success;
+		
+	}
+	
+	
+	public ImageView getRotLeft(int imageID) {
+		BufferedImage bufImage = null;
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImage", imageID));
+		if (getThumbnailJson.sendJsonToServer()){
+			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
+			if (getThumbnailResponse.getSuccess()){
+				bufImage = getThumbnailJson.receiveImageFromServer();
+			}
+			getThumbnailJson.closeHttpConnection();
+		}
+
+		// TODO: FOR DEBUG 
+
+		String text = String.valueOf(imageID) + " rotated left";
+		
+		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		Font font = new Font("Verdana", Font.ITALIC, 24);
+		g.setFont(font);
+		g.setColor(Color.RED);
+		g.drawString(text, 20, 20); 
+
+		//TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg blander swing og JavaFX?
+		Image image = SwingFXUtils.toFXImage(bufImage, null);
+
+
+		return new ImageView(image);
+	}
+	
+	public ImageView getRotRight(int imageID) {
+		BufferedImage bufImage = null;
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImage", imageID));
+		if (getThumbnailJson.sendJsonToServer()){
+			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
+			if (getThumbnailResponse.getSuccess()){
+				bufImage = getThumbnailJson.receiveImageFromServer();
+			}
+			getThumbnailJson.closeHttpConnection();
+		}
+
+		// TODO: FOR DEBUG 
+
+		String text = String.valueOf(imageID) + " rotated right";
+		
+		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		Font font = new Font("Verdana", Font.ITALIC, 24);
+		g.setFont(font);
+		g.setColor(Color.RED);
+		g.drawString(text, 20, 20); 
+
+		//TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg blander swing og JavaFX?
+		Image image = SwingFXUtils.toFXImage(bufImage, null);
+
+
+		return new ImageView(image);
 	}
 
 

@@ -79,15 +79,18 @@ public class ThumbnailsModeController {
 
 	}
 
+	// TODO: Slett dette
 	/**
 	 * Called when the user clicks refresh.
-	 */
+	 *
 	@FXML
 	private void handleRefreshBtn() {
 		System.out.println("Clicked refresh");
 		model.updateImageHashMap();
 		makeGridAndDisplayImages();
 	}
+	
+	*/
 
 	/**
 	 * Called when the user clicks import.
@@ -137,11 +140,13 @@ public class ThumbnailsModeController {
 	private void smallZoomLevelImages() {
 		int imageNum = 1;
 		
+		
+		
 		for (int i = 0; i < gridRows; i++) {
 			
 			for (int j = 0; j < gridColumns; j++) {
 				System.out.println(imageNum);
-				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getThumbnail(), j, i);
+				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getThumbnailImage(), j, i);
 				
 				imageNum++;
 				if (imageNum > model.getImageHashtable().size()) {
@@ -154,6 +159,7 @@ public class ThumbnailsModeController {
 			}
 			
 		}
+		
 	}
 	
 	private void mediumZoomLevelImages() {
@@ -163,7 +169,8 @@ public class ThumbnailsModeController {
 			
 			for (int j = 0; j < gridColumns; j++) {
 				System.out.println(imageNum);
-				thumbnailGridPane.add(model.getMediumImage(imageNum), j, i);
+				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getMediumImage(), j, i);
+				
 				
 				imageNum++;
 				if (imageNum > model.getImageHashtable().size()) {

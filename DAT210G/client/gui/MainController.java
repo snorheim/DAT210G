@@ -21,16 +21,19 @@ public class MainController extends Application {
 	private BorderPane rootLayout;
 	private Model model;
 	private Boolean contactWithServer;
+	private AboutPopupController aboutPopupController;
 	
 
 	public MainController() {
 		model = new Model(this);
 		
+		aboutPopupController = new AboutPopupController();
+		
 		contactWithServer = model.updateImageHashMap();
 		
 		if (!contactWithServer) {
 			System.out.println("No contact with server!");
-			Platform.exit();
+			exitProgram();
 		}
 		
 	}
@@ -50,6 +53,8 @@ public class MainController extends Application {
 			scene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
 			primaryStage.setScene(scene);
 			primaryStage.show();
+			
+			
 		} catch (Exception e) {
 			// Exception if fxml file isn't loaded
 			e.printStackTrace();
@@ -58,6 +63,10 @@ public class MainController extends Application {
 		showThumbnailsMode();
 		
 		
+	}
+	
+	public void exitProgram() {
+		Platform.exit();
 	}
 
 	/**
@@ -112,7 +121,12 @@ public class MainController extends Application {
 			e.printStackTrace();
 		}
 	}
+	
+	
 
+	public void showAboutPopup() {
+		aboutPopupController.showPopup();
+	}
 
 	
 

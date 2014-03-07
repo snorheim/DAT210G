@@ -26,7 +26,7 @@ public class SingleModeController {
 	private Button rotLeftBtn;
 	@FXML
 	private Button rotRightBtn;
-	
+
 	@FXML
 	private TextField titleTextField;
 	@FXML
@@ -37,7 +37,7 @@ public class SingleModeController {
 	private TextField dateTextField;
 	@FXML
 	private TextField tagsTextField;
-	
+
 	@FXML
 	private Label currentImageLabel;
 
@@ -54,14 +54,14 @@ public class SingleModeController {
 	}
 
 	private void displayImage() {		
-		
-				
-		ImageView image = model.getLargeImage(model.getCurrentImageId());
-				
-		
+
+
+		ImageView image = model.getCurrentOneImage().getFullImage();
+
+
 		anchorPaneForSingle.getChildren().add(image);
-		
-		
+
+
 		updateMetaFields();
 	}
 
@@ -69,86 +69,92 @@ public class SingleModeController {
 	private void homeBtnAction() {
 		main.showThumbnailsMode();
 	}
-	
+
 	@FXML
 	private void nextBtnAction() {
-						
-		
+
+
 		int nextImage = model.getCurrentImageId() + 1;
-		
+
 		if (nextImage > model.getImageHashtable().size()) {
 			nextImage = 1;
 		}
-		
+
 		model.setCurrentImageId(nextImage);
-		
-		
+
+
 		displayImage();
-		
+
 	}
-	
+
 	private void updateMetaFields() {
-		
+
 		currentImageLabel.setText(Integer.toString(model.getCurrentImageId()));		
-		
-		titleTextField.setText(model.getTitleMeta(model.getCurrentImageId()));
-		descTextField.setText(model.getDescMeta(model.getCurrentImageId()));
-		ratingTextField.setText(model.getRatingMeta(model.getCurrentImageId()));
-		dateTextField.setText(model.getDateMeta(model.getCurrentImageId()));
-		tagsTextField.setText(model.getTagsMeta(model.getCurrentImageId()));
-		
-	
+
+		titleTextField.setText(model.getCurrentOneImage().getTitleMeta());
+		descTextField.setText(model.getCurrentOneImage().getDescMeta());
+		ratingTextField.setText(model.getCurrentOneImage().getRatingMeta());
+		dateTextField.setText(model.getCurrentOneImage().getDateMeta());
+		tagsTextField.setText(model.getCurrentOneImage().getTagsMeta());
+
+
 	}
-	
+
 	@FXML
 	private void prevBtnAction() {
-		
-							
+
+
 		int prevImage = model.getCurrentImageId() - 1;
-		
+
 		if (prevImage < 1) {
 			prevImage = model.getImageHashtable().size();
 		}
-		
+
 		model.setCurrentImageId(prevImage);
-		
-		
+
+
 		displayImage();
-		
+
 	}
-	
+
 	@FXML
 	private void rotRightBtnAction() {
 		
+		ImageView image = model.getCurrentOneImage().getRotRight();
+
+
+		anchorPaneForSingle.getChildren().add(image);
 	}
-	
+
 	@FXML
 	private void rotLeftBtnAction() {
+
+		ImageView image = model.getCurrentOneImage().getRotLeft();
+
+
+		anchorPaneForSingle.getChildren().add(image);
 		
 	}
-	
+
 	@FXML
 	private void titleTextFieldAction() {
-		
+		model.getCurrentOneImage().modifyTitle(titleTextField.getText());
 	};
-	
+
 	@FXML
 	private void descTextFieldAction() {
-		
+		model.getCurrentOneImage().modifyDesc(descTextField.getText());
 	};
-	
+
 	@FXML
 	private void ratingTextFieldAction() {
-		
+		model.getCurrentOneImage().modifyRating(ratingTextField.getText());
 	};
-	@FXML
-	private void dateTextFieldAction() {
-		
-	};
+
 	@FXML
 	private void tagsTextFieldAction() {
-		
+		model.getCurrentOneImage().addTag(tagsTextField.getText());
 	};
-	
+
 
 }
