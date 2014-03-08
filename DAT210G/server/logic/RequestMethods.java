@@ -109,6 +109,8 @@ public class RequestMethods {
 		System.out.println("Neste id er: " + nextAvailableId);
 		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
 	}
+	
+	//blir skrevet feil til DB her
 	public static void addTag(RequestServer request, int imageId, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(imageId);
 		String fileLocation = pictureDb.getFileLocation();
@@ -190,10 +192,13 @@ public class RequestMethods {
 	public static void addNewFullImage(RequestServer request, int imageId, String detail){
 		System.out.println("ImageID til server: " + imageId);
 		File tempImage = null;
+		//metoden gaar mye inn i catchen her: why :P?
+		//prog crasher raskt ved flere bilder pga denne?
 		try {
 			tempImage = request.receiveFile(detail);
 		} catch (Exception e) {
 			request.sendJsonResponse(new ResponseServer(false));
+			tempImage.delete();
 			return;
 		}
 		ReadExif exif = new ReadExif(tempImage.getPath());
@@ -206,12 +211,16 @@ public class RequestMethods {
 					"\\thumb\\"+imageId+"."+detail);
 			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
 			if (writePictureToDb){
-				String[] tagsInString = exif.getExifTags().split(";");
-				for (int i = 0; i < tagsInString.length; i++) {
-					WriteToDatabase.addTagToPic(imageId, tagsInString[i]);
+				//har endret her
+				if (!(exif.getExifTags() == null)) {
+					String[] tagsInString = exif.getExifTags().split(";");
+					for (int i = 0; i < tagsInString.length; i++) {
+						WriteToDatabase.addTagToPic(imageId, tagsInString[i]);
+					}
 				}
 				request.sendJsonResponse(new ResponseServer(true));
 			}
-		}
+
+		} 
 	}
 }
