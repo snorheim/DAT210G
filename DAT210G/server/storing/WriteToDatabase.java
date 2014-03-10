@@ -92,7 +92,7 @@ public class WriteToDatabase {
 	}
 	
 	
-	//TODO: brukes ved ensureFolder, snakke med kjelli. HUSK: hvis img folder maa lages paa ny, WIPE DATABASE FORST
+	//TODO: brukes ved ensureFolder, snakk med kjelli
 	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;

@@ -2,6 +2,7 @@ package storing;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
@@ -77,6 +78,13 @@ public class testSkrivBilde {
 //		boolean ensF = WriteToDatabase.ensureImgFolderDatabase();
 //		System.out.println(ensF);
 		
+//		boolean del = DeleteFromDatabase.deleteFolderAndContent(2);
+//		System.out.println(del);
+
+		List<PictureDb> li = ReadFromDatabase.getPicturesBasedOnDate(" ", 1);
+		for (PictureDb p: li) {
+			System.out.println(p.getId());
+		}
 	}
 
 }

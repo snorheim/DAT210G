@@ -8,10 +8,11 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 public class ReadFromDatabase {
+
+	
 
 	@SuppressWarnings("unchecked")
 	public static List<TagDb> getAllTags() {
@@ -20,7 +21,8 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			tagList = dbSession.createQuery("FROM TagDb").list();
+			Query query = dbSession.createQuery("FROM TagDb");
+			tagList = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
@@ -30,7 +32,7 @@ public class ReadFromDatabase {
 		}
 		return tagList;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static String[] getTagsStartingWith(String tagStart) {
 		List<TagDb> tagsFromDb = null;
@@ -54,7 +56,7 @@ public class ReadFromDatabase {
 		}
 		return tagStringList;
 	}
-	
+
 	public static int findNextPicId() {
 		int nextPicId = 0;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -96,47 +98,20 @@ public class ReadFromDatabase {
 		return picList;
 	}
 
-	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har tag ut i fra det
-	@SuppressWarnings("unchecked")
-	public static int[] getPicturesBasedOnTag(String tag) {
-		List<PictureDb> picList = null;
+	public static List<PictureDb> getPicturesBasedOnTag(String tag, int folderId) {
+		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Criteria criteria = dbSession.createCriteria(PictureDb.class);
-			criteria.createAlias("tags", "tag");
-			criteria.add(Restrictions.eq("tag.tag", tag));
-			criteria.addOrder(Order.desc("dateTime"));
-			picList = criteria.list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null) dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}   
-		int[] imageIdArray = new int[picList.size()];
-		for (int i = 0; i < imageIdArray.length; i++) {
-			imageIdArray[i] = picList.get(i).getId();
-		}
-		return imageIdArray;
-	}
-
-	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har tag ut i fra det
-	@SuppressWarnings("unchecked")
-	public static List<PictureDb> getPicturesBasedOnManyTags(ArrayList<String> tagList) {
-		List<PictureDb> picList = null;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();		
-			Criteria criteria = dbSession.createCriteria(PictureDb.class);
-			criteria.createAlias("tags", "tag");
-			criteria.add(Restrictions.in("tag.tag", tagList));
-			criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-			criteria.addOrder(Order.desc("dateTime"));
-			picList = criteria.list();
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(folderId, dbSession);
+			for (PictureDb picture: picList) {
+				for (TagDb t: picture.getTags()) {
+					if (t.getTag().equals(tag)) {
+						returnList.add(picture);
+					}
+				}
+			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
@@ -144,21 +119,27 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return picList;
+		return returnList;
 	}
 
-	//TODO: spor etter bilder i folderAndSubFolder, spor saa etter bilder som har rating
-	@SuppressWarnings("unchecked")
-	public static int[] getPicturesBasedOnRating(int rating) {
-		List<PictureDb> picList = null;
+	public static List<PictureDb> getPicturesBasedOnManyTags(String[] tag, int folderId) {
+		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		int[] pictureIdArray = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE rating>=:rat ORDER BY rating DESC");
-			query.setParameter("rat", rating);
-			picList = query.list();
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(folderId, dbSession);
+			for (PictureDb picture: picList) {
+				for (TagDb t: picture.getTags()) {
+					for (String tagString: tag) {
+						if (t.getTag().equals(tagString)) {
+							if (!returnList.contains(picture)) {
+								returnList.add(picture);
+							}
+						}
+					}
+				}
+			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
@@ -166,13 +147,56 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		pictureIdArray = new int[picList.size()];
-		for (int i = 0; i < pictureIdArray.length; i++) {
-			pictureIdArray[i] = picList.get(i).getId();
-		}
-		return pictureIdArray;
+		return returnList;
 	}
-
+	
+	public static List<PictureDb> getPicturesBasedOnRating(int rating, int folderId) {
+		List<PictureDb> returnList = new ArrayList<>();
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(folderId, dbSession);
+			for (PictureDb picture: picList) {
+				if (picture.getRating() >= rating) {
+					returnList.add(picture);
+				}
+			}
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return returnList;
+	}
+	
+	public static List<PictureDb> getPicturesBasedOnDate(String timeDate, int folderId) {
+		List<PictureDb> returnList = new ArrayList<>();
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(folderId, dbSession);
+			for (PictureDb picture: picList) {
+				if (picture.getDateTime() != null) {
+					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
+						returnList.add(picture);
+					}
+				}
+			}
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return returnList;
+	}
+	
+	//TODO: kan fjernes?
 	public static PictureDb getPictureBasedOnId(int picId) {
 		PictureDb picture = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -214,7 +238,7 @@ public class ReadFromDatabase {
 		}
 		return tempArray;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static String getAllTagsForAPicture(int picId) {
 		List<TagDb> tagList = null;
@@ -239,34 +263,7 @@ public class ReadFromDatabase {
 		}
 		return allTagsAsString;
 	}
-	
-	//TODO: in a folder and subfolder, se tidl todo
-	@SuppressWarnings("unchecked")
-	public static int[] getPicturesBasedOnDate(String timeDate) {
-		List<PictureDb> pictureList = null;
-		int[] pictureIdArray;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Criteria criteria = dbSession.createCriteria(PictureDb.class);
-			criteria.add(Restrictions.like("dateTime", "%" + timeDate + "%"));
-			criteria.addOrder(Order.desc("dateTime"));
-			pictureList = criteria.list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null) dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		pictureIdArray = new int[pictureList.size()];
-		for (int i = 0; i < pictureIdArray.length; i++) {
-			pictureIdArray[i] = pictureList.get(i).getId();
-		}
-		return pictureIdArray;
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static int[] getImagesInAFolder(int folderId) {
 		int[] imageIdArray;
@@ -291,7 +288,7 @@ public class ReadFromDatabase {
 		}
 		return imageIdArray;
 	}
-	
+
 	public static ParentFolderDb getFolderInfo(int folderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -310,7 +307,7 @@ public class ReadFromDatabase {
 		}
 		return folder;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<ParentFolderDb> getFolderAndSubFolderInfo(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -337,7 +334,7 @@ public class ReadFromDatabase {
 		}
 		return foldersFromDb;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static int[] getFolderAndSubFolderId(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -369,7 +366,7 @@ public class ReadFromDatabase {
 		}
 		return folderIds; 	
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesInFolderAndSubFolderId(int startFolderId) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
@@ -399,7 +396,27 @@ public class ReadFromDatabase {
 		}
 		return pictureIds;
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private static List<PictureDb> getPictureFolderSubfolderMetaData(int startFolderId, Session dbSession) {
+		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
+		int[] folderIds = getFolderAndSubFolderId(startFolderId);
+		dbSession = HibernateUtil.getSessionFactory().openSession();
+		List<PictureDb> tmp = null;
+		try {
+			Query query = null;
+			for (int i: folderIds) {
+				query = dbSession.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
+				query.setParameter("folderId", i);
+				tmp = query.list();
+				picturesFromDb.addAll(tmp);
+			}
+		} catch (HibernateException e) {
+
+		} 
+		return picturesFromDb;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static List<ParentFolderDb> folderAndSubFolder(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -426,7 +443,7 @@ public class ReadFromDatabase {
 		}
 		return foldersFromDb;	
 	}
-	
+
 	public static IsNotOnlyChildObject isFolderOnlyChild(int parentFolderId) {
 		IsNotOnlyChildObject child = new IsNotOnlyChildObject();
 		child.setOnlyChild(true);
@@ -437,7 +454,7 @@ public class ReadFromDatabase {
 		}
 		return child;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<PictureDb> getPicturesInFolderAndSubFolderInfo(int startFolderId) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
@@ -463,18 +480,18 @@ public class ReadFromDatabase {
 		}
 		return picturesFromDb;
 	}
-	
+
 	public static class IsNotOnlyChildObject {
 		int leftChildId;
 		boolean isOnlyChild;
-		
+
 		public IsNotOnlyChildObject(int leftChildId, boolean isNotOnlyChild) {
 			this.leftChildId = leftChildId;
 			this.isOnlyChild = isNotOnlyChild;
 		}
-		
+
 		public IsNotOnlyChildObject() {}
-		
+
 		public int getLeftChildId() {
 			return leftChildId;
 		}
@@ -490,7 +507,7 @@ public class ReadFromDatabase {
 		public void setOnlyChild(boolean isOnlyChild) {
 			this.isOnlyChild = isOnlyChild;
 		}
-		
+
 	}
-	
+
 }

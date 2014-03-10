@@ -1,5 +1,7 @@
 package storing;
 
+
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -9,7 +11,6 @@ import org.hibernate.Transaction;
 
 public class DeleteFromDatabase {
 	private static boolean succesful;
-	
 	
 	public static boolean deletePicture(int picId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -64,24 +65,44 @@ public class DeleteFromDatabase {
 		return succesful;
 	}
 	
-//	public static boolean deleteTagsFromPic(int picId) {
-//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-//		Transaction dbTransaction = null;
-//		try {
-//			dbTransaction = dbSession.beginTransaction();
-//			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
-////			picFromDb.getTags().removeAll(picFromDb.getTags());
-//			dbTransaction.commit();
-//			succesful = true;
-//		} catch (HibernateException e) {
-//			if (dbTransaction != null) dbTransaction.rollback();
-//			succesful = false;
-//		} finally {
-// 			dbSession.close();
-//			HibernateUtil.shutdown();
-//		}
-//		return succesful;
-//	}
+	//TODO: fiks treestruktur
+	@SuppressWarnings("unchecked")
+	public static boolean deleteFolderAndContent(int folderId) {
+		int[] folderAndSubfolderId = ReadFromDatabase.getFolderAndSubFolderId(folderId);
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<PictureDb> tmpList = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = null;
+			for (int i: folderAndSubfolderId) {
+				query = dbSession.createQuery("DELETE FROM ParentFolderDb WHERE folderId = :folderId");
+				query.setParameter("folderId", i);
+				query.executeUpdate();
+			}
+			for (int i: folderAndSubfolderId) {
+				query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId = :folderID");
+				query.setParameter("folderID", i);
+				tmpList = query.list();
+				for (PictureDb p: tmpList) {
+					Set<TagDb> tagsToPic = removeTagOnPictureDelete(p);
+					p.getTags().removeAll(tagsToPic);
+					dbSession.delete(p);
+				}	
+			}
+			dbTransaction.commit();
+			succesful = true;
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+			succesful = false;
+		} finally {
+ 			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return succesful;
+	}
+	
+
 	
 	
 }
