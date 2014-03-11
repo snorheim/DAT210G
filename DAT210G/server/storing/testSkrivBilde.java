@@ -78,13 +78,13 @@ public class testSkrivBilde {
 //		boolean ensF = WriteToDatabase.ensureImgFolderDatabase();
 //		System.out.println(ensF);
 		
-//		boolean del = DeleteFromDatabase.deleteFolderAndContent(2);
+//		boolean del = DeleteFromDatabase.deleteFolderAndContent(6);
 //		System.out.println(del);
 
-		List<PictureDb> li = ReadFromDatabase.getPicturesBasedOnDate(" ", 1);
-		for (PictureDb p: li) {
-			System.out.println(p.getId());
-		}
+//		List<PictureDb> li = ReadFromDatabase.getPicturesBasedOnDate(" ", 1);
+//		for (PictureDb p: li) {
+//			System.out.println(p.getId());
+//		}
 	}
 
 }

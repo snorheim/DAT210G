@@ -75,25 +75,44 @@ public class DeleteFromDatabase {
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = null;
+			
+			query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:folderId");
+			query.setParameter("folderId", folderId);
+			int lft = (int) query.uniqueResult();
+			query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:folderId");
+			query.setParameter("folderId", folderId);
+			int rgt = (int) query.uniqueResult();
+			int width = rgt - lft + 1;
+			
+			query = dbSession.createQuery("DELETE FROM ParentFolderDb WHERE lft BETWEEN :lft AND :rgt");
+			query.setParameter("lft", lft);
+			query.setParameter("rgt", rgt);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt - :width WHERE rgt > :rgt");
+			query.setParameter("width", width);
+			query.setParameter("rgt", rgt);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft - :width WHERE lft > :lft");
+			query.setParameter("width", width);
+			query.setParameter("lft", lft);
+			query.executeUpdate();
 			for (int i: folderAndSubfolderId) {
-				query = dbSession.createQuery("DELETE FROM ParentFolderDb WHERE folderId = :folderId");
-				query.setParameter("folderId", i);
-				query.executeUpdate();
-			}
-			for (int i: folderAndSubfolderId) {
-				query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId = :folderID");
+				query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:folderID");
 				query.setParameter("folderID", i);
 				tmpList = query.list();
 				for (PictureDb p: tmpList) {
 					Set<TagDb> tagsToPic = removeTagOnPictureDelete(p);
 					p.getTags().removeAll(tagsToPic);
 					dbSession.delete(p);
-				}	
+				}
 			}
 			dbTransaction.commit();
 			succesful = true;
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
+			e.printStackTrace();
 			succesful = false;
 		} finally {
  			dbSession.close();

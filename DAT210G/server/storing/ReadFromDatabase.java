@@ -196,7 +196,6 @@ public class ReadFromDatabase {
 		return returnList;
 	}
 	
-	//TODO: kan fjernes?
 	public static PictureDb getPictureBasedOnId(int picId) {
 		PictureDb picture = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
