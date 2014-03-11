@@ -68,7 +68,7 @@ public class Model {
 		if (fileList != null) {
 			for (File file : fileList) {
 
-				serverCommHandler.SendImageToServer(fileList.get(0));
+				serverCommHandler.SendImageToServer(file);
 
 			}
 		}
