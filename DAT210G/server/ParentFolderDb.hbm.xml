@@ -10,5 +10,6 @@
 	<property name="path" column="path" type="string"></property>
 	<property name="lft" column="lft" type="integer"></property>
 	<property name="rgt" column="rgt" type="integer"></property>
+	<property name="parentId" column="parentId" type="integer"></property>
 </class>
 </hibernate-mapping>

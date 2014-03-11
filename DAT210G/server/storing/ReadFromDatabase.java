@@ -320,7 +320,7 @@ public class ReadFromDatabase {
 			st = (ParentFolderDb) query.uniqueResult();
 			int leftParent = st.getLft();
 			int rightParent = st.getRgt();
-			query = dbSession.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
+			query = dbSession.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent ORDER BY lft ASC");
 			query.setParameter("lftParent", leftParent);
 			query.setParameter("rgtParent", rightParent);
 			foldersFromDb = query.list();
@@ -452,6 +452,29 @@ public class ReadFromDatabase {
 			child.setLeftChildId(folders.get(1).getFolderId());
 		}
 		return child;
+	}
+	
+	public static List<TreeMenuNode> getTreeForMenu() {
+		List<ParentFolderDb> li = ReadFromDatabase.getFolderAndSubFolderInfo(1);
+		List<TreeMenuNode> tList = new ArrayList<>();
+		for (ParentFolderDb pFolder: li) {
+			TreeMenuNode t = new TreeMenuNode(pFolder);
+			tList.add(t);
+		}
+		for (TreeMenuNode trN: tList) {
+			addChildren(trN, tList);
+		}
+		return tList;
+	}
+	
+	private static void addChildren(TreeMenuNode root, List<TreeMenuNode> nodeList) {
+		ArrayList<TreeMenuNode> children = new ArrayList<>();
+		for (TreeMenuNode db: nodeList) {
+			if (db.getRoot().getParentId() == root.getRoot().getFolderId()) {
+					children.add(db);
+			}
+		}
+		root.setChildren(children);	
 	}
 
 	@SuppressWarnings("unchecked")

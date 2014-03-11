@@ -65,7 +65,7 @@ public class DeleteFromDatabase {
 		return succesful;
 	}
 	
-	//TODO: fiks treestruktur
+	//TODO: kort ned metoden, kall andre metoder?
 	@SuppressWarnings("unchecked")
 	public static boolean deleteFolderAndContent(int folderId) {
 		int[] folderAndSubfolderId = ReadFromDatabase.getFolderAndSubFolderId(folderId);

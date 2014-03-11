@@ -8,12 +8,14 @@ public class ParentFolderDb {
 	private String path;
 	private int lft;
 	private int rgt;
+	private int parentId;
 	
 	public ParentFolderDb() {}
 	
-	public ParentFolderDb(String folderName, String path) {
+	public ParentFolderDb(String folderName, String path, int parentId) {
 		this.name = folderName;
 		this.path = path;
+		this.parentId = parentId;
 	}
 	
 	public ParentFolderDb(String folderName, String path, int lft, int rgt) {
@@ -21,6 +23,14 @@ public class ParentFolderDb {
 		this.path = path;
 		this.lft = lft;
 		this.rgt = rgt;
+	}
+	
+	public ParentFolderDb(String folderName, String path, int lft, int rgt, int parentId) {
+		this.name = folderName;
+		this.path = path;
+		this.lft = lft;
+		this.rgt = rgt;
+		this.parentId = parentId;
 	}
 
 	public int getLft() {
@@ -61,6 +71,14 @@ public class ParentFolderDb {
 
 	public void setPath(String path) {
 		this.path = path;
+	}
+
+	public int getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(int parentId) {
+		this.parentId = parentId;
 	}
 
 	
