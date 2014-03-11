@@ -21,8 +21,7 @@ public class OneImage {
 
 		this.imageId = imageId;	
 		this.serverCommHandler = serverComm;
-		this.model = model;		
-		this.image = getThumbnailImage();
+		this.model = model;				
 
 	}
 
