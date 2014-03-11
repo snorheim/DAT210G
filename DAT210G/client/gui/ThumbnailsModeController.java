@@ -110,6 +110,7 @@ public class ThumbnailsModeController {
 	private void handleImportBtn() {
 		
 		main.openFileChooser();
+		makeGridAndDisplayImages();
 		
 	}
 

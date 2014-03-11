@@ -19,6 +19,7 @@ public class Model {
 
 		this.mainController = mainController;
 		serverCommHandler = new ServerCommHandler();
+		updateImageHashMap();
 
 	}
 
