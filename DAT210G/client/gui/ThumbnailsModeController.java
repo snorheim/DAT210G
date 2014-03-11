@@ -9,7 +9,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import gui.MainController;
+import gui.model.FolderTree;
 import gui.model.Model;
 
 public class ThumbnailsModeController {
@@ -39,7 +41,9 @@ public class ThumbnailsModeController {
 	@FXML
 	private Slider zoomSlider;
 	@FXML
-	private TreeView treeView;
+	private HBox hboxForTree;
+	
+	private FolderTree folderTree;
 	
 	private GridPane thumbnailGridPane;
 	
@@ -76,6 +80,10 @@ public class ThumbnailsModeController {
 				
 			}
 		});
+		
+		folderTree = new FolderTree(this, model);
+		
+		hboxForTree.getChildren().add(folderTree.getTree());
 		
 		makeGridAndDisplayImages();
 	
