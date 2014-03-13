@@ -1,9 +1,12 @@
 package gui;
 
+
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TreeView;
@@ -43,6 +46,9 @@ public class ThumbnailsModeController {
 	@FXML
 	private HBox hboxForTree;
 	
+	@FXML
+	private Label antallBilder;
+	
 	private FolderTree folderTree;
 	
 	private GridPane thumbnailGridPane;
@@ -50,6 +56,8 @@ public class ThumbnailsModeController {
 	
 	private int gridColumns = SMALL_ZOOM;
 	private int gridRows;
+	
+	;
 
 	
 	private Model model;
@@ -90,18 +98,6 @@ public class ThumbnailsModeController {
 
 	}
 
-	// TODO: Slett dette
-	/**
-	 * Called when the user clicks refresh.
-	 *
-	@FXML
-	private void handleRefreshBtn() {
-		System.out.println("Clicked refresh");
-		model.updateImageHashMap();
-		makeGridAndDisplayImages();
-	}
-	
-	*/
 
 	/**
 	 * Called when the user clicks import.
@@ -115,7 +111,10 @@ public class ThumbnailsModeController {
 
 	private void makeGridAndDisplayImages() {
 		
+		antallBilder.setText("antall bilder" + model.getImageList().size());
+		
 		anchorPane.getChildren().clear();
+		
 		
 		
 		thumbnailGridPane = new GridPane();
@@ -124,9 +123,9 @@ public class ThumbnailsModeController {
 		thumbnailGridPane.gridLinesVisibleProperty();
 		
 		
-		gridRows = (int) Math.ceil(1.0 * model.getImageHashtable().size() / gridColumns);
+		gridRows = (int) Math.ceil(1.0 * model.getImageList().size() / gridColumns);
 		
-		System.out.println(gridColumns + " " + gridRows);
+		//System.out.println(gridColumns + " " + gridRows);
 		
 		
 		if (getGridColumns() == SMALL_ZOOM) {
@@ -149,47 +148,54 @@ public class ThumbnailsModeController {
 	}
 
 	private void smallZoomLevelImages() {
-		int imageNum = 1;
+		
+		
+		
+		int imageNum = 0;
 		
 		
 		
 		for (int i = 0; i < gridRows; i++) {
 			
 			for (int j = 0; j < gridColumns; j++) {
-				System.out.println(imageNum);
-				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getThumbnailImage(), j, i);
+				System.out.println("here" + imageNum);
+				thumbnailGridPane.add(model.getImageList().get(imageNum).getThumbnailImage(), j, i);
 				
 				imageNum++;
-				if (imageNum > model.getImageHashtable().size()) {
+				if (imageNum >= model.getImageList().size()) {
 					break;
 				}
 			}
 			
-			if (imageNum > model.getImageHashtable().size()) {
+			if (imageNum >= model.getImageList().size()) {
 				break;
 			}
 			
 		}
 		
+		
 	}
 	
 	private void mediumZoomLevelImages() {
-		int imageNum = 1;
+		
+		
+		
+		int imageNum = 0;
 		
 		for (int i = 0; i < gridRows; i++) {
 			
 			for (int j = 0; j < gridColumns; j++) {
-				System.out.println(imageNum);
-				thumbnailGridPane.add(model.getImageHashtable().get(imageNum).getMediumImage(), j, i);
+				//System.out.println(imageNum);
+				thumbnailGridPane.add(model.getImageList().get(imageNum).getMediumImage(), j, i);
 				
 				
 				imageNum++;
-				if (imageNum > model.getImageHashtable().size()) {
+				if (imageNum >= model.getImageList().size()) {
 					break;
 				}
 			}
 			
-			if (imageNum > model.getImageHashtable().size()) {
+			if (imageNum >= model.getImageList().size()) {
 				break;
 			}
 			

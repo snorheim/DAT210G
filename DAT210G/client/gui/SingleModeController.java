@@ -69,7 +69,11 @@ public class SingleModeController {
 
 	@FXML
 	private void homeBtnAction() {
+		
+		anchorPaneForSingle.getChildren().clear();
+		
 		main.showThumbnailsMode();
+		
 	}
 
 	@FXML
@@ -78,7 +82,7 @@ public class SingleModeController {
 
 		int nextImage = model.getCurrentImageId() + 1;
 
-		if (nextImage > model.getImageHashtable().size()) {
+		if (nextImage > model.getImageList().size()) {
 			nextImage = 1;
 		}
 
@@ -109,7 +113,7 @@ public class SingleModeController {
 		int prevImage = model.getCurrentImageId() - 1;
 
 		if (prevImage < 1) {
-			prevImage = model.getImageHashtable().size();
+			prevImage = model.getImageList().size();
 		}
 
 		model.setCurrentImageId(prevImage);

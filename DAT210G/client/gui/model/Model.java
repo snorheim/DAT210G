@@ -3,17 +3,20 @@ package gui.model;
 import gui.MainController;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
 
 public class Model {
 
-	private Hashtable<Integer, OneImage> imageHashtable;
+	private int[] imageIdArray;
+	private ArrayList<OneImage> imageList;
 	private int currentImageId;
 	private int currentFolderId;
 	private ServerCommHandler serverCommHandler;	
 	private MainController mainController;
+
 
 	public Model(MainController mainController) {
 
@@ -22,49 +25,82 @@ public class Model {
 
 	}
 
-	
-	public boolean updateImageHashMap() {
+
+	public boolean updateIdArray() {
+
 		
-		
-		
-		int[] imageIdArray = serverCommHandler.getAllImageIds();
-			
+
+		imageIdArray = serverCommHandler.getAllImageIds();
+
 		if (imageIdArray == null) {
 			return false;
 		}
-		
-		
-		imageHashtable = new Hashtable<Integer, OneImage>();
-		
-		
+
+
+		imageList = new ArrayList<OneImage>();
+
+
 		for (int i = 0; i < imageIdArray.length; i++) {
-												
-			
+
+
 			OneImage oneImage = new OneImage(imageIdArray[i], serverCommHandler, this);
-			
-			
-			imageHashtable.put(imageIdArray[i], oneImage);
+
+
+			imageList.add(i, oneImage);
 		}
-								
-		
-		if(imageHashtable.isEmpty()) {
-			
-			System.out.println("hashmap is empty");
+
+
+		if(imageList.isEmpty()) {
+
+			System.out.println("imageList is empty");
 		}
-		System.out.println(imageHashtable.toString());
+		System.out.println(imageList.toString());
 		
-		
-		
+
+
+
 		return true;
-		
+
 	}
 
-	
+	public void fillWithThumbnails() {
+		System.out.println("fill thumbnails ++++++++++++++++++++++++++++++++++++++++++++++++++++");
+		System.out.println(imageIdArray.length);
+		System.out.println(imageList.size());
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+
+			System.out.println("imageid: " + imageList.get(i).getImageId());
+			System.out.println("i: " + i);
+			
+			
+			imageList.get(i).setThumbnailImage();
+			
+
+		}
+
+
+	}
+
+	public void fillWithMediumImages() {
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+
+			imageList.get(i).setMediumImage();
+
+
+		}
+
+	}
+
+
 
 	public void sendImagesToServer(List<File> fileList) {
-		
+
 		// TODO: fix så ikke den sender evig mange bilder
-		
+
 		if (fileList != null) {
 			for (File file : fileList) {
 
@@ -72,18 +108,18 @@ public class Model {
 
 			}
 		}
-		
+
 	}
-		
-	
-	public Hashtable<Integer, OneImage> getImageHashtable() {
-		return imageHashtable;
+
+
+	public ArrayList<OneImage> getImageList() {
+		return imageList;
 	}
-	
+
 	public OneImage getCurrentOneImage() {
-		
-		
-		return imageHashtable.get(currentImageId);
+
+
+		return imageList.get(currentImageId-1);
 	}
 
 
@@ -103,7 +139,7 @@ public class Model {
 	public void setCurrentFolderId(int currentFolderId) {
 		this.currentFolderId = currentFolderId;
 	}
-	
-	
+
+
 
 }

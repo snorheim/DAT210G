@@ -8,7 +8,8 @@ public class OneImage {
 
 
 	private int imageId;
-	private ImageView image;
+	private ImageView thumbnailImage;
+	private ImageView mediumImage;
 	private Model model;
 	private ServerCommHandler serverCommHandler;
 	private String titleMeta;
@@ -34,12 +35,12 @@ public class OneImage {
 		return model;
 	}
 
-	public ImageView getThumbnailImage() {
+	public void setThumbnailImage() {
 
 		
-		image = serverCommHandler.getThumbnail(imageId);
+		thumbnailImage = serverCommHandler.getThumbnail(imageId);
 
-		image.setOnMouseClicked(new EventHandler<Event>() {
+		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
@@ -49,16 +50,16 @@ public class OneImage {
 			}
 		});
 
-		return image;
+		
 
 	}
 
-	public ImageView getMediumImage() {
+	public void setMediumImage() {
 
 
-		image = serverCommHandler.getMediumImage(imageId);
+		mediumImage = serverCommHandler.getMediumImage(imageId);
 
-		image.setOnMouseClicked(new EventHandler<Event>() {
+		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
@@ -68,34 +69,33 @@ public class OneImage {
 			}
 		});
 
-		return image;
+		
 
 	}
 
 	public ImageView getFullImage() {
 
 
-		image = serverCommHandler.getFullImage(imageId);		
-
-		return image;
+		return serverCommHandler.getFullImage(imageId);		
+		
 
 	}
 	
 	public ImageView getRotLeft() {
 
 
-		image = serverCommHandler.getRotLeft(imageId);
+		thumbnailImage = serverCommHandler.getRotLeft(imageId);
 
-		return image;
+		return thumbnailImage;
 
 	}
 	
 	public ImageView getRotRight() {
 
 
-		image = serverCommHandler.getRotRight(imageId);
+		thumbnailImage = serverCommHandler.getRotRight(imageId);
 
-		return image;
+		return thumbnailImage;
 
 	}
 
@@ -135,7 +135,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyTitle(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -143,7 +143,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyDesc(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -151,7 +151,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyRating(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -159,9 +159,19 @@ public class OneImage {
 		Boolean success = serverCommHandler.addTag(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
+
+	public ImageView getThumbnailImage() {
+		return thumbnailImage;
+	}
+	
+	public ImageView getMediumImage() {
+		return mediumImage;
+	}
+	
+	
 
 
 

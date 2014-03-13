@@ -58,6 +58,7 @@
               </children>
             </HBox>
             <HBox fx:id="hboxForTree" layoutX="17.0" layoutY="291.0" prefHeight="295.0" prefWidth="200.0" />
+            <Label fx:id="antallBilder" layoutX="35.0" layoutY="39.0" text="Label" />
           </children>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
