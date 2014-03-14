@@ -98,7 +98,7 @@ public class ReadFromDatabase {
 		return picList;
 	}
 
-	public static List<PictureDb> getPicturesBasedOnTag(String tag, int folderId) {
+	public static int[] getPicturesBasedOnTag(String tag, int folderId) {
 		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -119,7 +119,11 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return returnList;
+		int[] pictureIdArray = new int[returnList.size()];
+		for (int i = 0; i < pictureIdArray.length; i++) {
+			pictureIdArray[i] = returnList.get(i).getId();
+		}
+		return pictureIdArray;
 	}
 
 	public static List<PictureDb> getPicturesBasedOnManyTags(String[] tag, int folderId) {
@@ -150,7 +154,7 @@ public class ReadFromDatabase {
 		return returnList;
 	}
 	
-	public static List<PictureDb> getPicturesBasedOnRating(int rating, int folderId) {
+	public static int[] getPicturesBasedOnRating(int rating, int folderId) {
 		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -169,10 +173,14 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return returnList;
+		int[] pictureIdArray = new int[returnList.size()];
+		for (int i = 0; i < pictureIdArray.length; i++) {
+			pictureIdArray[i] = returnList.get(i).getId();
+		}
+		return pictureIdArray;
 	}
 	
-	public static List<PictureDb> getPicturesBasedOnDate(String timeDate, int folderId) {
+	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
 		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -193,7 +201,11 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return returnList;
+		int[] pictureIdArray = new int[returnList.size()];
+		for (int i = 0; i < pictureIdArray.length; i++) {
+			pictureIdArray[i] = returnList.get(i).getId();
+		}
+		return pictureIdArray;
 	}
 	
 	public static PictureDb getPictureBasedOnId(int picId) {

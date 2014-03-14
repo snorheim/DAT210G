@@ -2,23 +2,23 @@ package logic;
 
 public class RequestClient {
 	private String order;
-	private int imageId;
+	private int id;
 	private String detail;
 
 	public RequestClient(String order){
 		this.order = order;
 	}
-	public RequestClient(String order, int imageId){
+	public RequestClient(String order, int id){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 	}
 	public RequestClient(String order, String detail){
 		this.order = order;
 		this.detail = detail;
 	}
-	public RequestClient(String order, int imageId, String detail){
+	public RequestClient(String order, int id, String detail){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 		this.detail = detail;
 	}
 }

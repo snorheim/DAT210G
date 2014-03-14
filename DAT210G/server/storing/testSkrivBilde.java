@@ -3,8 +3,6 @@ package storing;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import apple.laf.JRSUIUtils.Tree;
 import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
 public class testSkrivBilde {
