@@ -1,5 +1,7 @@
 package storing;
 
+
+import java.util.List;
 import java.util.Set;
 
 import org.hibernate.HibernateException;
@@ -9,7 +11,6 @@ import org.hibernate.Transaction;
 
 public class DeleteFromDatabase {
 	private static boolean succesful;
-	
 	
 	public static boolean deletePicture(int picId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -64,24 +65,63 @@ public class DeleteFromDatabase {
 		return succesful;
 	}
 	
-//	public static boolean deleteTagsFromPic(int picId) {
-//		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-//		Transaction dbTransaction = null;
-//		try {
-//			dbTransaction = dbSession.beginTransaction();
-//			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
-////			picFromDb.getTags().removeAll(picFromDb.getTags());
-//			dbTransaction.commit();
-//			succesful = true;
-//		} catch (HibernateException e) {
-//			if (dbTransaction != null) dbTransaction.rollback();
-//			succesful = false;
-//		} finally {
-// 			dbSession.close();
-//			HibernateUtil.shutdown();
-//		}
-//		return succesful;
-//	}
+	//TODO: kort ned metoden, kall andre metoder?
+	@SuppressWarnings("unchecked")
+	public static boolean deleteFolderAndContent(int folderId) {
+		int[] folderAndSubfolderId = ReadFromDatabase.getFolderAndSubFolderId(folderId);
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		List<PictureDb> tmpList = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = null;
+			
+			query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:folderId");
+			query.setParameter("folderId", folderId);
+			int lft = (int) query.uniqueResult();
+			query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:folderId");
+			query.setParameter("folderId", folderId);
+			int rgt = (int) query.uniqueResult();
+			int width = rgt - lft + 1;
+			
+			query = dbSession.createQuery("DELETE FROM ParentFolderDb WHERE lft BETWEEN :lft AND :rgt");
+			query.setParameter("lft", lft);
+			query.setParameter("rgt", rgt);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt - :width WHERE rgt > :rgt");
+			query.setParameter("width", width);
+			query.setParameter("rgt", rgt);
+			query.executeUpdate();
+			
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft - :width WHERE lft > :lft");
+			query.setParameter("width", width);
+			query.setParameter("lft", lft);
+			query.executeUpdate();
+			for (int i: folderAndSubfolderId) {
+				query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:folderID");
+				query.setParameter("folderID", i);
+				tmpList = query.list();
+				for (PictureDb p: tmpList) {
+					Set<TagDb> tagsToPic = removeTagOnPictureDelete(p);
+					p.getTags().removeAll(tagsToPic);
+					dbSession.delete(p);
+				}
+			}
+			dbTransaction.commit();
+			succesful = true;
+		} catch (HibernateException e) {
+			if (dbTransaction != null) dbTransaction.rollback();
+			e.printStackTrace();
+			succesful = false;
+		} finally {
+ 			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		return succesful;
+	}
+	
+
 	
 	
 }
