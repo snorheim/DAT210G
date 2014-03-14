@@ -9,12 +9,12 @@ import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
 public class DirectoryMonitor implements FileAlterationListener {
-
+	
 	Path directoryToWatch;
 	FileAlterationMonitor monitor;
 	ArrayList<File> ignoreList;
 
-	public static final int READ_INTERVAL_MS = 2000;
+	public static final int READ_INTERVAL_MS = 5000;
 
 	public DirectoryMonitor(Path dir) {
 		directoryToWatch = dir;

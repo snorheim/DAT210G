@@ -3,7 +3,9 @@ package logic;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
+
 import net.coobird.thumbnailator.Thumbnails;
 import storing.ImageHandler;
 import storing.PictureDb;
@@ -216,38 +218,42 @@ public class RequestMethods {
 		//		}
 		//		request.sendJsonResponse(new ResponseServer(false));
 	}
-	//	public static void addNewFullImage(RequestServer request, int id, int folderId, String detail){
-	//		System.out.println("id til server: " + id);
-	//		File tempImage = null;
-	//		//metoden gaar mye inn i catchen her: why :P?
-	//		//prog crasher raskt ved flere bilder pga denne?
-	//		try {
-	//			tempImage = request.receiveFile(detail);
-	//		} catch (Exception e) {
-	//			request.sendJsonResponse(new ResponseServer(false));
-	//			tempImage.delete();
-	//			return;
-	//		}
-	//		ReadExif exif = new ReadExif(tempImage.getPath());
-	//		boolean writePictureToFile = ImageHandler.getInstance().saveAndDispose(id, tempImage);
-	//		if (writePictureToFile){
-	//			PictureDb pictureDb = new PictureDb(exif.getExifTitle(), exif.getExifComment(), 
-	//					exif.getExifRating(), exif.getExifDateTimeTaken(), 
-	//					"\\full\\"+id+"."+detail, 
-	//					"\\medium\\"+id+"."+detail, 
-	//					"\\thumb\\"+id+"."+detail);
-	//			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
-	//			if (writePictureToDb){
-	//				//har endret her
-	//				if (!(exif.getExifTags() == null)) {
-	//					String[] tagsInString = exif.getExifTags().split(";");
-	//					for (int i = 0; i < tagsInString.length; i++) {
-	//						WriteToDatabase.addTagToPic(id, tagsInString[i]);
-	//					}
-	//				}
-	//				request.sendJsonResponse(new ResponseServer(true));
-	//			}
-	//
-	//		} 
-	//	}
+	public static void addNewFullImage(RequestServer request, int id, String detail){
+		System.out.println("id til server: " + id);
+		File tempImage = null;
+		try {
+			tempImage = request.receiveFile(detail);
+			ImageHandler.getInstance().dirWatch.ignore(tempImage);
+		} catch (Exception e) {
+			request.sendJsonResponse(new ResponseServer(false));
+			return;
+		}
+		ReadExif exif = new ReadExif(tempImage.getPath());
+		boolean writePictureToFile = ImageHandler.getInstance().save(tempImage,ImageHandler.getInstance().defaultPath);
+		if (writePictureToFile){
+			Path directory = ImageHandler.getInstance().defaultPath;
+			int lio = detail.split("[.]").length;
+			String mediumName = detail.split("[.]")[lio-2] + "_medium." + detail.split("[.]")[lio-1];
+			String thumbName = detail.split("[.]")[lio-2] + "_thumb." + detail.split("[.]")[lio-1];
+			System.out.println(thumbName);
+			PictureDb pictureDb = new PictureDb(exif.getExifTitle(), exif.getExifComment(), 
+					exif.getExifRating(), exif.getExifDateTimeTaken(), 
+					directory + "\\" +detail, 
+					directory + "\\" +mediumName, 
+					directory + "\\" +thumbName,
+					1);
+			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
+			if (writePictureToDb){
+				if (!(exif.getExifTags() == null)) {
+					String[] tagsInString = exif.getExifTags().split(";");
+					for (int i = 0; i < tagsInString.length; i++) {
+						boolean test = WriteToDatabase.addTagToPic(id, tagsInString[i]);
+						System.out.println("tag skrevet: " + test);
+					}
+				}
+				request.sendJsonResponse(new ResponseServer(true));
+			}
+
+		} 
+	}
 }

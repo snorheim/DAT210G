@@ -22,7 +22,7 @@ public class ImageHandler {
 	private static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
-	private DirectoryMonitor dirWatch;
+	public DirectoryMonitor dirWatch;
 
 	public static final String[] SUPPORTED_EXTENSIONS = { "jpg", "png", "bmp",
 			"jpeg" };
@@ -226,10 +226,10 @@ public class ImageHandler {
 				log(destFile + " already exists!");
 				return true;
 			}
-
+			log("Failer ");
 			Thumbnails.of(imageFile).size(THUMBNAIL_SIZE, THUMBNAIL_SIZE)
 					.toFile(destFile);
-
+			log("Her");
 			log("Saved " + imageFile + " to " + destFile);
 
 			dirWatch.ignore(imageFile);
@@ -257,29 +257,23 @@ public class ImageHandler {
 		return true;
 	}
 
-	public boolean saveAndDispose(File tempFile) {
-		return saveAndDispose(tempFile, defaultPath);
+	public boolean save(File imageFile) {
+		return save(imageFile, defaultPath);
 	}
 
-	public boolean saveAndDispose(File tempFile, Path directory) {
-		if (!saveFullImageToFile(tempFile, directory)) {
+	public boolean save(File imageFile, Path directory) {
+		if (!saveFullImageToFile(imageFile, directory)) {
 			return false;
 		}
 
-		if (!saveMediumImageToFile(tempFile, directory)) {
+		if (!saveMediumImageToFile(imageFile, directory)) {
 			return false;
 		}
-		if (!saveThumbnailImageToFile(tempFile, directory)) {
+		if (!saveThumbnailImageToFile(imageFile, directory)) {
 			return false;
 		}
 
-		boolean wasDisposed = tempFile.delete();
-
-		if (wasDisposed)
-			return true;
-		else
-			log("Could not properly dispose of the temporary file");
-		return false;
+		return true;
 	}
 
 	public static ImageHandler getInstance() {
