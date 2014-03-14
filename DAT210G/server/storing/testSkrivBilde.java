@@ -70,12 +70,18 @@ public class testSkrivBilde {
 //					System.out.println(p.getId());
 //				}
 
-		//		List<TreeMenuNode> treet = ReadFromDatabase.getTreeForMenu();
-		//		for (TreeMenuNode tn: treet) {
-		//			System.out.println(tn.getRoot().getName() + ":");
-		//			System.out.println(tn.printChildren());
-		//
-		//		}
+//				List<TreeMenuNode> treet = ReadFromDatabase.getTreeForMenu();
+//				System.out.println(treet.get(0).getRoot().getName());
+//				System.out.println("  " + treet.get(0).getChildren().get(0).getRoot().getName());
+//				System.out.println("    " + treet.get(0).getChildren().get(0).getChildren().get(0).getRoot().getName());
+//				System.out.println("    " + treet.get(0).getChildren().get(0).getChildren().get(1).getRoot().getName());
+//				System.out.println("      " + treet.get(0).getChildren().get(0).getChildren().get(1).getChildren().get(0).getRoot().getName());
+//				System.out.println("  " + treet.get(0).getChildren().get(1).getRoot().getName());
+//				for (TreeMenuNode tn: treet) {
+//					System.out.println(tn.getRoot().getName() + ":");
+//					System.out.println(tn.printChildren());
+//		
+//				}
 	}
 
 }
