@@ -1,6 +1,5 @@
 package storing;
 
-
 import java.util.ArrayList;
 
 import org.hibernate.HibernateException;
@@ -8,11 +7,10 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
 
-	public static boolean writeOnePic(PictureDb pic){
+	public static boolean writeOnePic(PictureDb pic) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
@@ -22,7 +20,8 @@ public class WriteToDatabase {
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
@@ -35,14 +34,15 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			for (PictureDb pic: picList) {
+			for (PictureDb pic : picList) {
 				dbSession.save(pic);
 			}
 			dbTransaction.commit();
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
@@ -60,7 +60,8 @@ public class WriteToDatabase {
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
@@ -75,14 +76,16 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class, picId);
+			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class,
+					picId);
 			TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
 			picFromDb.addTag(tagFromDb);
 			dbTransaction.commit();
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
@@ -90,17 +93,17 @@ public class WriteToDatabase {
 
 		return successfulTransfer;
 	}
-	
-	
-	//TODO: brukes ved ensureFolder, snakk med kjelli
+
+	// TODO: brukes ved ensureFolder, snakk med Kjelli
 	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		int[] allPicIds = ReadFromDatabase.getAllPicIds();
-		for (int i: allPicIds) {
+		for (int i : allPicIds) {
 			DeleteFromDatabase.deletePicture(i);
 		}
-		ParentFolderDb newImageFolder = new ParentFolderDb("img", "\\img\\", 1, 2);
+		ParentFolderDb newImageFolder = new ParentFolderDb("img", "\\img\\", 1,
+				2);
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession.createQuery("DELETE FROM TagDb");
@@ -112,64 +115,73 @@ public class WriteToDatabase {
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
-	
 
-	public static boolean addFolderInAFolderWithOtherChildren(ParentFolderDb folder, int leftFolderId) {
+	public static boolean addFolderInAFolderWithOtherChildren(
+			ParentFolderDb folder, int leftFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:leftFolderId");
+			Query query = dbSession
+					.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:leftFolderId");
 			query.setParameter("leftFolderId", leftFolderId);
 			int right = (int) query.uniqueResult();
-			
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :rgtRight");
-			query.setParameter("rgtRight", right);
-			query.executeUpdate();
-			
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :rgtRight");
+
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :rgtRight");
 			query.setParameter("rgtRight", right);
 			query.executeUpdate();
 
-			folder.setLft(right+1);
-			folder.setRgt(right+2);
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :rgtRight");
+			query.setParameter("rgtRight", right);
+			query.executeUpdate();
+
+			folder.setLft(right + 1);
+			folder.setRgt(right + 2);
 			dbSession.save(folder);
 			dbTransaction.commit();
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
-	
-	public static boolean addFolderAsAnOnlyChildToFolder(ParentFolderDb folder, int parentId) {
+
+	public static boolean addFolderAsAnOnlyChildToFolder(ParentFolderDb folder,
+			int parentId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
+			Query query = dbSession
+					.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
 			query.setParameter("parentId", parentId);
 			int left = (int) query.uniqueResult();
-			
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
+
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
-			
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
+
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
-			
+
 			folder.setLft(left + 1);
 			folder.setRgt(left + 2);
 			dbSession.save(folder);
@@ -177,7 +189,8 @@ public class WriteToDatabase {
 			successfulTransfer = true;
 		} catch (HibernateException e) {
 			successfulTransfer = false;
-			if (dbTransaction != null) dbTransaction.rollback();
+			if (dbTransaction != null)
+				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 			HibernateUtil.shutdown();

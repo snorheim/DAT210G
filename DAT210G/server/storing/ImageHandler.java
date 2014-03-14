@@ -63,7 +63,7 @@ public class ImageHandler {
 			return true;
 		} else {
 			// TODO: uncomment etter merge med database
-			// WriteToDatabase.ensureImgFolderDatabase();
+			WriteToDatabase.ensureImgFolderDatabase();
 			return defaultPath.toFile().mkdirs();
 		}
 	}
@@ -79,7 +79,7 @@ public class ImageHandler {
 
 	public BufferedImage load(String filepath) {
 		log("Loading imagefile: " + defaultPath + filepath);
-		File imageFile = new File(defaultPath + filepath);
+		File imageFile = new File(defaultPath + "\\" + filepath);
 		if (imageFile.exists()) {
 			return load(imageFile);
 		}
@@ -226,10 +226,8 @@ public class ImageHandler {
 				log(destFile + " already exists!");
 				return true;
 			}
-			log("Failer ");
 			Thumbnails.of(imageFile).size(THUMBNAIL_SIZE, THUMBNAIL_SIZE)
 					.toFile(destFile);
-			log("Her");
 			log("Saved " + imageFile + " to " + destFile);
 
 			dirWatch.ignore(imageFile);
