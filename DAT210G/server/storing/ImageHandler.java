@@ -15,7 +15,6 @@ import java.nio.file.Paths;
 
 import javax.imageio.ImageIO;
 
-import logic.ReadExif;
 import net.coobird.thumbnailator.Thumbnails;
 
 public class ImageHandler {
@@ -205,6 +204,7 @@ public class ImageHandler {
 
 			return true;
 		} catch (IOException e) {
+
 			e.printStackTrace();
 			log("Could not save mediumsized image");
 			return false;
@@ -288,38 +288,6 @@ public class ImageHandler {
 
 		return instance;
 
-	}
-
-	// TODO: legg denne i WriteToDatabase ved merge
-	public boolean writeImageToDatabase(File imageFile) {
-		ReadExif exif = new ReadExif(imageFile.getPath());
-
-		// TODO: pictureDb skal hente riktige tags
-		PictureDb pictureDb = new PictureDb(null, null, 0, null, null, null,
-				null);
-		boolean pictureWrittenToDatabase = WriteToDatabase
-				.writeOnePic(pictureDb);
-		if (!pictureWrittenToDatabase)
-			return false;
-
-		String[] tagsInString = exif.getExifTags().split(";");
-		boolean allTagsWereAdded = true;
-		for (int i = 0; i < tagsInString.length; i++) {
-			// TODO: bilde ID.
-			if (!WriteToDatabase.addTagToPic(randomID(), tagsInString[i]))
-				allTagsWereAdded = false;
-		}
-		log("All tags were added: " + allTagsWereAdded);
-		return true;
-
-	}
-
-	public static int randomID() {
-		String id = "";
-		for (int i = 0; i < 5; i++) {
-			id += String.valueOf((int) (Math.random() * 9 + 1));
-		}
-		return Integer.valueOf(id);
 	}
 
 	// Tester metodene:
