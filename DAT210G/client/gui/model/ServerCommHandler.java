@@ -54,7 +54,7 @@ public class ServerCommHandler {
 	}
 
 	public ImageView getThumbnail(int imageID) {
-				
+
 		BufferedImage bufImage = null;
 		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getThumbnail", imageID));
 		if (getThumbnailJson.sendJsonToServer()){
@@ -67,7 +67,7 @@ public class ServerCommHandler {
 
 
 		Image image = null;
-		
+
 		if (bufImage != null) {
 			// TODO: FOR DEBUG 
 
@@ -76,17 +76,17 @@ public class ServerCommHandler {
 			g.setFont(font);
 			g.setColor(Color.RED);
 			g.drawString(String.valueOf(imageID), 15, 15);
-			
+
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		} 
 
-		
+
 		return new ImageView(image);
 	}
 	public void SendImageToServer(File fileToSend){
 		int nextAvailableId = -1;
 		BufferedImage image = null;
-		String fileType = null;
+		String fileName = null;
 		try {
 			image = ImageIO.read(fileToSend);
 		} catch (IOException e) {
@@ -99,28 +99,25 @@ public class ServerCommHandler {
 			System.out.println("Next available id: "+nextAvailableId);
 			sendImageJson1.closeHttpConnection();
 		}
-		int i = fileToSend.getAbsolutePath().lastIndexOf('.');
-		if (i > 0) {
-			fileType = fileToSend.getAbsolutePath().substring(i+1);
-			System.out.println("Filtype til nytt bilde: " + fileType + " id: " + nextAvailableId);
-		}
+		fileName = fileToSend.getName();
+		System.out.println("Filtype til nytt bilde: " + fileName + " id: " + nextAvailableId);
 		if (nextAvailableId != -1){
-			boolean imageWasSentSuccessful = false;
-			while (imageWasSentSuccessful == false){
-				JsonClient sendImageJson = new JsonClient(new RequestClient("addNewFullImage", nextAvailableId, fileType));
-				if (sendImageJson.sendJsonToServer()){ 
-					//sendImageJson.sendImageToServer(image, fileType);
-					try {
-						System.out.println("Prøver å sende bilde: " + fileToSend.getPath());
-						sendImageJson.sendFileToServer(fileToSend.getPath());
-						ResponseClient response = sendImageJson.receiveJsonFromServer();
-						imageWasSentSuccessful = response.getSuccess();
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-					sendImageJson.closeHttpConnection();
+			//boolean imageWasSentSuccessful = false;
+			//while (imageWasSentSuccessful == false){
+			JsonClient sendImageJson = new JsonClient(new RequestClient("addNewFullImage", nextAvailableId, fileName));
+			if (sendImageJson.sendJsonToServer()){ 
+				//sendImageJson.sendImageToServer(image, fileType);
+				try {
+					System.out.println("Prøver å sende bilde: " + fileToSend.getPath());
+					sendImageJson.sendFileToServer(fileToSend.getPath());
+					ResponseClient response = sendImageJson.receiveJsonFromServer();
+					//imageWasSentSuccessful = response.getSuccess();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				sendImageJson.closeHttpConnection();
 			}
+			//}
 		}
 
 	}
@@ -151,7 +148,7 @@ public class ServerCommHandler {
 		return new ImageView(image);
 	}
 
-	
+
 	public ImageView getMediumImage(int imageID) {
 		BufferedImage bufImage = null;
 		JsonClient getMediumJson = new JsonClient(new RequestClient("getFullImageWithDimensions", imageID, "500;500"));
@@ -197,9 +194,9 @@ public class ServerCommHandler {
 
 		return metaData;
 	}
-	
+
 	public Boolean modifyTitle(int imageID, String string) {
-			
+
 		Boolean success = false;
 
 		JsonClient modifyTitle = new JsonClient(new RequestClient("modifyTitle", imageID, string));
@@ -210,13 +207,13 @@ public class ServerCommHandler {
 			}
 			modifyTitle.closeHttpConnection();
 		}
-		
+
 		return success;
-		
+
 	}
-	
+
 	public Boolean modifyDesc(int imageID, String string) {
-		
+
 		Boolean success = false;
 
 		JsonClient modifyDescription = new JsonClient(new RequestClient("modifyDescription", imageID, string));
@@ -227,13 +224,13 @@ public class ServerCommHandler {
 			}
 			modifyDescription.closeHttpConnection();
 		}
-		
+
 		return success;
-		
+
 	}
-	
+
 	public Boolean modifyRating(int imageID, String string) {
-		
+
 		Boolean success = false;
 
 		JsonClient modifyRating = new JsonClient(new RequestClient("modifyRating", imageID, string));
@@ -244,13 +241,13 @@ public class ServerCommHandler {
 			}
 			modifyRating.closeHttpConnection();
 		}
-		
+
 		return success;
-		
+
 	}
-	
+
 	public Boolean addTag(int imageID, String string) {
-		
+
 		Boolean success = false;
 
 		JsonClient addTag = new JsonClient(new RequestClient("addTag", imageID, string));
@@ -261,12 +258,12 @@ public class ServerCommHandler {
 			}
 			addTag.closeHttpConnection();
 		}
-		
+
 		return success;
-		
+
 	}
-	
-	
+
+
 	public ImageView getRotLeft(int imageID) {
 		BufferedImage bufImage = null;
 		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImage", imageID));
@@ -281,7 +278,7 @@ public class ServerCommHandler {
 		// TODO: FOR DEBUG 
 
 		String text = String.valueOf(imageID) + " rotated left";
-		
+
 		Graphics2D g = (Graphics2D) bufImage.createGraphics();
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);
@@ -294,7 +291,7 @@ public class ServerCommHandler {
 
 		return new ImageView(image);
 	}
-	
+
 	public ImageView getRotRight(int imageID) {
 		BufferedImage bufImage = null;
 		JsonClient getThumbnailJson = new JsonClient(new RequestClient("getFullImage", imageID));
@@ -309,7 +306,7 @@ public class ServerCommHandler {
 		// TODO: FOR DEBUG 
 
 		String text = String.valueOf(imageID) + " rotated right";
-		
+
 		Graphics2D g = (Graphics2D) bufImage.createGraphics();
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);

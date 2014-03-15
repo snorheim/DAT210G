@@ -13,6 +13,7 @@
 	<property name="fileLocation" column="file_loc" type="string"></property>
 	<property name="mediumFileLocation" column="med_file_loc" type="string"></property>
 	<property name="thumbnailFileLocation" column="thumb_file_loc" type="string"></property>
+	<property name="parentFolderId" column="parentId" type="integer"></property>
 	
 	<set name="tags" table="tag_picture" inverse="true">
 		<key column="picId"/>

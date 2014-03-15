@@ -15,5 +15,6 @@
 
 		<mapping resource="PictureDb.hbm.xml"/>
 		<mapping resource="TagDb.hbm.xml"/>
+		<mapping resource="ParentFolderDb.hbm.xml"/>
 	</session-factory>
 </hibernate-configuration>

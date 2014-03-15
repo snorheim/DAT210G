@@ -8,6 +8,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -20,23 +22,28 @@ public class ImageHandler {
 	private static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
+	public DirectoryMonitor dirWatch;
+
+	public static final String[] SUPPORTED_EXTENSIONS = { "jpg", "png", "bmp",
+			"jpeg" };
+
 	public Path defaultPath;
 
 	private ImageHandler() {
 		init();
-
 	}
 
 	private void init() {
+		log("Initializing...");
 
 		defaultPath = Paths.get(".\\img");
 		log("Default path: " + defaultPath.normalize().toAbsolutePath());
-
 		try {
 			log("Default path ready: \t" + ensureLocation());
 		} catch (FileNotFoundException fnfe) {
 			fnfe.printStackTrace();
 		}
+		dirWatch = new DirectoryMonitor(defaultPath);
 	}
 
 	private void log(String string) {
@@ -51,36 +58,14 @@ public class ImageHandler {
 	 * @throws FileNotFoundException
 	 */
 	private boolean ensureLocation() throws FileNotFoundException {
-		File thumbFolder = new File(defaultPath + "\\thumb");
-		File mediumFolder = new File(defaultPath + "\\medium");
-		File fullFolder = new File(defaultPath + "\\full");
 
-		/*
-		 * exists() sjekker om mappen faktisk eksisterer paa maskinen, om den
-		 * ikke gjoer det har vi ikke grunnlag til aa lagre bildene, og da skal
-		 * det oppstaa en feilmelding
-		 */
-
-		boolean success = (thumbFolder.exists() && mediumFolder.exists() && fullFolder
-				.exists());
-
-		/*
-		 * mkdirs() lager mappene som spesifisert ovenfor, om en mappe ikke blir
-		 * lagd kan det vaere at den allerede eksisterer, eller av en annen
-		 * grunn feiler.
-		 */
-		if (success)
+		if (defaultPath.toFile().exists()) {
 			return true;
-		else {
-			thumbFolder.mkdirs();
-			mediumFolder.mkdirs();
-			fullFolder.mkdirs();
+		} else {
+			// TODO: uncomment etter merge med database
+			WriteToDatabase.ensureImgFolderDatabase();
+			return defaultPath.toFile().mkdirs();
 		}
-		success = (thumbFolder.exists() && mediumFolder.exists() && fullFolder
-				.exists());
-		if (success)
-			return true;
-		return false;
 	}
 
 	/**
@@ -94,7 +79,7 @@ public class ImageHandler {
 
 	public BufferedImage load(String filepath) {
 		log("Loading imagefile: " + defaultPath + filepath);
-		File imageFile = new File(defaultPath + filepath);
+		File imageFile = new File(defaultPath + "\\" + filepath);
 		if (imageFile.exists()) {
 			return load(imageFile);
 		}
@@ -119,80 +104,6 @@ public class ImageHandler {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
-		return bufferedImage;
-	}
-
-	// TODO: Metode som kan erstatte en databasespørring KUN hvis
-	// mappestrukturen er fast
-	/**
-	 * Metoden forsoeker aa lese en bildefil(fullstoerrelse) basert paa en
-	 * spesifikk bilde-ID og returnerer et BufferedImage
-	 * 
-	 * @Param id Bilde-IDen til bildet som skal lastes inn
-	 * 
-	 * @return Returnerer et BufferedImage av bildet.
-	 */
-
-	public BufferedImage getFullImage(int id) {
-		BufferedImage bufferedImage = null;
-		File imageFile = getImageWithID(id);
-		if (imageFile == null)
-			return null;
-
-		String extension = "." + imageFile.getName().split("[.]")[1];
-
-		bufferedImage = load("\\full\\" + id + extension);
-
-		return bufferedImage;
-	}
-
-	// TODO: Metode som kan erstatte en databasespørring KUN hvis
-	// mappestrukturen er fast
-
-	/**
-	 * Metoden forsoeker aa lese en bildefil(mediumstoerrelse) basert paa en
-	 * spesifikk bilde-ID og returnerer et BufferedImage
-	 * 
-	 * @Param id Bilde-IDen til bildet som skal lastes inn
-	 * 
-	 * @return Returnerer et BufferedImage av bildet.
-	 */
-
-	public BufferedImage getMediumImage(int id) {
-		BufferedImage bufferedImage = null;
-		File imageFile = getImageWithID(id);
-		if (imageFile == null)
-			return null;
-
-		String extension = "." + imageFile.getName().split("[.]")[1];
-
-		bufferedImage = load("\\medium\\" + id + extension);
-
-		return bufferedImage;
-	}
-
-	// TODO: Metode som kan erstatte en databasespørring KUN hvis
-	// mappestrukturen er fast
-
-	/**
-	 * Metoden forsoeker aa lese en bildefil(thumbnail) basert paa en spesifikk
-	 * bilde-ID og returnerer et BufferedImage
-	 * 
-	 * @Param id Bilde-IDen til bildet som skal lastes inn
-	 * 
-	 * @return Returnerer et BufferedImage av bildet.
-	 */
-
-	public BufferedImage getThumbnailImage(int id) {
-		BufferedImage bufferedImage = null;
-		File imageFile = getImageWithID(id);
-		if (imageFile == null)
-			return null;
-
-		String extension = "." + imageFile.getName().split("[.]")[1];
-
-		bufferedImage = load("\\thumb\\" + id + extension);
 
 		return bufferedImage;
 	}
@@ -237,72 +148,93 @@ public class ImageHandler {
 
 	}
 
-	/**
-	 * Metoden lagrer en gitt midlertidig bildefil i mappen for
-	 * fullstoerrelse-bilder
-	 * 
-	 * @param ID
-	 *            ID tildelt av databasen, ender opp som filnavn for den
-	 *            nylagrede bildefilen
-	 * @param imageFile
-	 *            Midlertidig bildefil-objekt som skal lagres i mappen for
-	 *            fullstoerrelse-bilder
-	 */
+	// TODO: Filplassering
 
-	public boolean saveFullImageToFile(int ID, File imageFile) {
-		File destFile = new File(defaultPath + "\\full\\" + ID + "."
-				+ imageFile.getName().toString().split("[.]")[1]);
-		boolean wasSuccessful = copyFile(imageFile, destFile);
-		if (wasSuccessful)
+	public boolean saveFullImageToFile(File imageFile) {
+		Path oldLocation = imageFile.toPath().getParent();
+		return saveFullImageToFile(imageFile, oldLocation);
+	}
+
+	public boolean saveFullImageToFile(File imageFile, Path directory) {
+		String newFilename = imageFile.getName();
+		File destFile = new File(directory + "\\" + newFilename);
+
+		if (destFile.exists()) {
+			log(destFile + " already exists!");
 			return true;
-		else
+		}
+
+		boolean wasSuccessful = copyFile(imageFile, destFile);
+
+		if (wasSuccessful) {
+			log("Saved " + imageFile + " to " + destFile);
+			dirWatch.ignore(imageFile);
+			dirWatch.ignore(destFile);
+			return true;
+		} else
 			log("Could not save fullsized image");
 		return false;
 	}
 
-	/**
-	 * Metoden endrer stoerrelse paa, og lagrer en gitt midlertidig bildefil i
-	 * mappen for mediumstoerrelse-bilder
-	 * 
-	 * @param ID
-	 *            ID tildelt av databasen, ender opp som filnavn for den
-	 *            nylagrede bildefilen
-	 * @param imageFile
-	 *            Midlertidig bildefil-objekt som skal lagres i mappen for
-	 *            mediumstoerrelse-bilder
-	 */
+	public boolean saveMediumImageToFile(File imageFile) {
+		Path oldLocation = imageFile.toPath().getParent();
+		return saveMediumImageToFile(imageFile, oldLocation);
+	}
 
-	public boolean saveMediumImageToFile(int ID, File imageFile) {
+	public boolean saveMediumImageToFile(File imageFile, Path directory) {
 		try {
-			File destFile = new File(defaultPath + "\\medium\\" + ID + "."
-					+ imageFile.getName().toString().split("[.]")[1]);
+
+			String newFilename = imageFile.getName().split("[.]")[0]
+					+ "_medium" + "." + imageFile.getName().split("[.]")[1];
+			File destFile = new File(directory + "\\" + newFilename);
+
+			if (destFile.exists()) {
+				log(destFile + " already exists!");
+				return true;
+			}
+
 			Thumbnails.of(imageFile).size(MEDIUM_SIZE, MEDIUM_SIZE)
 					.toFile(destFile);
+			log("Saved " + imageFile + " to " + destFile);
+
+			dirWatch.ignore(imageFile);
+			dirWatch.ignore(destFile);
+
+			hideImageFile(destFile);
+
 			return true;
 		} catch (IOException e) {
+
+			e.printStackTrace();
 			log("Could not save mediumsized image");
 			return false;
 		}
 	}
 
-	/**
-	 * Metoden endrer stoerrelse paa, og lagrer en gitt midlertidig bildefil i
-	 * mappen for thumbnailstoerrelse-bilder
-	 * 
-	 * @param ID
-	 *            ID tildelt av databasen, ender opp som filnavn for den
-	 *            nylagrede bildefilen
-	 * @param imageFile
-	 *            Midlertidig bildefil-objekt som skal lagres i mappen for
-	 *            thumbnailstoerrelse-bilder
-	 */
+	public boolean saveThumbnailImageToFile(File imageFile) {
+		Path oldLocation = imageFile.toPath().getParent();
+		return saveThumbnailImageToFile(imageFile, oldLocation);
+	}
 
-	public boolean saveThumbnailImageToFile(int ID, File imageFile) {
+	public boolean saveThumbnailImageToFile(File imageFile, Path directory) {
 		try {
-			File destFile = new File(defaultPath + "\\thumb\\" + ID + "."
-					+ imageFile.getName().toString().split("[.]")[1]);
+			String newFilename = imageFile.getName().split("[.]")[0] + "_thumb"
+					+ "." + imageFile.getName().split("[.]")[1];
+			File destFile = new File(directory + "\\" + newFilename);
+
+			if (destFile.exists()) {
+				log(destFile + " already exists!");
+				return true;
+			}
 			Thumbnails.of(imageFile).size(THUMBNAIL_SIZE, THUMBNAIL_SIZE)
 					.toFile(destFile);
+			log("Saved " + imageFile + " to " + destFile);
+
+			dirWatch.ignore(imageFile);
+			dirWatch.ignore(destFile);
+
+			hideImageFile(destFile);
+
 			return true;
 		} catch (IOException e) {
 			log("Could not save thumbnailsized image");
@@ -310,61 +242,42 @@ public class ImageHandler {
 		}
 	}
 
-	/**
-	 * Metoden tar inn en ID tildelt av databasen, og en midlertidig bildefil.
-	 * Det blir lagret tre versjoner av bildefilen, i hver stoerrelse, med navn
-	 * ID + filtype, saa blir den midlertidige bildefilen slettet.
-	 * 
-	 * @param ID
-	 *            Bilde-ID tildelt av databasen, ender opp som filnavn for
-	 *            nylagrede bildefiler
-	 * @param tempFile
-	 *            Filobjektet til den midlertidige bildefilen
-	 * @return Returnerer sann om alle operasjonene gjennomfoeres uten feil.
-	 */
-
-	public boolean saveAndDispose(int ID, File tempFile) {
-		if (!saveFullImageToFile(ID, tempFile)) {
+	public boolean saveImageFromDisk(File tempFile) {
+		if (!saveMediumImageToFile(tempFile)) {
 			return false;
 		}
-		if (!saveMediumImageToFile(ID, tempFile)) {
-			return false;
-		}
-		if (!saveThumbnailImageToFile(ID, tempFile)) {
+		if (!saveThumbnailImageToFile(tempFile)) {
 			return false;
 		}
 
-		boolean wasDisposed = tempFile.delete();
+		// writeImageToDatabase(tempFile);
 
-		if (wasDisposed)
-			return true;
-		else
-			log("Could not properly dispose of the temporary file");
-		return false;
+		return true;
 	}
 
-	/**
-	 * Hjelpemetode for aa finne bildefil med bestemt ID. Metoden soeker gjennom
-	 * bildene i fullstoerrelse(villkaarlig) og sjekker om bildefilen eksisterer
-	 * 
-	 * @param id
-	 *            Bildefilens ID
-	 * @return Returnerer bildefilen hvis den eksisterer, null hvis ikke
-	 */
+	public boolean save(File imageFile) {
+		return save(imageFile, defaultPath);
+	}
 
-	private File getImageWithID(int id) {
-		File[] directory = new File(defaultPath + "\\full\\").listFiles();
-		for (File file : directory) {
-			if (file.getName().startsWith(String.valueOf(id)))
-				return file;
+	public boolean save(File imageFile, Path directory) {
+		if (!saveFullImageToFile(imageFile, directory)) {
+			return false;
 		}
-		log("Could not find file with id: " + id);
-		return null;
+
+		if (!saveMediumImageToFile(imageFile, directory)) {
+			return false;
+		}
+		if (!saveThumbnailImageToFile(imageFile, directory)) {
+			return false;
+		}
+
+		return true;
 	}
 
 	public static ImageHandler getInstance() {
 		if (instance == null)
 			instance = new ImageHandler();
+
 		return instance;
 
 	}
@@ -373,15 +286,27 @@ public class ImageHandler {
 
 	public static void main(String[] args) {
 		ImageHandler ih = ImageHandler.getInstance();
-		File[] directory = ih.defaultPath.toFile().listFiles();
-		int id = 0;
-		for (File file : directory) {
-			if (file.getName().endsWith(".png")) {
-				System.out.println("Images were saved: \t\t"
-						+ ih.saveAndDispose(id, file));
-				id++;
-			}
-		}
+	}
 
+	private void hideImageFile(File file) {
+		try {
+			Object hidden = Files.getAttribute(file.toPath(), "dos:hidden",
+					LinkOption.NOFOLLOW_LINKS);
+			if (hidden != null) {
+				Files.setAttribute(file.toPath(), "dos:hidden", Boolean.TRUE,
+						LinkOption.NOFOLLOW_LINKS);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	public static boolean isImageFile(File arg0) {
+		String extension = arg0.getName().split("[.]")[1];
+		for (String supportedExtension : SUPPORTED_EXTENSIONS)
+			if (extension.toLowerCase().equals(supportedExtension))
+				return true;
+		return false;
 	}
 }

@@ -9,24 +9,24 @@ import logic.ResponseServer;
 
 public class RequestServer {
 	private String order;
-	private int imageId;
+	private int id;
 	private String detail;
 	private JsonServer jsonServer;
 
 	public RequestServer(String order){
 		this.order = order;
 	}
-	public RequestServer(String order, int imageId){
+	public RequestServer(String order, int id){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 	}
 	public RequestServer(String order, String detail){
 		this.order = order;
 		this.detail = detail;
 	}
-	public RequestServer(String order, int imageId, String detail){
+	public RequestServer(String order, int id, String detail){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 		this.detail = detail;
 	}
 	public void setJsonServer(JsonServer jsonServer){
@@ -69,7 +69,7 @@ public class RequestServer {
 			return;
 		}
 		try {
-			thisMethod.invoke(this,this,imageId,detail);
+			thisMethod.invoke(this,this,id,detail);
 		} catch (IllegalAccessException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
 			return;
