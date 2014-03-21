@@ -60,7 +60,7 @@ public class testSkrivBilde {
 //				System.out.println(imgFolder);
 
 
-//				boolean del = DeleteFromDatabase.deleteFolderAndContent(1);
+//				boolean del = DeleteFromDatabase.deleteFolderAndContent(3);
 //				System.out.println(del);
 
 //				List<PictureDb> li = ReadFromDatabase.getPicturesBasedOnDate(" ", 1);
@@ -80,6 +80,7 @@ public class testSkrivBilde {
 //					System.out.println(tn.printChildren());
 //		
 //				}
+	
 	}
 
 }
