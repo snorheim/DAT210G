@@ -107,6 +107,11 @@ public class ThumbnailsModeController {
 		
 		main.openFileChooser();
 		
+		model.fillWithThumbnails();
+		model.fillWithMediumImages();
+		
+		main.showThumbnailsMode();
+		
 	}
 
 	private void makeGridAndDisplayImages() {
