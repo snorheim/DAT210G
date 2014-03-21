@@ -1,57 +1,63 @@
 package gui.model;
 
 public class Folder {
-
-	private ServerCommHandler serverCommHandler;
-
-	private int folderId;
-	private String folderName;
-	private FolderTree folderTreeModel;
+	
+	private String name;	
+	private int id;
+	private int lft;
+	private int rgt;
 	
 	
+	public Folder(String name, int id, int lft, int rgt) {
+		this.name = name;
+		this.id = id;
+		this.lft = lft;
+		this.rgt = rgt;
+	}
 
-	public Folder(ServerCommHandler serverCommHandler, int folderId,
-			String folderName, FolderTree folderTreeModel) {
 
-		this.serverCommHandler = serverCommHandler;
-		this.folderId = folderId;
+	public String getName() {
+		return name;
+	}
 
-		this.folderName = folderName;
-		this.folderTreeModel = folderTreeModel;
 
-		
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public int getId() {
+		return id;
+	}
+
+
+<<<<<<< HEAD
+=======
+	public void setId(int id) {
+		this.id = id;
+	}
+
+
+	public int getLft() {
+		return lft;
+	}
+
+
+	public void setLft(int lft) {
+		this.lft = lft;
+	}
+
+
+	public int getRgt() {
+		return rgt;
+	}
+
+
+	public void setRgt(int rgt) {
+		this.rgt = rgt;
 	}
 	
 	
-
-	public void setFolderTreeModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
-	}
-
-	
-
-	public String getFolderName() {
-		return folderName;
-	}
-
-	public void setFolderName(String folderName) {
-		this.folderName = folderName;
-	}
-
-	public int getFolderId() {
-		return folderId;
-	}
-
-	public void setFolderId(int folderId) {
-		this.folderId = folderId;
-	}
-
-	public String toString() {
-
-		return folderName + "    (" + folderId + ")    ";
-
-	}
-
-
+>>>>>>> parent of fb343bd... Ny test
 
 }

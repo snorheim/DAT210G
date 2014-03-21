@@ -1,6 +1,6 @@
 package gui;
 
-import gui.model.FolderTree;
+import gui.model.Model;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -8,11 +8,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
-public class SingleViewController {
-	
-	private MainController mainController;
-	private FolderTree folderTreeModel;
-	
+public class SingleModeController {
+
+	// Reference to the main application
+	private MainController main;
+	private Model model;
+
 	@FXML
 	private AnchorPane anchorPaneForSingle;
 	@FXML
@@ -26,7 +27,8 @@ public class SingleViewController {
 	@FXML
 	private Button rotRightBtn;
 	@FXML
-	private Button storeMetaBtn;	
+	private Button storeMetaBtn;
+	
 	@FXML
 	private TextField titleTextField;
 	@FXML
@@ -37,40 +39,47 @@ public class SingleViewController {
 	private TextField dateTextField;
 	@FXML
 	private TextField tagsTextField;
+
 	@FXML
 	private Label currentImageLabel;
-	
-	
-	public void displayImage() {		
+
+	/**
+	 * Is called by the Main class to give a reference back to itself.
+	 * 
+	 * @param main
+	 */
+	public void setMain(MainController main, Model model) {
+		this.main = main;
+		this.model = model;
+		displayImage();
+
+	}
+
+	private void displayImage() {		
 
 
-		ImageView image = folderTreeModel.getFullImage(folderTreeModel.getCurrentImage());
+		ImageView image = model.getCurrentOneImage().getFullImage();
 
 
 		anchorPaneForSingle.getChildren().add(image);
 
 
-		//updateMetaFields();
+		updateMetaFields();
 	}
-	
-	
 
-	
 	@FXML
 	private void homeBtnAction() {
 		
-		mainController.setManyMode();
-		System.out.println("clicked home button");
+		anchorPaneForSingle.getChildren().clear();
+		
+		main.showThumbnailsMode();
+		
 	}
 
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
-	
 	@FXML
 	private void nextBtnAction() {
 
-		/*
+
 		int nextImage = model.getCurrentImageId() + 1;
 
 		if (nextImage > model.getImageList().size()) {
@@ -81,14 +90,26 @@ public class SingleViewController {
 
 
 		displayImage();
-		*/
-		System.out.println("clicked next button");
+
 	}
-	
+
+	private void updateMetaFields() {
+
+		currentImageLabel.setText(Integer.toString(model.getCurrentImageId()));		
+
+		titleTextField.setText(model.getCurrentOneImage().getTitleMeta());
+		descTextField.setText(model.getCurrentOneImage().getDescMeta());
+		ratingTextField.setText(model.getCurrentOneImage().getRatingMeta());
+		dateTextField.setText(model.getCurrentOneImage().getDateMeta());
+		tagsTextField.setText(model.getCurrentOneImage().getTagsMeta());
+
+
+	}
+
 	@FXML
 	private void prevBtnAction() {
 
-		/*
+
 		int prevImage = model.getCurrentImageId() - 1;
 
 		if (prevImage < 1) {
@@ -99,56 +120,55 @@ public class SingleViewController {
 
 
 		displayImage();
-		*/
-		System.out.println("clicked prev button");
 
 	}
 
 	@FXML
 	private void rotRightBtnAction() {
-		/*
+		
 		ImageView image = model.getCurrentOneImage().getRotRight();
 
 
 		anchorPaneForSingle.getChildren().add(image);
-		*/
-		System.out.println("clicked rot right button");
 	}
 
 	@FXML
 	private void rotLeftBtnAction() {
-		/*
+
 		ImageView image = model.getCurrentOneImage().getRotLeft();
 
 
 		anchorPaneForSingle.getChildren().add(image);
-		*/
-		System.out.println("clicked rot left button");
 		
 	}
 	
 	@FXML
 	private void storeMetaBtnAction() {
-		/*
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
 		tagsTextFieldAction();
-		*/
-		System.out.println("clicked apply button");
 	}
 
-
-
-
-
-
+	
+	private void titleTextFieldAction() {
+		model.getCurrentOneImage().modifyTitle(titleTextField.getText());
+	};
 
 	
-	public void setModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
-		
-	}
+	private void descTextFieldAction() {
+		model.getCurrentOneImage().modifyDesc(descTextField.getText());
+	};
+
 	
+	private void ratingTextFieldAction() {
+		model.getCurrentOneImage().modifyRating(ratingTextField.getText());
+	};
+
 	
+	private void tagsTextFieldAction() {
+		model.getCurrentOneImage().addTag(tagsTextField.getText());
+	};
+
+
 }
