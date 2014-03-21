@@ -1,101 +1,127 @@
 package gui.model;
 
+import java.util.ArrayList;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class OneImage {
 
 
 	private int imageId;
-	private ImageView image;
-	private Model model;
+	private int folderId;
 	private ServerCommHandler serverCommHandler;
 	private String titleMeta;
 	private String descMeta;
 	private String ratingMeta;
 	private String dateMeta;
 	private String tagsMeta;
+	private FolderTree folderTreeModel;
 
-	public OneImage(int imageId, ServerCommHandler serverComm, Model model) {
+	public OneImage(int imageId, int folderId, ServerCommHandler serverComm, FolderTree folderTreeModel) {
 
 		this.imageId = imageId;	
+		this.folderId = folderId;
 		this.serverCommHandler = serverComm;
-		this.model = model;				
+		this.folderTreeModel = folderTreeModel;
+					
 
 	}
 
 	public int getImageId() {
 		return imageId;
 	}
+	
+	public ArrayList<ImageView> getThumbnailsFromThisFolderDown() {
 
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
 
-	public Model getModel() {
-		return model;
-	}
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
 
-	public ImageView getThumbnailImage() {
+		for (int i = 0; i < imageIdArray.length; i++) {
 
-		
-		image = serverCommHandler.getThumbnail(imageId);
+			ImageView tempImage = serverCommHandler
+					.getThumbnail(imageIdArray[i]);
+			
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
 
-		image.setOnMouseClicked(new EventHandler<Event>() {
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: " + imageId);
+					
+					
+				}
+				
+			});
+			
+			imageViewArray.add(tempImage);
 
-			@Override
-			public void handle(Event event) {
-				System.out.println("Clicked image: " + getImageId());
-				getModel().setCurrentImageId(getImageId());
+		}
 
-			}
-		});
-
-		return image;
-
-	}
-
-	public ImageView getMediumImage() {
-
-
-		image = serverCommHandler.getMediumImage(imageId);
-
-		image.setOnMouseClicked(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				System.out.println("Clicked image: " + getImageId());
-				getModel().setCurrentImageId(getImageId());
-
-			}
-		});
-
-		return image;
+		return imageViewArray;
 
 	}
+
+	public ArrayList<ImageView> getMediumFromThisFolderDown() {
+
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
+
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+			ImageView tempImage = serverCommHandler
+					.getMediumImage(imageIdArray[i]);
+
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: " + imageId);
+					
+					
+				}
+				
+			});
+			
+
+			imageViewArray.add(tempImage);
+
+		}
+
+		return imageViewArray;
+
+	}
+
+
 
 	public ImageView getFullImage() {
 
 
-		image = serverCommHandler.getFullImage(imageId);		
-
-		return image;
+		return serverCommHandler.getFullImage(imageId);		
+		
 
 	}
-	
+	/*
 	public ImageView getRotLeft() {
 
 
-		image = serverCommHandler.getRotLeft(imageId);
+		thumbnailImage = serverCommHandler.getRotLeft(imageId);
 
-		return image;
+		return thumbnailImage;
 
 	}
 	
 	public ImageView getRotRight() {
 
 
-		image = serverCommHandler.getRotRight(imageId);
+		thumbnailImage = serverCommHandler.getRotRight(imageId);
 
-		return image;
+		return thumbnailImage;
 
 	}
 
@@ -135,7 +161,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyTitle(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -143,7 +169,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyDesc(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -151,7 +177,7 @@ public class OneImage {
 		Boolean success = serverCommHandler.modifyRating(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
 	
@@ -159,9 +185,22 @@ public class OneImage {
 		Boolean success = serverCommHandler.addTag(imageId, string);
 		
 		if (success) {
-			System.out.println("sucess");
+			//System.out.println("sucess");
 		}
 	}
+
+*/
+
+
+	public int getFolderId() {
+		return folderId;
+	}
+	
+	
+
+	
+	
+	
 
 
 
