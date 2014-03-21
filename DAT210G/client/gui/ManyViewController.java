@@ -107,7 +107,7 @@ public class ManyViewController {
 
 	private void smallZoomLevelImages() {
 
-		ArrayList<ImageView> imagesToBeDisplayed = folderTreeModel
+		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
 				.getCurrentFolder().getThumbnailsFromThisFolderDown();					
 		
  

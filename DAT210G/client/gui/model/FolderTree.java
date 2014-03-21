@@ -21,6 +21,9 @@ public class FolderTree {
 	private TreeItem<Folder> treeRoot;
 	
 	private ArrayList<Folder> allFoldersList = new ArrayList<Folder>();
+	private ArrayList<OneImage> allImagesList = new ArrayList<>();
+
+	
 
 	private ServerCommHandler serverCommHandler;
 	private ManyViewController manyViewController;
@@ -83,7 +86,7 @@ public class FolderTree {
 
 			Folder tempFolder = new Folder(serverCommHandler, id,
 					subFolderIdAndName.get(id), this);
-						
+			allImagesList.add(new OneImage(id, parentFolder, serverCommHandler, this));			
 
 			allFoldersList.add(tempFolder);
 
@@ -105,6 +108,9 @@ public class FolderTree {
 		return treeRoot;
 	}
 
+	public ArrayList<OneImage> getAllImagesList() {
+		return allImagesList;
+	}
 	
 
 	public void setManyViewController(ManyViewController manyViewController) {

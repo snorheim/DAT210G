@@ -1,11 +1,5 @@
 package gui.model;
 
-import java.util.ArrayList;
-
-import javafx.event.Event;
-import javafx.event.EventHandler;
-import javafx.scene.image.ImageView;
-
 public class Folder {
 
 	private ServerCommHandler serverCommHandler;
@@ -59,69 +53,5 @@ public class Folder {
 	}
 
 
-	
-	public ArrayList<ImageView> getThumbnailsFromThisFolderDown() {
-
-		ArrayList<ImageView> imageViewArray = new ArrayList<>();
-
-		int[] imageIdArray = serverCommHandler
-				.getImagesInFolderAndSubfolders(folderId);
-
-		for (int i = 0; i < imageIdArray.length; i++) {
-
-			ImageView tempImage = serverCommHandler
-					.getThumbnail(imageIdArray[i]);
-
-			tempImage.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event ev) {
-					System.out.println("Clicked image: ");
-					
-					
-				}
-				
-			});
-			
-
-			imageViewArray.add(tempImage);
-
-		}
-
-		return imageViewArray;
-
-	}
-
-	public ArrayList<ImageView> getMediumFromThisFolderDown() {
-
-		ArrayList<ImageView> imageViewArray = new ArrayList<>();
-
-		int[] imageIdArray = serverCommHandler
-				.getImagesInFolderAndSubfolders(folderId);
-
-		for (int i = 0; i < imageIdArray.length; i++) {
-
-			ImageView tempImage = serverCommHandler
-					.getMediumImage(imageIdArray[i]);
-
-			tempImage.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event ev) {
-					System.out.println("Clicked image: ");
-					
-					
-				}
-				
-			});
-			
-
-			imageViewArray.add(tempImage);
-
-		}
-
-		return imageViewArray;
-
-	}
 
 }
