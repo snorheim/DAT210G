@@ -89,6 +89,15 @@ public class testSkrivBilde {
 //		boolean t = DeleteFromDatabase.deletePicture(4);
 //		System.out.println(t);
 	
+//		String[] t = new String[2];
+//		t[0] = "jul";
+//		t[1] = "annet";
+//		
+//		int[] img = ReadFromDatabase.androidPictureBasedOnManyTags(t, 2);
+//		for (int i: img) {
+//			System.out.println(i);
+//		}
+ 		
 	}
 
 }

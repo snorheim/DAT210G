@@ -183,22 +183,21 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	//TODO: android versjon
-	public static List<PictureDb> getPicturesBasedOnManyTags(String[] tag,
+	public static int[] getPicturesBasedOnManyTags(String[] tag,
 			int folderId) {
-		List<PictureDb> returnList = new ArrayList<>();
+		List<PictureDb> tmpPictureList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture : picList) {
-				for (TagDb t : picture.getTags()) {
-					for (String tagString : tag) {
+			for (PictureDb picture: picList) {
+				for (TagDb t: picture.getTags()) {
+					for (String tagString: tag) {
 						if (t.getTag().equals(tagString)) {
-							if (!returnList.contains(picture)) {
-								returnList.add(picture);
+							if (!tmpPictureList.contains(picture)) {
+								tmpPictureList.add(picture);
 							}
 						}
 					}
@@ -212,7 +211,47 @@ public class ReadFromDatabase {
 			dbSession.close();
 			HibernateUtil.shutdown();
 		}
-		return returnList;
+		int[] imageIdArray = new int[tmpPictureList.size()];
+		for (int i = 0; i < imageIdArray.length; i++) {
+			imageIdArray[i] = tmpPictureList.get(i).getId();
+		}
+		return imageIdArray;
+	}
+
+	@SuppressWarnings("unchecked")
+	public static int[] androidPictureBasedOnManyTags(String[] tag, int folderId) {
+		List<PictureDb> tmpPictureList = new ArrayList<>();
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId = :folderId");
+			query.setParameter("folderId", folderId);
+			List<PictureDb> queryList = query.list();
+			for (PictureDb picture: queryList) {
+				for (TagDb pictureTag: picture.getTags()) {
+					for (String tagString: tag) {
+						if (pictureTag.getTag().equals(tagString)) {
+							if (!tmpPictureList.contains(picture)) {
+								tmpPictureList.add(picture);
+							}
+						}
+					}
+				}
+			}	
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null)
+				dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+			HibernateUtil.shutdown();
+		}
+		int[] imageIdArray = new int[tmpPictureList.size()];
+		for (int i = 0; i < imageIdArray.length; i++) {
+			imageIdArray[i] = tmpPictureList.get(i).getId();
+		}
+		return imageIdArray;
 	}
 
 	public static int[] getPicturesBasedOnRating(int rating, int folderId) {
