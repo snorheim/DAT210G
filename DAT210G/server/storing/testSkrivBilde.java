@@ -85,6 +85,9 @@ public class testSkrivBilde {
 //		for (int i: ar) {
 //			System.out.println(i);
 //		}
+		
+//		boolean t = DeleteFromDatabase.deletePicture(4);
+//		System.out.println(t);
 	
 	}
 

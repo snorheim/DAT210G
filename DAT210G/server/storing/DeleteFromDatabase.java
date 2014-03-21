@@ -1,6 +1,7 @@
 package storing;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -15,14 +16,17 @@ public class DeleteFromDatabase {
 	public static boolean deletePicture(int picId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		ArrayList<TagDb> tmpTagList = new ArrayList<>();
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession.createQuery("FROM PictureDb WHERE id=:picId");
 			query.setParameter("picId", picId);
 			PictureDb picFromDb = (PictureDb) query.uniqueResult();
 			Set<TagDb> tagsToPic = removeTagOnPictureDelete(picFromDb);
+			tmpTagList.addAll(tagsToPic);
 			picFromDb.getTags().removeAll(tagsToPic);
 			dbSession.delete(picFromDb);
+			cleanTags(tmpTagList, dbSession);
 			dbTransaction.commit();
 			succesful = true;
 		} catch (HibernateException e) {
@@ -33,6 +37,7 @@ public class DeleteFromDatabase {
 			HibernateUtil.shutdown();
 		}
 		return succesful;
+
 	}
 
 
@@ -43,7 +48,18 @@ public class DeleteFromDatabase {
 		}
 		return tagsToPic;
 	}
-
+	
+	private static void cleanTags(ArrayList<TagDb> tagList, Session dbSession) {
+		Query query;
+		for (TagDb tag: tagList) {
+			if (tag.getPics().isEmpty()) {
+				query = dbSession.createQuery("DELETE FROM TagDb WHERE tag = :tag");
+				query.setParameter("tag", tag.getTag());
+				query.executeUpdate();
+			}
+		}
+	}
+ 
 	public static boolean deleteTagFromPicture(int pictureId, String tag) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -109,9 +125,12 @@ public class DeleteFromDatabase {
 			query.setParameter("folderID", i);
 			tmpList = query.list();
 			for (PictureDb p: tmpList) {
+				ArrayList<TagDb> tmpTagList = new ArrayList<>();
 				Set<TagDb> tagsToPic = removeTagOnPictureDelete(p);
+				tmpTagList.addAll(tagsToPic);
 				p.getTags().removeAll(tagsToPic);
 				dbSession.delete(p);
+				cleanTags(tmpTagList, dbSession);
 			}
 		}
 	}
