@@ -133,7 +133,7 @@ public class RequestMethods {
 	public static void getTagsStartingWith(RequestServer request, int id, String detail){
 
 	}
-	public static void getNextid(RequestServer request, int id, String detail){
+	public static void getNextImageId(RequestServer request, int id, String detail){
 		int nextAvailableId = ReadFromDatabase.findNextPicId();
 		System.out.println("Neste id er: " + nextAvailableId);
 		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
@@ -230,17 +230,23 @@ public class RequestMethods {
 		}
 		ReadExif exif = new ReadExif(tempImage.getPath());
 		boolean writePictureToFile = ImageHandler.getInstance().save(tempImage,ImageHandler.getInstance().defaultPath);
+		System.out.println(writePictureToFile + " " + detail);
 		if (writePictureToFile){
 			Path directory = ImageHandler.getInstance().defaultPath;
+			directory = directory.subpath(1, directory.getNameCount());
+
 			int lio = detail.split("[.]").length;
 			String mediumName = detail.split("[.]")[lio-2] + "_medium." + detail.split("[.]")[lio-1];
+			System.out.println(mediumName);
 			String thumbName = detail.split("[.]")[lio-2] + "_thumb." + detail.split("[.]")[lio-1];
 			System.out.println(thumbName);
+			System.out.println(detail);
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(), exif.getExifComment(), 
 					exif.getExifRating(), exif.getExifDateTimeTaken(), 
-					directory + "\\" +detail, 
-					directory + "\\" +mediumName, 
-					directory + "\\" +thumbName,
+					detail, 
+					mediumName, 
+					thumbName,
+					//TODO Endre 1 til mappe id.
 					1);
 			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
 			if (writePictureToDb){

@@ -29,8 +29,8 @@ import logic.ResponseClient;
  * 
  */
 public class ServerCommHandler {
-	
-	
+
+
 
 	public int[] getAllImageIds() {
 		int[] allImageId = null;
@@ -48,7 +48,7 @@ public class ServerCommHandler {
 		}
 		return allImageId;
 	}
-	
+
 	public int[] getImagesInFolderAndSubfolders(int id) {
 		int[] allImageId = null;
 		JsonClient getAllImagesJson = new JsonClient(new RequestClient(
@@ -76,7 +76,7 @@ public class ServerCommHandler {
 					.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()) {
 				bufImage = getThumbnailJson.receiveImageFromServer();
-				
+
 			}
 			getThumbnailJson.closeHttpConnection();
 		}
@@ -99,14 +99,14 @@ public class ServerCommHandler {
 		if (image == null) {
 			image = new Image("testthumbnail.png");
 		}
-		
-		
+
+
 
 		return new ImageView(image);
 
 	}
-	
-	
+
+
 
 	public void SendImageToServer(File fileToSend) {
 		int nextAvailableId = -1;
@@ -130,30 +130,30 @@ public class ServerCommHandler {
 		System.out.println("Filtype til nytt bilde: " + fileName + " id: "
 				+ nextAvailableId);
 		if (nextAvailableId != -1) {
-			// boolean imageWasSentSuccessful = false;
-			// while (imageWasSentSuccessful == false){
-			JsonClient sendImageJson = new JsonClient(new RequestClient(
-					"addNewFullImage", nextAvailableId, fileName));
-			if (sendImageJson.sendJsonToServer()) {
-				// sendImageJson.sendImageToServer(image, fileType);
-				try {
-					System.out.println("Prøver å sende bilde: "
-							+ fileToSend.getPath());
-					sendImageJson.sendFileToServer(fileToSend.getPath());
-					ResponseClient response = sendImageJson
-							.receiveJsonFromServer();
-					// imageWasSentSuccessful = response.getSuccess();
-				} catch (Exception e) {
-					e.printStackTrace();
+			boolean imageWasSentSuccessful = false;
+			while (imageWasSentSuccessful == false){
+				JsonClient sendImageJson = new JsonClient(new RequestClient(
+						"addNewFullImage", nextAvailableId, fileName));
+				if (sendImageJson.sendJsonToServer()) {
+					// sendImageJson.sendImageToServer(image, fileType);
+					try {
+						System.out.println("Prøver å sende bilde: "
+								+ fileToSend.getPath());
+						sendImageJson.sendFileToServer(fileToSend.getPath());
+						ResponseClient response = sendImageJson
+								.receiveJsonFromServer();
+						imageWasSentSuccessful = response.getSuccess();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					sendImageJson.closeHttpConnection();
 				}
-				sendImageJson.closeHttpConnection();
 			}
-			// }
 		}
 
 	}
 
-	
+
 
 	public Hashtable<Integer, String> getSubFoldersIdAndName(int id) {
 
@@ -191,13 +191,13 @@ public class ServerCommHandler {
 		return idAndNames;
 
 	}
-	
-	
-	
+
+
+
 	public int[] getSubFoldersIdArray(int id) {
 
 		int[] subFoldersId = null;
-		
+
 
 		JsonClient json = new JsonClient(new RequestClient("getSubFolders", id,
 				null));
@@ -211,7 +211,7 @@ public class ServerCommHandler {
 			if (response.getSuccess()) {
 				System.out.println("sucess");
 				subFoldersId = response.getImageIdArray();
-				
+
 
 			}
 			json.closeHttpConnection();
@@ -220,13 +220,13 @@ public class ServerCommHandler {
 
 		}
 
-		
+
 
 		return subFoldersId;
 
 	}
-	
-	
+
+
 
 	public int[] getAllImagesInFolder(int id) {
 
@@ -272,7 +272,7 @@ public class ServerCommHandler {
 		// TODO: FOR DEBUG
 
 		Image image = null;
-		
+
 		if (bufImage != null) {
 			// TODO: FOR DEBUG
 
@@ -285,8 +285,8 @@ public class ServerCommHandler {
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
 
-		
-		
+
+
 		// For testing
 		image = new Image("testfull.png");
 
@@ -321,9 +321,9 @@ public class ServerCommHandler {
 		}
 
 		// For testing
-				if (image == null) {
-					image = new Image("testmedium.png");
-				}
+		if (image == null) {
+			image = new Image("testmedium.png");
+		}
 
 		return new ImageView(image);
 	}

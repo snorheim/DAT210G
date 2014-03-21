@@ -188,6 +188,7 @@ public class WriteToDatabase {
 			dbTransaction.commit();
 			successfulTransfer = true;
 		} catch (HibernateException e) {
+			e.printStackTrace();
 			successfulTransfer = false;
 			if (dbTransaction != null)
 				dbTransaction.rollback();

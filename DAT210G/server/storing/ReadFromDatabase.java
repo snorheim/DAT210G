@@ -31,7 +31,7 @@ public class ReadFromDatabase {
 		}
 		return tagList;
 	}
-
+	
 	public static int getPictureFromPath(String path) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -42,6 +42,7 @@ public class ReadFromDatabase {
 					.createQuery("SELECT id FROM PictureDb WHERE fileLocation = :path");
 			query.setParameter("path", path);
 			pictureId = (int) query.uniqueResult();
+			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
 				dbTransaction.rollback();
@@ -548,6 +549,7 @@ public class ReadFromDatabase {
 	}
 
 	public static int getFolderID(String folderPath) {
+		System.out.println("søker på denne pathen: " + folderPath);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		int folderId = 0;

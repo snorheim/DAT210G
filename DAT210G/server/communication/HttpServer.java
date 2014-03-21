@@ -149,12 +149,13 @@ public class HttpServer implements Runnable {
 		return new File(fileFullPath);
 	}
 	public static void main(String[] args) {
+		ImageHandler.getInstance();
 		int port = 19999;
 		int count = 0;
 		ServerSocket serverConnection = null;
 		try {
 			serverConnection = new ServerSocket(port);
-			System.out.println("HTTP server initialized");
+			System.out.println("HTTP server initialized. Listening to port: " + port);
 			while (true) {
 				Socket connection = serverConnection.accept();
 				Runnable runnable = new HttpServer(connection, ++count);

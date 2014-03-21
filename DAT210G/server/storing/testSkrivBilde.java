@@ -41,7 +41,7 @@ public class testSkrivBilde {
 
 
 		//TODO: hvordan vi adder folders
-//				ParentFolderDb nyFolder = new ParentFolderDb("undersommer", "\\img\\sommer\\undersommer\\", 3);
+//				ParentFolderDb nyFolder = new ParentFolderDb("undersommer", "\\img\\sommer\\undersommer\\", 1);
 //				
 //				IsNotOnlyChildObject onlyChild = ReadFromDatabase.isFolderOnlyChild(3);
 //				System.out.println(onlyChild.isOnlyChild());

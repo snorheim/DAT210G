@@ -63,21 +63,26 @@ public class RequestServer {
 			thisMethod = requestMethodsClass.getMethod(order, parameterTypes);
 		} catch (NoSuchMethodException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (SecurityException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		}
 		try {
 			thisMethod.invoke(this,this,id,detail);
 		} catch (IllegalAccessException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (IllegalArgumentException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (InvocationTargetException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		}
 	}

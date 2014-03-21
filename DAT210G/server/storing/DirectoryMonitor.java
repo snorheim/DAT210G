@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import logic.ResponseServer;
+
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -79,10 +81,12 @@ public class DirectoryMonitor implements FileAlterationListener {
 		log("Is only child: " + onlyChild.isOnlyChild());
 
 		if (onlyChild.isOnlyChild) {
+			System.out.println("er onlychild");
 			boolean writ = WriteToDatabase.addFolderAsAnOnlyChildToFolder(
 					newFolder, parentID);
 			log(writ + ", only child");
 		} else {
+			System.out.println("ikke onlychild");
 			boolean writ = WriteToDatabase.addFolderInAFolderWithOtherChildren(
 					newFolder, onlyChild.getLeftChildId());
 			log(writ + ", sibling");
@@ -139,7 +143,25 @@ public class DirectoryMonitor implements FileAlterationListener {
 					thumbPath, parentID);
 
 			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
+			System.out.println("Her " + wasWritten);
 
+//			if (wasWritten){
+//				System.out.println("Her og");
+//				if (!(read.getExifTags() == null)) {
+//					System.out.println("Og her");
+//					int pictureId = ReadFromDatabase.getPictureFromPath(fullPath);
+//					System.out.println("picture id til tagbilde: " + pictureId);
+//					String[] tagsInString = read.getExifTags().split(";");
+//					for (int i = 0; i < tagsInString.length; i++) {
+//						boolean writeTagsToDb = WriteToDatabase.addTagToPic(pictureId, tagsInString[i]);
+//						System.out.println("tag skrevet: " + writeTagsToDb + " : " + tagsInString[i]);
+//					}
+//				}
+//			}
+			
+			
+			
+			
 			log("Was written to batadase: " + wasWritten);
 
 			ImageHandler.getInstance().saveImageFromDisk(file);
