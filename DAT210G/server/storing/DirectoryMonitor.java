@@ -145,23 +145,19 @@ public class DirectoryMonitor implements FileAlterationListener {
 			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
 			System.out.println("Her " + wasWritten);
 
-//			if (wasWritten){
-//				System.out.println("Her og");
-//				if (!(read.getExifTags() == null)) {
-//					System.out.println("Og her");
-//					int pictureId = ReadFromDatabase.getPictureFromPath(fullPath);
-//					System.out.println("picture id til tagbilde: " + pictureId);
-//					String[] tagsInString = read.getExifTags().split(";");
-//					for (int i = 0; i < tagsInString.length; i++) {
-//						boolean writeTagsToDb = WriteToDatabase.addTagToPic(pictureId, tagsInString[i]);
-//						System.out.println("tag skrevet: " + writeTagsToDb + " : " + tagsInString[i]);
-//					}
-//				}
-//			}
-			
-			
-			
-			
+			if (wasWritten){
+				System.out.println("Her og");
+				if (!(read.getExifTags() == null)) {
+					System.out.println("Og her");
+					int pictureId = ReadFromDatabase.getPictureFromPath(fullPath);
+					System.out.println("picture id til tagbilde: " + pictureId);
+					String[] tagsInString = read.getExifTags().split(";");
+					for (int i = 0; i < tagsInString.length; i++) {
+						boolean writeTagsToDb = WriteToDatabase.addTagToPic(pictureId, tagsInString[i]);
+						System.out.println("tag skrevet: " + writeTagsToDb + " : " + tagsInString[i]);
+					}
+				}
+			}
 			log("Was written to batadase: " + wasWritten);
 
 			ImageHandler.getInstance().saveImageFromDisk(file);
