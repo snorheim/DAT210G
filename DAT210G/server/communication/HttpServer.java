@@ -114,7 +114,7 @@ public class HttpServer implements Runnable {
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(connection.getInputStream());
 		String fileFullPath = ImageHandler.getInstance().defaultPath + "\\" + fileName;
 		//TODO: funker denne ?
-		ImageHandler.getInstance().dirWatch.ignore(new File(fileFullPath));
+		ImageHandler.getInstance().directoryMonitor.ignore(new File(fileFullPath));
 		System.out.println("Receiving image to file: " + fileFullPath);
 		byte[] byteSize = new byte[4];
 		int offset = 0;

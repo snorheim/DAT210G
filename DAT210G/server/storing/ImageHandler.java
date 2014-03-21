@@ -22,7 +22,7 @@ public class ImageHandler {
 	private static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
-	public DirectoryMonitor dirWatch;
+	private DirectoryMonitor directoryMonitor;
 
 	public static final String[] SUPPORTED_EXTENSIONS = { "jpg", "png", "bmp",
 			"jpeg" };
@@ -43,39 +43,22 @@ public class ImageHandler {
 		} catch (FileNotFoundException fnfe) {
 			fnfe.printStackTrace();
 		}
-		dirWatch = new DirectoryMonitor(defaultPath);
+		directoryMonitor = new DirectoryMonitor(defaultPath);
 	}
 
 	private void log(String string) {
 		System.out.println("IH@ " + string);
 	}
 
-	/**
-	 * Soerger for at noedvendige mapper for lagring av bilder eksisterer, lager
-	 * dem om noedvendig.
-	 * 
-	 * 
-	 * @throws FileNotFoundException
-	 */
 	private boolean ensureLocation() throws FileNotFoundException {
 
 		if (defaultPath.toFile().exists()) {
 			return true;
 		} else {
-			// TODO: uncomment etter merge med database
 			WriteToDatabase.ensureImgFolderDatabase();
 			return defaultPath.toFile().mkdirs();
 		}
 	}
-
-	/**
-	 * Metoden forsoeker aa lese og laste inn en bildefil med sti relativ til
-	 * defaultpath og returnerer et BufferedImage.
-	 * 
-	 * @Param file Bildefilen som skal leses og lastes inn.
-	 * 
-	 * @return Returnerer et BufferedImage av bildet.
-	 */
 
 	public BufferedImage load(String filepath) {
 		log("Loading imagefile: " + defaultPath + filepath);
@@ -85,15 +68,6 @@ public class ImageHandler {
 		}
 		return null;
 	}
-
-	/**
-	 * Metoden forsoeker aa lese og laste inn en bildefil og returnerer et
-	 * BufferedImage.
-	 * 
-	 * @Param file Bildefilen som skal leses og lastes inn.
-	 * 
-	 * @return Returnerer et BufferedImage av bildet.
-	 */
 
 	public BufferedImage load(File file) {
 		BufferedImage bufferedImage = null;
@@ -107,16 +81,6 @@ public class ImageHandler {
 
 		return bufferedImage;
 	}
-
-	/**
-	 * Hjelpemetode for aa kopiere en fil til en ny plassering
-	 * 
-	 * @param sourceFile
-	 *            Filen som skal bli kopiert
-	 * @param destinationFile
-	 *            Den kopierte filens nye destinasjon
-	 * @return Returnerer sann om kopieringen lykkes
-	 */
 
 	private boolean copyFile(File sourceFile, File destinationFile) {
 		InputStream inStream = null;
@@ -148,16 +112,14 @@ public class ImageHandler {
 
 	}
 
-	// TODO: Filplassering
-
 	public boolean saveFullImageToFile(File imageFile) {
 		Path oldLocation = imageFile.toPath().getParent();
 		return saveFullImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveFullImageToFile(File imageFile, Path directory) {
+	public boolean saveFullImageToFile(File imageFile, Path destination) {
 		String newFilename = imageFile.getName();
-		File destFile = new File(directory + "\\" + newFilename);
+		File destFile = new File(destination + "\\" + newFilename);
 
 		if (destFile.exists()) {
 			log(destFile + " already exists!");
@@ -168,8 +130,8 @@ public class ImageHandler {
 
 		if (wasSuccessful) {
 			log("Saved " + imageFile + " to " + destFile);
-			dirWatch.ignore(imageFile);
-			dirWatch.ignore(destFile);
+			directoryMonitor.ignore(imageFile);
+			directoryMonitor.ignore(destFile);
 			return true;
 		} else
 			log("Could not save fullsized image");
@@ -181,12 +143,12 @@ public class ImageHandler {
 		return saveMediumImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveMediumImageToFile(File imageFile, Path directory) {
+	public boolean saveMediumImageToFile(File imageFile, Path destination) {
 		try {
 
 			String newFilename = imageFile.getName().split("[.]")[0]
 					+ "_medium" + "." + imageFile.getName().split("[.]")[1];
-			File destFile = new File(directory + "\\" + newFilename);
+			File destFile = new File(destination + "\\" + newFilename);
 
 			if (destFile.exists()) {
 				log(destFile + " already exists!");
@@ -197,8 +159,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			dirWatch.ignore(imageFile);
-			dirWatch.ignore(destFile);
+			directoryMonitor.ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -216,11 +177,11 @@ public class ImageHandler {
 		return saveThumbnailImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveThumbnailImageToFile(File imageFile, Path directory) {
+	public boolean saveThumbnailImageToFile(File imageFile, Path destination) {
 		try {
 			String newFilename = imageFile.getName().split("[.]")[0] + "_thumb"
 					+ "." + imageFile.getName().split("[.]")[1];
-			File destFile = new File(directory + "\\" + newFilename);
+			File destFile = new File(destination + "\\" + newFilename);
 
 			if (destFile.exists()) {
 				log(destFile + " already exists!");
@@ -230,8 +191,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			dirWatch.ignore(imageFile);
-			dirWatch.ignore(destFile);
+			directoryMonitor.ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -259,15 +219,15 @@ public class ImageHandler {
 		return save(imageFile, defaultPath);
 	}
 
-	public boolean save(File imageFile, Path directory) {
-		if (!saveFullImageToFile(imageFile, directory)) {
+	public boolean save(File imageFile, Path destination) {
+		if (!saveFullImageToFile(imageFile, destination)) {
 			return false;
 		}
 
-		if (!saveMediumImageToFile(imageFile, directory)) {
+		if (!saveMediumImageToFile(imageFile, destination)) {
 			return false;
 		}
-		if (!saveThumbnailImageToFile(imageFile, directory)) {
+		if (!saveThumbnailImageToFile(imageFile, destination)) {
 			return false;
 		}
 
@@ -285,6 +245,7 @@ public class ImageHandler {
 	// Tester metodene:
 
 	public static void main(String[] args) {
+		@SuppressWarnings("unused")
 		ImageHandler ih = ImageHandler.getInstance();
 	}
 
@@ -297,7 +258,6 @@ public class ImageHandler {
 						LinkOption.NOFOLLOW_LINKS);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

@@ -14,15 +14,14 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 	Path directoryToWatch;
 	FileAlterationMonitor monitor;
-	ArrayList<File> ignoreList;
+	ArrayList<String> ignoreList;
 
 	public static final int READ_INTERVAL_MS = 5000;
 
 	public DirectoryMonitor(Path dir) {
 		directoryToWatch = dir;
 
-		ignoreList = new ArrayList<File>();
-
+		ignoreList = new ArrayList<String>();
 		FileAlterationObserver observer = new FileAlterationObserver(
 				directoryToWatch.toString());
 		observer.addListener(this);
@@ -35,6 +34,7 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 	public void stop() {
 		try {
+			log("Stopped.");
 			monitor.stop();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -44,7 +44,7 @@ public class DirectoryMonitor implements FileAlterationListener {
 	public void start() {
 		try {
 			monitor.start();
-			log("Started");
+			log("Started.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -70,8 +70,6 @@ public class DirectoryMonitor implements FileAlterationListener {
 		int parentID = ReadFromDatabase.getFolderID(parentPath);
 
 		String folderPath = parentPath + arg0.getName() + "\\";
-
-		System.out.println(folderPath);
 
 		ParentFolderDb newFolder = new ParentFolderDb(arg0.getName(),
 				folderPath, parentID);
@@ -113,28 +111,28 @@ public class DirectoryMonitor implements FileAlterationListener {
 	}
 
 	@Override
-	public void onFileCreate(File arg0) {
-		if (ignoreList.contains(arg0)) {
-			ignoreList.remove(arg0);
+	public void onFileCreate(File file) {
+		if (isIgnored(file)) {
+			unignore(file);
 			return;
 		}
-		log("New file: " + arg0);
-		if (ImageHandler.isImageFile(arg0)) {
+		log("New file: " + file);
+		if (ImageHandler.isImageFile(file)) {
 
-			int length = arg0.toPath().getNameCount();
+			int length = file.toPath().getNameCount();
 			String parentPath = "\\"
-					+ arg0.toPath().getParent().subpath(1, length - 1)
+					+ file.toPath().getParent().subpath(1, length - 1)
 							.toString() + "\\";
 
 			int parentID = ReadFromDatabase.getFolderID(parentPath);
 
-			String fullPath = arg0.toPath().subpath(2, length).toString();
+			String fullPath = file.toPath().subpath(2, length).toString();
 			int lio = fullPath.split("[.]").length;
 			String mediumPath = fullPath.split("[.]")[lio - 2] + "_medium"
 					+ "." + fullPath.split("[.]")[lio - 1];
 			String thumbPath = fullPath.split("[.]")[lio - 2] + "_thumb" + "."
 					+ fullPath.split("[.]")[lio - 1];
-			ReadExif read = new ReadExif(arg0.getPath().toString());
+			ReadExif read = new ReadExif(file.getPath().toString());
 			PictureDb pictureDb = new PictureDb(read.getExifTitle(),
 					read.getExifComment(), read.getExifRating(),
 					read.getExifDateTimeTaken(), fullPath, mediumPath,
@@ -144,14 +142,14 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 			log("Was written to batadase: " + wasWritten);
 
-			ImageHandler.getInstance().saveImageFromDisk(arg0);
+			ImageHandler.getInstance().saveImageFromDisk(file);
 		}
 	}
 
 	@Override
 	public void onFileDelete(File file) {
-		if (ignoreList.contains(file)) {
-			ignoreList.remove(file);
+		if (isIgnored(file)) {
+			unignore(file);
 			return;
 		}
 		log("Deleted file: " + file);
@@ -164,8 +162,6 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 				String fullPath = file.toPath().subpath(2, count).toString();
 
-				System.out.println(fullPath);
-
 				int imageID = ReadFromDatabase.getPictureFromPath(fullPath);
 
 				boolean success = DeleteFromDatabase.deletePicture(imageID);
@@ -176,17 +172,35 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 	}
 
+	public void ignore(File file) {
+		ignoreList.add(file.toPath().toString());
+	}
+
+	private boolean unignore(File file) {
+		boolean success = ignoreList.remove(file.toPath().toString());
+		return success;
+	}
+
+	private boolean isIgnored(File file) {
+		return ignoreList.contains(file.toPath().toString());
+	}
+
 	@Override
 	public void onStart(FileAlterationObserver arg0) {
+		log("Reading...");
 	}
 
 	@Override
 	public void onStop(FileAlterationObserver arg0) {
 		log("Read complete.");
-	}
-
-	public void ignore(File file) {
-		ignoreList.add(file);
+		if (!ignoreList.isEmpty()) {
+			StringBuilder sb = new StringBuilder("");
+			sb.append("Ignoring ");
+			for (String filename : ignoreList) {
+				sb.append(filename + " ");
+			}
+			log(sb.toString());
+		}
 	}
 
 	private File searchFile(File arg0, String string) {

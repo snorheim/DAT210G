@@ -223,7 +223,7 @@ public class RequestMethods {
 		File tempImage = null;
 		try {
 			tempImage = request.receiveFile(detail);
-			ImageHandler.getInstance().dirWatch.ignore(tempImage);
+			ImageHandler.getInstance().directoryMonitor.ignore(tempImage);
 		} catch (Exception e) {
 			request.sendJsonResponse(new ResponseServer(false));
 			return;
