@@ -80,6 +80,11 @@ public class testSkrivBilde {
 //					System.out.println(tn.printChildren());
 //		
 //				}
+		
+//		int[] ar = ReadFromDatabase.androidPicturesBasedOnDate("11", 2);
+//		for (int i: ar) {
+//			System.out.println(i);
+//		}
 	
 	}
 
