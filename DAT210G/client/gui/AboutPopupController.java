@@ -1,11 +1,11 @@
 package gui;
 
+
 import java.io.IOException;
 
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.web.WebEngine;
@@ -19,6 +19,8 @@ public class AboutPopupController {
 
 	@FXML
 	private AnchorPane aboutAnchorPane;
+	
+	
 
 	
 
@@ -27,7 +29,7 @@ public class AboutPopupController {
 
 	public void showPopup() {
 
-
+		
 
 
 		try {
@@ -36,10 +38,11 @@ public class AboutPopupController {
 					MainController.class
 					.getResource("view/AboutPopup.fxml"));
 
+			
 			aboutAnchorPane = (AnchorPane) loader.load();
 			
 			Scene popupScene = new Scene(aboutAnchorPane, 550, 580);
-			popupScene.getStylesheets().add(getClass().getResource("view/style.css").toExternalForm());
+			popupScene.getStylesheets().add(MainController.class.getResource("view/style.css").toExternalForm());
 			Stage popupStage = new Stage();
 			popupStage.setScene(popupScene);
 			popupStage.show();

@@ -1,63 +1,127 @@
 package gui.model;
 
+import java.util.ArrayList;
+
+import javafx.event.Event;
+import javafx.event.EventHandler;
+import javafx.scene.image.ImageView;
+
 public class Folder {
+
+	private ServerCommHandler serverCommHandler;
+
+	private int folderId;
+	private String folderName;
+	private FolderTree folderTreeModel;
 	
-	private String name;	
-	private int id;
-	private int lft;
-	private int rgt;
 	
-	
-	public Folder(String name, int id, int lft, int rgt) {
-		this.name = name;
-		this.id = id;
-		this.lft = lft;
-		this.rgt = rgt;
-	}
 
+	public Folder(ServerCommHandler serverCommHandler, int folderId,
+			String folderName, FolderTree folderTreeModel) {
 
-	public String getName() {
-		return name;
-	}
+		this.serverCommHandler = serverCommHandler;
+		this.folderId = folderId;
 
+		this.folderName = folderName;
+		this.folderTreeModel = folderTreeModel;
 
-	public void setName(String name) {
-		this.name = name;
-	}
-
-
-	public int getId() {
-		return id;
-	}
-
-
-<<<<<<< HEAD
-=======
-	public void setId(int id) {
-		this.id = id;
-	}
-
-
-	public int getLft() {
-		return lft;
-	}
-
-
-	public void setLft(int lft) {
-		this.lft = lft;
-	}
-
-
-	public int getRgt() {
-		return rgt;
-	}
-
-
-	public void setRgt(int rgt) {
-		this.rgt = rgt;
+		
 	}
 	
 	
->>>>>>> parent of fb343bd... Ny test
+
+	public void setFolderTreeModel(FolderTree folderTreeModel) {
+		this.folderTreeModel = folderTreeModel;
+	}
+
+	
+
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
+
+	public int getFolderId() {
+		return folderId;
+	}
+
+	public void setFolderId(int folderId) {
+		this.folderId = folderId;
+	}
+
+	public String toString() {
+
+		return folderName + "    (" + folderId + ")    ";
+
+	}
+
+
+	
+	public ArrayList<ImageView> getThumbnailsFromThisFolderDown() {
+
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
+
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+			ImageView tempImage = serverCommHandler
+					.getThumbnail(imageIdArray[i]);
+
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: ");
+					
+					
+				}
+				
+			});
+			
+
+			imageViewArray.add(tempImage);
+
+		}
+
+		return imageViewArray;
+
+	}
+
+	public ArrayList<ImageView> getMediumFromThisFolderDown() {
+
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
+
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+			ImageView tempImage = serverCommHandler
+					.getMediumImage(imageIdArray[i]);
+
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: ");
+					
+					
+				}
+				
+			});
+			
+
+			imageViewArray.add(tempImage);
+
+		}
+
+		return imageViewArray;
+
+	}
 
 }

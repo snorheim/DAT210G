@@ -1,29 +1,26 @@
 package gui.model;
 
+import gui.MainController;
+import gui.ManyViewController;
+import gui.SingleViewController;
+
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 
-import gui.ThumbnailsModeController;
-import javafx.scene.Node;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class FolderTree {
 
-	private TreeView<String> treeView;
+	private TreeView<Folder> treeView;
+	private TreeItem<Folder> treeRoot;
 	
-	private ThumbnailsModeController thumbnailsModeController;
-	private Model model;
-	private Node folderIcon;
-	private ArrayList<String> folders = new ArrayList<String>();
-	
-<<<<<<< HEAD
 	private ArrayList<Folder> allFoldersList = new ArrayList<Folder>();
-	private ArrayList<OneImage> allImagesList = new ArrayList<>();
-
-	
 
 	private ServerCommHandler serverCommHandler;
 	private ManyViewController manyViewController;
@@ -37,28 +34,32 @@ public class FolderTree {
 	public FolderTree() {
 
 		serverCommHandler = new ServerCommHandler();
-=======
->>>>>>> parent of fb343bd... Ny test
 
-	
-	public FolderTree(ThumbnailsModeController thumbnailsModeController, Model model) {
 		
-		this.thumbnailsModeController = thumbnailsModeController;
-		this.model = model;		
+
+		updateTree();
+
+	}
+
+	public void updateTree() {
+		treeView = new TreeView<Folder>();
+		treeView.getSelectionModel().selectedItemProperty()
+				.addListener(new ChangeListener<TreeItem<Folder>>() {
+					public void changed(
+							ObservableValue<? extends TreeItem<Folder>> observableValue,
+							TreeItem<Folder> oldItem, TreeItem<Folder> newItem) {
+
+						currentFolder = newItem.getValue();
+
+						manyViewController.makeGridAndDisplayImages();
+
+					}
+				});
+
+		Folder rootFolder = new Folder(serverCommHandler, rootFolderId, "/",
+				this);
 		
-		folders.add("Dogs");
-		folders.add("Clowns");
-		folders.add("Stupid");
-		folders.add("screenshots");
-		folders.add("Wow");
-		folders.add("Ferie2012");
-		folders.add("Pr0n");
-		folders.add("Jul1914");
-		folders.add("wallpapers");
-        
-		folderIcon = new ImageView(new Image(getClass().getResourceAsStream("folderIcon.png")));
 		
-<<<<<<< HEAD
 
 		currentFolder = rootFolder;
 
@@ -82,7 +83,7 @@ public class FolderTree {
 
 			Folder tempFolder = new Folder(serverCommHandler, id,
 					subFolderIdAndName.get(id), this);
-			allImagesList.add(new OneImage(id, parentFolder, serverCommHandler, this));			
+						
 
 			allFoldersList.add(tempFolder);
 
@@ -92,67 +93,66 @@ public class FolderTree {
 
 			populateTree(id, temp);
 
-=======
-		
-		TreeItem<String> rootNode = new TreeItem<String> ("/", folderIcon);
-		
-		/*
-        TreeItem<String> folderA = new TreeItem<String>("Folder A");
-        TreeItem<String> folderA1 = new TreeItem<String>("Folder A1");
-        TreeItem<String> folderA2 = new TreeItem<String>("Folder A2");
-        TreeItem<String> folderA3 = new TreeItem<String>("Folder A3");
-        TreeItem<String> folderA4 = new TreeItem<String>("Folder A4");
-        
-        folderA.getChildren().add(folderA1);
-        folderA.getChildren().add(folderA2);
-        folderA.getChildren().add(folderA3);
-        folderA.getChildren().add(folderA4);
-        
-        TreeItem<String> folderB = new TreeItem<String>("Folder B");
-        TreeItem<String> folderB1 = new TreeItem<String>("Folder B1");
-        TreeItem<String> folderB2 = new TreeItem<String>("Folder B2");
-        TreeItem<String> folderB3 = new TreeItem<String>("Folder B3");
-        TreeItem<String> folderB4 = new TreeItem<String>("Folder B4");
-        
-        folderB.getChildren().add(folderB1);
-        folderB.getChildren().add(folderB2);
-        folderB.getChildren().add(folderB3);
-        folderB.getChildren().add(folderB4);
-        
-        rootNode.getChildren().add(folderA);
-        rootNode.getChildren().add(folderB);
-        */
-		
-		for (String string : folders) {
-			
-			TreeItem<String> foldersLeaf = new TreeItem<String>(string);
-			rootNode.getChildren().add(foldersLeaf);
-			
->>>>>>> parent of fb343bd... Ny test
 		}
-        
-        
-        
-        
-        treeView = new TreeView<String>();
-        treeView.setShowRoot(true);
-        treeView.setRoot(rootNode);
-        rootNode.setExpanded(true);
-        
 
 	}
 
-
-	public TreeView<String> getTree() {
+	public TreeView<Folder> getTree() {
 		return treeView;
 	}
-<<<<<<< HEAD
 
-	public ArrayList<OneImage> getAllImagesList() {
-		return allImagesList;
+	public TreeItem<Folder> getTreeRoot() {
+		return treeRoot;
 	}
-=======
->>>>>>> parent of fb343bd... Ny test
+
 	
+
+	public void setManyViewController(ManyViewController manyViewController) {
+		this.manyViewController = manyViewController;
+	}
+
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	public void setSingleViewController(
+			SingleViewController singleViewController) {
+		this.singleViewController = singleViewController;
+	}
+
+	public int getCurrentImage() {
+		return currentImage;
+	}
+
+	public ImageView getFullImage(int imageid) {
+		return serverCommHandler.getFullImage(imageid);
+	}
+
+	public void setCurrentImage(int currentImage) {
+		this.currentImage = currentImage;
+		mainController.setSingleMode();
+	}
+
+	public ArrayList<Folder> getAllFoldersList() {
+		return allFoldersList;
+	}
+
+	public Folder getCurrentFolder() {
+		return currentFolder;
+	}
 	
+	public void sendImagesToServer(List<File> fileList) {
+
+		// TODO: fix så ikke den sender evig mange bilder
+
+		if (fileList != null) {
+			for (File file : fileList) {
+
+				serverCommHandler.SendImageToServer(file);
+
+			}
+		}
+
+	}
+
 }

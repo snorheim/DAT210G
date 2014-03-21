@@ -1,77 +1,103 @@
 package gui.model;
 
+import java.util.ArrayList;
+
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class OneImage {
 
 
 	private int imageId;
-	private ImageView thumbnailImage;
-	private ImageView mediumImage;
-	private Model model;
+	private int folderId;
 	private ServerCommHandler serverCommHandler;
 	private String titleMeta;
 	private String descMeta;
 	private String ratingMeta;
 	private String dateMeta;
 	private String tagsMeta;
+	private FolderTree folderTreeModel;
 
-	public OneImage(int imageId, ServerCommHandler serverComm, Model model) {
+	public OneImage(int imageId, int folderId, ServerCommHandler serverComm, FolderTree folderTreeModel) {
 
 		this.imageId = imageId;	
+		this.folderId = folderId;
 		this.serverCommHandler = serverComm;
-		this.model = model;				
+		this.folderTreeModel = folderTreeModel;
+					
 
 	}
 
 	public int getImageId() {
 		return imageId;
 	}
+	
+	public ArrayList<ImageView> getThumbnailsFromThisFolderDown() {
 
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
 
-	public Model getModel() {
-		return model;
-	}
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
 
-	public void setThumbnailImage() {
+		for (int i = 0; i < imageIdArray.length; i++) {
 
-		
-		thumbnailImage = serverCommHandler.getThumbnail(imageId);
+			ImageView tempImage = serverCommHandler
+					.getThumbnail(imageIdArray[i]);
+			
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
 
-		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: " + imageId);
+					
+					
+				}
+				
+			});
+			
+			imageViewArray.add(tempImage);
 
-			@Override
-			public void handle(Event event) {
-				System.out.println("Clicked image: " + getImageId());
-				getModel().setCurrentImageId(getImageId());
+		}
 
-			}
-		});
-
-		
-
-	}
-
-	public void setMediumImage() {
-
-
-		mediumImage = serverCommHandler.getMediumImage(imageId);
-
-		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				System.out.println("Clicked image: " + getImageId());
-				getModel().setCurrentImageId(getImageId());
-
-			}
-		});
-
-		
+		return imageViewArray;
 
 	}
+
+	public ArrayList<ImageView> getMediumFromThisFolderDown() {
+
+		ArrayList<ImageView> imageViewArray = new ArrayList<>();
+
+		int[] imageIdArray = serverCommHandler
+				.getImagesInFolderAndSubfolders(folderId);
+
+		for (int i = 0; i < imageIdArray.length; i++) {
+
+			ImageView tempImage = serverCommHandler
+					.getMediumImage(imageIdArray[i]);
+
+			tempImage.setOnMouseClicked(new EventHandler<Event>() {
+
+				@Override
+				public void handle(Event ev) {
+					System.out.println("Clicked image: " + imageId);
+					
+					
+				}
+				
+			});
+			
+
+			imageViewArray.add(tempImage);
+
+		}
+
+		return imageViewArray;
+
+	}
+
+
 
 	public ImageView getFullImage() {
 
@@ -80,7 +106,7 @@ public class OneImage {
 		
 
 	}
-	
+	/*
 	public ImageView getRotLeft() {
 
 
@@ -163,13 +189,16 @@ public class OneImage {
 		}
 	}
 
-	public ImageView getThumbnailImage() {
-		return thumbnailImage;
+*/
+
+
+	public int getFolderId() {
+		return folderId;
 	}
 	
-	public ImageView getMediumImage() {
-		return mediumImage;
-	}
+	
+
+	
 	
 	
 
