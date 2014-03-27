@@ -29,6 +29,8 @@ public class MainController extends Application {
 		aboutPopupController = new AboutPopupController();
 		folderTreeModel = new FolderTree();
 		folderTreeModel.setMainController(this);
+		
+		System.out.println("testing");
 
 		if (!contactWithServer) {
 			System.out.println("No contact with server!");
