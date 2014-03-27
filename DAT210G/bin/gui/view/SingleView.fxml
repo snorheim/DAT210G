@@ -6,22 +6,18 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="-1.0" prefWidth="-1.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SingleViewController">
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SingleViewController">
   <!-- TODO Add Nodes -->
   <children>
     <BorderPane prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
       <center>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
           <children>
-            <ScrollPane fitToHeight="false" fitToWidth="false" prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-              <content>
-                <AnchorPane id="Content" fx:id="anchorPaneForSingle" minHeight="-1.0" minWidth="-1.0" prefHeight="-1.0" prefWidth="-1.0" style="">
-                  <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
-                  </padding>
-                </AnchorPane>
-              </content>
-            </ScrollPane>
+            <AnchorPane id="Content" fx:id="anchorPaneForSingle" minHeight="-1.0" minWidth="-1.0" prefHeight="600.0" prefWidth="471.0" style="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+              </padding>
+            </AnchorPane>
           </children>
         </AnchorPane>
       </center>
@@ -37,8 +33,8 @@
                 <Button fx:id="rotRightBtn" mnemonicParsing="false" onAction="#rotRightBtnAction" text="Rotate Right" />
               </children>
             </VBox>
-            <Label layoutX="32.0" layoutY="291.0" text="Current image" />
-            <Label fx:id="currentImageLabel" layoutX="49.0" layoutY="314.0" text="Label" />
+            <Label layoutX="32.0" layoutY="291.0" text="Current folder:" />
+            <Label id="currentImageLabel" fx:id="currentFolder" layoutX="49.0" layoutY="314.0" text="Label" />
           </children>
         </AnchorPane>
       </left>

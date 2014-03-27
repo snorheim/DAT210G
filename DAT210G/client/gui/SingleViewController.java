@@ -1,18 +1,22 @@
 package gui;
 
 import gui.model.FolderTree;
+import gui.model.OneImage;
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 
 public class SingleViewController {
-	
-	private MainController mainController;
+
+	private Main mainController;
 	private FolderTree folderTreeModel;
-	
+
 	@FXML
 	private AnchorPane anchorPaneForSingle;
 	@FXML
@@ -26,7 +30,7 @@ public class SingleViewController {
 	@FXML
 	private Button rotRightBtn;
 	@FXML
-	private Button storeMetaBtn;	
+	private Button storeMetaBtn;
 	@FXML
 	private TextField titleTextField;
 	@FXML
@@ -38,117 +42,173 @@ public class SingleViewController {
 	@FXML
 	private TextField tagsTextField;
 	@FXML
-	private Label currentImageLabel;
-	
-	
-	public void displayImage() {		
+	private Label currentFolder;
 
+	private ImageView imageToDisplay;
 
-		ImageView image = folderTreeModel.getFullImage(folderTreeModel.getCurrentImage());
+	private OneImage currentImage;
 
+	public void displayImage() {
+		anchorPaneForSingle.getChildren().clear();
 
-		anchorPaneForSingle.getChildren().add(image);
+		currentImage = folderTreeModel.getCurrentImage();
 
+		if (imageToDisplay == null) {
+			imageToDisplay = currentImage.getFullImage();
+		}
 
-		//updateMetaFields();
+		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+
+				showFull();
+
+			}
+		});
+
+		imageToDisplay.fitWidthProperty().bind(
+				anchorPaneForSingle.widthProperty());
+		imageToDisplay.fitHeightProperty().bind(
+				anchorPaneForSingle.heightProperty());
+		imageToDisplay.setPreserveRatio(true);
+
+		anchorPaneForSingle.getChildren().add(imageToDisplay);
+
+		updateMetaFields();
+
+		currentFolder.setText(folderTreeModel.getCurrentFolder()
+				.getFolderName());
 	}
-	
-	
 
-	
+	private void showFull() {
+
+		ScrollPane scrollPane = new ScrollPane();
+
+		anchorPaneForSingle.getChildren().clear();
+
+		imageToDisplay.fitWidthProperty().unbind();
+		imageToDisplay.fitHeightProperty().unbind();
+
+		imageToDisplay.fitWidthProperty().set(0);
+		imageToDisplay.fitHeightProperty().set(0);
+
+		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+
+				displayImage();
+
+			}
+		});
+
+		scrollPane.setContent(imageToDisplay);
+
+		scrollPane.prefViewportWidthProperty().bind(
+				anchorPaneForSingle.widthProperty());
+		scrollPane.prefViewportHeightProperty().bind(
+				anchorPaneForSingle.heightProperty());
+
+		anchorPaneForSingle.getChildren().add(scrollPane);
+
+	}
+
+	private void updateMetaFields() {
+
+		titleTextField.setText(currentImage.getTitleMeta());
+		descTextField.setText(currentImage.getDescMeta());
+		ratingTextField.setText(currentImage.getRatingMeta());
+		dateTextField.setText(currentImage.getDateMeta());
+		tagsTextField.setText(currentImage.getTagsMeta());
+
+	}
+
 	@FXML
 	private void homeBtnAction() {
-		
-		mainController.setManyMode();
-		System.out.println("clicked home button");
+
+		mainController.setManyMode(false);
+
 	}
 
-	public void setMainController(MainController mainController) {
+	public void setMainController(Main mainController) {
 		this.mainController = mainController;
 	}
-	
+
 	@FXML
 	private void nextBtnAction() {
 
-		/*
-		int nextImage = model.getCurrentImageId() + 1;
+		folderTreeModel.getNextImageInImageList(currentImage);
 
-		if (nextImage > model.getImageList().size()) {
-			nextImage = 1;
-		}
-
-		model.setCurrentImageId(nextImage);
-
+		imageToDisplay = null;
 
 		displayImage();
-		*/
-		System.out.println("clicked next button");
+
 	}
-	
+
 	@FXML
 	private void prevBtnAction() {
 
-		/*
-		int prevImage = model.getCurrentImageId() - 1;
+		folderTreeModel.getPrevImageInImageList(currentImage);
 
-		if (prevImage < 1) {
-			prevImage = model.getImageList().size();
-		}
-
-		model.setCurrentImageId(prevImage);
-
+		imageToDisplay = null;
 
 		displayImage();
-		*/
-		System.out.println("clicked prev button");
 
 	}
 
 	@FXML
 	private void rotRightBtnAction() {
-		/*
-		ImageView image = model.getCurrentOneImage().getRotRight();
 
+		imageToDisplay = folderTreeModel.getCurrentImage().getRotRight();
 
-		anchorPaneForSingle.getChildren().add(image);
-		*/
-		System.out.println("clicked rot right button");
+		displayImage();
+
 	}
 
 	@FXML
 	private void rotLeftBtnAction() {
-		/*
-		ImageView image = model.getCurrentOneImage().getRotLeft();
 
+		imageToDisplay = folderTreeModel.getCurrentImage().getRotLeft();
 
-		anchorPaneForSingle.getChildren().add(image);
-		*/
-		System.out.println("clicked rot left button");
-		
+		displayImage();
+
 	}
-	
+
 	@FXML
 	private void storeMetaBtnAction() {
-		/*
+
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
 		tagsTextFieldAction();
-		*/
-		System.out.println("clicked apply button");
+
 	}
 
+	private void tagsTextFieldAction() {
 
+		currentImage.addTag(tagsTextField.getText());
 
+	}
 
+	private void ratingTextFieldAction() {
+		currentImage.modifyRating(ratingTextField.getText());
 
+	}
 
+	private void descTextFieldAction() {
+		currentImage.modifyDesc(descTextField.getText());
 
-	
+	}
+
+	private void titleTextFieldAction() {
+		currentImage.modifyTitle(titleTextField.getText());
+
+	}
+
 	public void setModel(FolderTree folderTreeModel) {
 		this.folderTreeModel = folderTreeModel;
-		
+
 	}
-	
-	
+
 }

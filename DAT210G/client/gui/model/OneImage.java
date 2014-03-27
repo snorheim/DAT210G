@@ -1,207 +1,198 @@
 package gui.model;
 
-import java.util.ArrayList;
-
 import javafx.event.Event;
 import javafx.event.EventHandler;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 public class OneImage {
 
-
 	private int imageId;
 	private int folderId;
-	private ServerCommHandler serverCommHandler;
 	private String titleMeta;
 	private String descMeta;
 	private String ratingMeta;
 	private String dateMeta;
 	private String tagsMeta;
-	private FolderTree folderTreeModel;
 
-	public OneImage(int imageId, int folderId, ServerCommHandler serverComm, FolderTree folderTreeModel) {
+	private ImageView thumbnailImage;
+	private ImageView mediumImage;
+	
+	private FolderTree folderTree;
 
-		this.imageId = imageId;	
-		this.folderId = folderId;
-		this.serverCommHandler = serverComm;
-		this.folderTreeModel = folderTreeModel;
-					
+	public OneImage(int imageId, int folderId, FolderTree folderTree) {
+
+		this.setImageId(imageId);
+		this.setFolderId(folderId);
+		this.folderTree = folderTree;
+
+		cacheMeta();
+		cacheImages();
+
+	}
+
+	private void cacheMeta() {
+
+		String[] tempMeta = ServerCommHandler.getMetaData(imageId);
+
+		titleMeta = tempMeta[0];
+		descMeta = tempMeta[1];
+		ratingMeta = tempMeta[2];
+		dateMeta = tempMeta[3];
+		tagsMeta = tempMeta[4];
+
+	}
+
+	private void cacheImages() {
+		thumbnailImage = ServerCommHandler.getThumbnail(imageId);
+
+		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				folderTree.setCurrentImage(OneImage.this);
+				folderTree.getMainController().setSingleMode();
+
+			}
+		});
+
+		mediumImage = ServerCommHandler.getMediumImage(imageId);
+
+		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				folderTree.setCurrentImage(OneImage.this);
+				folderTree.getMainController().setSingleMode();
+			}
+		});
 
 	}
 
 	public int getImageId() {
 		return imageId;
 	}
-	
-	public ArrayList<ImageView> getThumbnailsFromThisFolderDown() {
 
-		ArrayList<ImageView> imageViewArray = new ArrayList<>();
-
-		int[] imageIdArray = serverCommHandler
-				.getImagesInFolderAndSubfolders(folderId);
-
-		for (int i = 0; i < imageIdArray.length; i++) {
-
-			ImageView tempImage = serverCommHandler
-					.getThumbnail(imageIdArray[i]);
-			
-			tempImage.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event ev) {
-					System.out.println("Clicked image: " + imageId);
-					
-					
-				}
-				
-			});
-			
-			imageViewArray.add(tempImage);
-
-		}
-
-		return imageViewArray;
-
+	public void setImageId(int imageId) {
+		this.imageId = imageId;
 	}
 
-	public ArrayList<ImageView> getMediumFromThisFolderDown() {
-
-		ArrayList<ImageView> imageViewArray = new ArrayList<>();
-
-		int[] imageIdArray = serverCommHandler
-				.getImagesInFolderAndSubfolders(folderId);
-
-		for (int i = 0; i < imageIdArray.length; i++) {
-
-			ImageView tempImage = serverCommHandler
-					.getMediumImage(imageIdArray[i]);
-
-			tempImage.setOnMouseClicked(new EventHandler<Event>() {
-
-				@Override
-				public void handle(Event ev) {
-					System.out.println("Clicked image: " + imageId);
-					
-					
-				}
-				
-			});
-			
-
-			imageViewArray.add(tempImage);
-
-		}
-
-		return imageViewArray;
-
+	public int getFolderId() {
+		return folderId;
 	}
 
+	public void setFolderId(int folderId) {
+		this.folderId = folderId;
+	}
 
+	public ImageView getThumbnailImage() {
+
+		return thumbnailImage;
+	}
+
+	public ImageView getMediumImage() {
+
+		return mediumImage;
+	}
 
 	public ImageView getFullImage() {
+		ImageView tempImage = ServerCommHandler.getFullImage(imageId);
 
+		tempImage.setOnMouseClicked(new EventHandler<Event>() {
 
-		return serverCommHandler.getFullImage(imageId);		
-		
+			@Override
+			public void handle(Event event) {
+				System.out.println("Clicked full image");
+
+			}
+		});
+
+		return tempImage;
+	}
+
+	public String toString() {
+
+		return "[ FolderId: " + folderId + ", ImageId: " + imageId + " ]";
 
 	}
-	/*
+
 	public ImageView getRotLeft() {
 
+		ImageView image = ServerCommHandler.getRotLeft(imageId);
 
-		thumbnailImage = serverCommHandler.getRotLeft(imageId);
-
-		return thumbnailImage;
+		return image;
 
 	}
-	
+
 	public ImageView getRotRight() {
 
+		ImageView image = ServerCommHandler.getRotRight(imageId);
 
-		thumbnailImage = serverCommHandler.getRotRight(imageId);
-
-		return thumbnailImage;
+		return image;
 
 	}
 
 	public String getTitleMeta() {
 
-		titleMeta = serverCommHandler.getMetaData(imageId)[0];
-		
 		return titleMeta;
 
 	}
 
 	public String getDescMeta() {
-		descMeta = serverCommHandler.getMetaData(imageId)[1];
-		
+
 		return descMeta;
 	}
 
 	public String getRatingMeta() {
-		ratingMeta = serverCommHandler.getMetaData(imageId)[2];
-		
+
 		return ratingMeta;
 	}
 
 	public String getDateMeta() {
-		dateMeta = serverCommHandler.getMetaData(imageId)[3];
-		
+
 		return dateMeta;
 	}
 
 	public String getTagsMeta() {
-		tagsMeta = serverCommHandler.getMetaData(imageId)[4];
-		
+
 		return tagsMeta;
 	}
-	
+
 	public void modifyTitle(String string) {
-		Boolean success = serverCommHandler.modifyTitle(imageId, string);
-		
+		Boolean success = ServerCommHandler.modifyTitle(imageId, string);
+
 		if (success) {
-			//System.out.println("sucess");
+			
+			cacheMeta();
 		}
 	}
-	
+
 	public void modifyDesc(String string) {
-		Boolean success = serverCommHandler.modifyDesc(imageId, string);
-		
+		Boolean success = ServerCommHandler.modifyDesc(imageId, string);
+
 		if (success) {
-			//System.out.println("sucess");
+			cacheMeta();
 		}
 	}
-	
+
 	public void modifyRating(String string) {
-		Boolean success = serverCommHandler.modifyRating(imageId, string);
-		
+		Boolean success = ServerCommHandler.modifyRating(imageId, string);
+
 		if (success) {
-			//System.out.println("sucess");
+			cacheMeta();
 		}
 	}
-	
+
 	public void addTag(String string) {
-		Boolean success = serverCommHandler.addTag(imageId, string);
-		
+		Boolean success = ServerCommHandler.addTag(imageId, string);
+
 		if (success) {
-			//System.out.println("sucess");
+			cacheMeta();
+
+			System.out
+					.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		}
 	}
-
-*/
-
-
-	public int getFolderId() {
-		return folderId;
-	}
-	
-	
-
-	
-	
-	
-
-
 
 }

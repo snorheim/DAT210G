@@ -1,28 +1,34 @@
 package gui;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import gui.model.FolderTree;
+import gui.model.OneImage;
+import gui.model.ServerCommHandler;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.FileChooser;
 
 public class ManyViewController {
 
 	private FolderTree folderTreeModel;
 
-	private MainController mainController;
+	private Main main;
 
 	@FXML
-	private AnchorPane anchorPane;
+	private AnchorPane anchorPaneForMany;
 	@FXML
 	private Button importBtn;
 	@FXML
@@ -40,21 +46,18 @@ public class ManyViewController {
 	@FXML
 	private HBox hboxForTree;
 
-	private static final int SMALL_ZOOM = 6;
-	private static final int MEDIUM_ZOOM = 3;
+	ScrollPane scrollPane;
 
-	@FXML
-	private Label antallBilder;
+	private ZoomLevel currentZooom;
 
-	private GridPane thumbnailGridPane;
-
-	private int gridColumns = SMALL_ZOOM;
-	private int gridRows = 0;
+	private enum ZoomLevel {
+		SMALL, MEDIUM
+	}
 
 	@FXML
 	public void goToSingleView() {
 
-		mainController.setSingleMode();
+		main.setSingleMode();
 
 	}
 
@@ -63,164 +66,151 @@ public class ManyViewController {
 	 */
 	@FXML
 	private void handleImportBtn() {
-		
-		  mainController.openFileChooser();
-		  
-		  makeGridAndDisplayImages();
-		 
-		System.out.println("clicked import");
+
+		openFileChooser();
+
+		main.setManyMode(true);
 
 	}
 
 	public void updateFolderTree() {
+
 		hboxForTree.getChildren().add(folderTreeModel.getTree());
 
 	}
 
+	public void start() {
+
+		if (!folderTreeModel.isReady()) {
+
+			ProgressIndicator bar = new ProgressIndicator();
+			bar.progressProperty().bind(
+					folderTreeModel.getTask().progressProperty());
+
+			anchorPaneForMany.getChildren().add(bar);
+
+		} else {
+
+			setModel();
+
+			makeGridAndDisplayImages();
+
+			folderTreeModel.setManyViewController(this);
+
+		}
+
+	}
+
 	public void makeGridAndDisplayImages() {
-		
-		folderTreeModel.updateTree();
 
-		anchorPane.getChildren().clear();
+		anchorPaneForMany.getChildren().clear();
 
-		thumbnailGridPane = new GridPane();
-		thumbnailGridPane.setHgap(10);
-		thumbnailGridPane.setVgap(10);
-		thumbnailGridPane.gridLinesVisibleProperty();
+		scrollPane = new ScrollPane();
 
-		if (getGridColumns() == SMALL_ZOOM) {
-			smallZoomLevelImages();
-		} else if (getGridColumns() == MEDIUM_ZOOM) {
-
-			mediumZoomLevelImages();
-
+		if (currentZooom == ZoomLevel.SMALL) {
+			scrollPane.setContent(smallZoomLevelImages());
+		} else if (currentZooom == ZoomLevel.MEDIUM) {
+			scrollPane.setContent(mediumZoomLevelImages());
 		}
 
-		System.out.println("size of gridpane now: "
-				+ thumbnailGridPane.getChildren().size());
+		scrollPane.prefViewportWidthProperty().bind(
+				anchorPaneForMany.widthProperty());
+		scrollPane.prefViewportHeightProperty().bind(
+				anchorPaneForMany.heightProperty());
 
-		anchorPane.getChildren().add(thumbnailGridPane);
-
-		System.out.println("making grid and displaying images");
+		anchorPaneForMany.getChildren().add(scrollPane);
 
 	}
 
-	private void smallZoomLevelImages() {
+	private FlowPane smallZoomLevelImages() {
 
-		ArrayList<ImageView> imagesToBeDisplayed = folderTreeModel
-				.getCurrentFolder().getThumbnailsFromThisFolderDown();					
-		
- 
-		if (!imagesToBeDisplayed.isEmpty()) {
+		FlowPane smallPane = new FlowPane();
 
-			gridRows = (int) Math.ceil(1.0 * imagesToBeDisplayed.size()
-					/ gridColumns);
+		smallPane.setPadding(new Insets(5, 0, 5, 0));
+		smallPane.setVgap(4);
+		smallPane.setHgap(4);
 
-			System.out.println(gridColumns + " " + gridRows);
+		smallPane.prefWrapLengthProperty().bind(
+				anchorPaneForMany.widthProperty());
 
-			int imageNum = 0;
+		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
+				.getImagesInThisFolderAndDown();
 
-			for (int i = 0; i < gridRows; i++) {
+		for (OneImage image : imagesToBeDisplayed) {
 
-				for (int j = 0; j < gridColumns; j++) {
+			smallPane.getChildren().add(image.getThumbnailImage());
 
-					thumbnailGridPane.add(imagesToBeDisplayed.get(imageNum), j,
-							i);
-					
-					
+		}
 
-					// thumbnailGridPane.add(new
-					// Button(Integer.toString(imagesToBeDisplayed.get(imageNum).getImageId())),
-					// j, i);
+		return smallPane;
 
-					imageNum++;
-					if (imageNum >= imagesToBeDisplayed.size()) {
-						break;
-					}
-				}
+	}
 
-				if (imageNum >= imagesToBeDisplayed.size()) {
-					break;
-				}
+	private FlowPane mediumZoomLevelImages() {
+
+		FlowPane mediumPane = new FlowPane();
+
+		mediumPane.setPadding(new Insets(5, 0, 5, 0));
+		mediumPane.setVgap(4);
+		mediumPane.setHgap(4);
+
+		mediumPane.prefWrapLengthProperty().bind(
+				anchorPaneForMany.widthProperty());
+
+		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
+				.getImagesInThisFolderAndDown();
+
+		for (OneImage image : imagesToBeDisplayed) {
+
+			mediumPane.getChildren().add(image.getMediumImage());
+
+		}
+
+		return mediumPane;
+	}
+
+	private void openFileChooser() {
+
+		// TODO: hvordan få til importere directories?
+
+		ArrayList<String> fileTypes = new ArrayList<>();
+		fileTypes.add("*.jpg");
+		fileTypes.add("*.jpeg");
+		fileTypes.add("*.png");
+		fileTypes.add("*.bmp");
+
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Import images");
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("All Images", fileTypes));
+
+		List<File> fileList = fileChooser.showOpenMultipleDialog(main
+				.getPrimaryStage());
+
+		if (fileList != null) {
+			for (File file : fileList) {
+
+				ServerCommHandler.SendImageToServer(file);
 
 			}
-
 		}
 
+		/*
+		 * final DirectoryChooser directoryChooser = new DirectoryChooser();
+		 * final File selectedDirectory =
+		 * directoryChooser.showDialog(mainController.getPrimaryStage()); if
+		 * (selectedDirectory != null) { selectedDirectory.getAbsolutePath(); }
+		 */
+
 	}
 
-	private void mediumZoomLevelImages() {
-
-		ArrayList<ImageView> imagesToBeDisplayed = folderTreeModel
-				.getCurrentFolder().getMediumFromThisFolderDown();
-
-		if (!imagesToBeDisplayed.isEmpty()) {
-
-			gridRows = (int) Math.ceil(1.0 * imagesToBeDisplayed.size()
-					/ gridColumns);
-
-			System.out.println(gridColumns + " " + gridRows);
-
-			int imageNum = 0;
-
-			for (int i = 0; i < gridRows; i++) {
-
-				for (int j = 0; j < gridColumns; j++) {
-
-					thumbnailGridPane.add(imagesToBeDisplayed.get(imageNum), j,
-							i);
-
-					// thumbnailGridPane.add(new
-					// Button(Integer.toString(imagesToBeDisplayed.get(imageNum).getImageId())),
-					// j, i);
-
-					imageNum++;
-					if (imageNum >= imagesToBeDisplayed.size()) {
-						break;
-					}
-				}
-
-				if (imageNum >= imagesToBeDisplayed.size()) {
-					break;
-				}
-
-			}
-
-		}
-
-		System.out.println("we are in mediumzoomlevel");
+	public void setMainController(Main mainController) {
+		this.main = mainController;
+		currentZooom = ZoomLevel.SMALL;
 	}
 
-	public int getGridColumns() {
-		return gridColumns;
-	}
+	private void setModel() {
 
-	public void setGridColumns(int gridColumns) {
-		this.gridColumns = gridColumns;
-	}
-
-	public int getGridRows() {
-		return gridRows;
-	}
-
-	public void setGridRows(int gridRows) {
-		this.gridRows = gridRows;
-	}
-
-	public static int getSmallZoom() {
-		return SMALL_ZOOM;
-	}
-
-	public static int getMediumZoom() {
-		return MEDIUM_ZOOM;
-	}
-
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
-
-	public void setModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
 		updateFolderTree();
 
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
@@ -230,18 +220,22 @@ public class ManyViewController {
 					Number oldValue, Number newValue) {
 
 				if (newValue.intValue() == 1) {
-					setGridColumns(MEDIUM_ZOOM);
-					System.out.println("medium zoom");
+					currentZooom = ZoomLevel.MEDIUM;
+
 					makeGridAndDisplayImages();
 				} else if (newValue.intValue() == 0) {
-					setGridColumns(SMALL_ZOOM);
-					System.out.println("small zoom");
+					currentZooom = ZoomLevel.SMALL;
+
 					makeGridAndDisplayImages();
 				}
 
 			}
 		});
 
+	}
+
+	public void setFolderTreeModel(FolderTree folderTreeModel) {
+		this.folderTreeModel = folderTreeModel;
 	}
 
 }
