@@ -56,15 +56,6 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
 	}
-	public static void getThumbnailToAndroid(RequestServer request, int id, String detail){
-		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		String fileLocation = pictureDb.getThumbnailFileLocation();
-		String[] fileNameSplit = fileLocation.split("\\.");
-		String[] fileType = {fileNameSplit[fileNameSplit.length - 1]};
-
-		request.sendJsonResponse(new ResponseServer(true, id, fileType));
-		request.sendImageResponseToAndroid(ImageHandler.getInstance().defaultPath + fileLocation);
-	}
 	public static void getLargeImage(RequestServer request, int id, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getMediumFileLocation();
@@ -73,15 +64,6 @@ public class RequestMethods {
 
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage, filetypeSplit[filetypeSplit.length - 1]);
-	}
-	public static void getLargeImageToAndroid(RequestServer request, int id, String detail){
-		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		String fileLocation = pictureDb.getMediumFileLocation();
-		String[] fileNameSplit = fileLocation.split("\\.");
-		String[] fileType = {fileNameSplit[fileNameSplit.length - 1]};
-
-		request.sendJsonResponse(new ResponseServer(true, id, fileType));
-		request.sendImageResponseToAndroid(ImageHandler.getInstance().defaultPath + fileLocation);
 	}
 	public static void getFullImage(RequestServer request, int id, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
@@ -138,8 +120,6 @@ public class RequestMethods {
 		System.out.println("Neste id er: " + nextAvailableId);
 		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
 	}
-
-	//blir skrevet feil til DB her
 	public static void addTag(RequestServer request, int id, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getFileLocation();
@@ -197,26 +177,6 @@ public class RequestMethods {
 	}
 	public static void rotate90CounterClock(RequestServer request, int id, String detail){
 
-	}
-	public static void addNewImage(RequestServer request, int id, String detail){
-		//		System.out.println("id til server: " + id);
-		//		BufferedImage bufferedImage = request.receiveImage();
-		//		//ImageHandler.IMAGE_HANDLER.createServerImage(id, detail, bufferedImage);
-		//		boolean wasCreatedSuccesful = ImageHandler.getInstance().saveAndDispose(id, file);
-		//
-		//		System.out.println("IMAGE WAS SAVED: "+ wasCreatedSuccesful);
-		//		if (wasCreatedSuccesful){
-		//			String fullPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\full\\" + id + "." + detail;
-		//			String medPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\medium\\"+ id + "." + detail;
-		//			String thumbPath = ImageHandler.IMAGE_HANDLER.defaultPath + "\\thumb\\"+ id + "." + detail;
-		//			PictureDb picDb = new PictureDb("test import", "test import", 1, "2014-02-02 10:10:10", fullPath, medPath, thumbPath);
-		//			boolean dbWriteSuccesful = WriteToDatabase.writeOnePic(picDb);
-		//			if (dbWriteSuccesful){
-		//				request.sendJsonResponse(new ResponseServer(true));
-		//				return;
-		//			}
-		//		}
-		//		request.sendJsonResponse(new ResponseServer(false));
 	}
 	public static void addNewFullImage(RequestServer request, int id, String detail){
 		System.out.println("id til server: " + id);

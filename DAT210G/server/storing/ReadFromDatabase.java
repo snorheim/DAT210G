@@ -154,35 +154,6 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	public static int[] androidPicturesBasedOnTag(String tag, int folderId) {
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		List<PictureDb> pictureList = new ArrayList<>();
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM TagDb WHERE tag = :tag");
-			query.setParameter("tag", tag);
-			TagDb tagFromDb = (TagDb) query.uniqueResult();
-			for (PictureDb picture: tagFromDb.getPics()) {
-				if (picture.getParentFolderId() == folderId) {
-					pictureList.add(picture);
-				}
-			}
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		int[] pictureIdArray = new int[pictureList.size()];
-		for (int i = 0; i < pictureIdArray.length; i++) {
-			pictureIdArray[i] = pictureList.get(i).getId();
-		}
-		return pictureIdArray;
-	}
-
 	public static int[] getPicturesBasedOnManyTags(String[] tag,
 			int folderId) {
 		List<PictureDb> tmpPictureList = new ArrayList<>();
@@ -203,42 +174,6 @@ public class ReadFromDatabase {
 					}
 				}
 			}
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		int[] imageIdArray = new int[tmpPictureList.size()];
-		for (int i = 0; i < imageIdArray.length; i++) {
-			imageIdArray[i] = tmpPictureList.get(i).getId();
-		}
-		return imageIdArray;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static int[] androidPictureBasedOnManyTags(String[] tag, int folderId) {
-		List<PictureDb> tmpPictureList = new ArrayList<>();
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId = :folderId");
-			query.setParameter("folderId", folderId);
-			List<PictureDb> queryList = query.list();
-			for (PictureDb picture: queryList) {
-				for (TagDb pictureTag: picture.getTags()) {
-					for (String tagString: tag) {
-						if (pictureTag.getTag().equals(tagString)) {
-							if (!tmpPictureList.contains(picture)) {
-								tmpPictureList.add(picture);
-							}
-						}
-					}
-				}
-			}	
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
@@ -282,33 +217,6 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static int[] androidPictureBasedOnRating(int rating, int folderId) {
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		List<PictureDb> pictureList = new ArrayList<>();
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE rating >= :rating "
-					+ "AND parentFolderId = :folderId ORDER BY rating DESC");
-			query.setParameter("rating", rating);
-			query.setParameter("folderId", folderId);
-			pictureList = query.list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		int[] pictureIdArray = new int[pictureList.size()];
-		for (int i = 0; i < pictureIdArray.length; i++) {
-			pictureIdArray[i] = pictureList.get(i).getId();
-		}
-		return pictureIdArray;
-	}
-
 	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
 		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -335,33 +243,6 @@ public class ReadFromDatabase {
 		int[] pictureIdArray = new int[returnList.size()];
 		for (int i = 0; i < pictureIdArray.length; i++) {
 			pictureIdArray[i] = returnList.get(i).getId();
-		}
-		return pictureIdArray;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static int[] androidPicturesBasedOnDate(String timeDate, int folderId) {
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		List<PictureDb> pictureList = new ArrayList<>();
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE dateTime LIKE :timeDate AND "
-					+ "parentFolderId = :folderId ORDER BY dateTime DESC");
-			query.setParameter("timeDate", "%" + timeDate + "%");
-			query.setParameter("folderId", folderId);
-			pictureList = query.list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-			HibernateUtil.shutdown();
-		}
-		int[] pictureIdArray = new int[pictureList.size()];
-		for (int i = 0; i < pictureIdArray.length; i++) {
-			pictureIdArray[i] = pictureList.get(i).getId();
 		}
 		return pictureIdArray;
 	}
