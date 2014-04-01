@@ -76,6 +76,7 @@ public class ManyViewController {
 	public void updateFolderTree() {
 
 		hboxForTree.getChildren().add(folderTreeModel.getTree());
+		
 
 	}
 
@@ -119,7 +120,10 @@ public class ManyViewController {
 				anchorPaneForMany.heightProperty());
 
 		anchorPaneForMany.getChildren().add(scrollPane);
-
+		
+		scrollPane.setId("scrollpane");
+		
+		
 	}
 
 	private FlowPane smallZoomLevelImages() {
