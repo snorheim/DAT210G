@@ -1,49 +1,32 @@
 package logic;
 
-import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
+import javaxt.io.Image;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
+import storing.ImageHandler;
+import storing.PictureDb;
+import storing.WriteExif;
 
 public class ImageManipulate {
 	
-	public static BufferedImage RotateImage90DegreesClockwise(BufferedImage imageFile) {
-		int imageHeight =imageFile.getHeight();
-		int imageWidth =imageFile.getWidth();
+	public static void RotateImage(PictureDb picDb, boolean antiClockWise){
+		String relativePath = ImageHandler.getInstance().defaultPath.subpath(1, ImageHandler.getInstance().defaultPath.getNameCount()).toAbsolutePath().toString();
 		
-		BufferedImage orginal = imageFile;
-		
-		BufferedImage Rotert = new BufferedImage(imageHeight, imageWidth, BufferedImage.TYPE_INT_RGB);
-		
-		double theta = Math.PI / 2;
-	
-		AffineTransform coordinateClass = AffineTransform.getRotateInstance(theta, imageHeight / 2, imageHeight / 2);
-		
-		Graphics2D graphic2DClass = (Graphics2D) Rotert.createGraphics();
-		graphic2DClass.drawImage(orginal, coordinateClass, null);
-		graphic2DClass.dispose();
-	
-		return Rotert;
-	
-	}
-	
-	public static BufferedImage RotateImage90DegreesCounterClockwise(BufferedImage imageFile) {
-		int imageHeight =imageFile.getHeight();
-		int imageWidth =imageFile.getWidth();
-		
-		BufferedImage orginal = imageFile;
-		
-		BufferedImage Rotert = new BufferedImage(imageHeight, imageWidth, BufferedImage.TYPE_INT_RGB);
-		
-		double theta = Math.PI / 2*3;
-	
-		AffineTransform coordinateClass = AffineTransform.getRotateInstance(theta, imageWidth / 2, imageWidth / 2);
-		
-		Graphics2D graphic2DClass = (Graphics2D) Rotert.createGraphics();
-		graphic2DClass.drawImage(orginal, coordinateClass, null);
-		graphic2DClass.dispose();
-	
-		return Rotert;
+		String fileLocation = relativePath + "\\" + picDb.getFileLocation();
+		System.out.println("Filplassering:" + fileLocation);
+		ReadExif exif = new ReadExif(fileLocation);
+		TiffOutputSet completeExif = exif.getMetadataOutputSet();
+		Image imageHandlerFull = new Image(fileLocation);
+		if (antiClockWise){
+			imageHandlerFull.rotateCounterClockwise();
+		}
+		else{
+			imageHandlerFull.rotateClockwise();
+		}
+		imageHandlerFull.saveAs(fileLocation);
+		WriteExif writeExif = new WriteExif(fileLocation);
+		writeExif.setMetaDataOutPutSet(completeExif);
+		writeExif.writeToImage();
 		
 	}
-
+	
 }

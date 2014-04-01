@@ -121,8 +121,7 @@ public class ServerCommHandler {
 		int nextAvailableId = -1;
 		String fileName = null;
 
-		JsonClient sendImageJson1 = new JsonClient(new RequestClient(
-				"getNextImageId"));
+		JsonClient sendImageJson1 = new JsonClient(new RequestClient("getNextImageId"));
 		if (sendImageJson1.sendJsonToServer()) {
 			ResponseClient sendImageResponse1 = sendImageJson1
 					.receiveJsonFromServer();
@@ -134,32 +133,26 @@ public class ServerCommHandler {
 		System.out.println("Filtype til nytt bilde: " + fileName + " id: "
 				+ nextAvailableId);
 		if (nextAvailableId != -1) {
-
-			JsonClient sendImageJson = new JsonClient(new RequestClient(
-					"addNewFullImage", nextAvailableId, fileName));
-			if (sendImageJson.sendJsonToServer()) {
-
-				try {
-					System.out.println("Prøver å sende bilde: "
-							+ fileToSend.getPath());
-					sendImageJson.sendFileToServer(fileToSend.getPath());
-					ResponseClient response = sendImageJson
-							.receiveJsonFromServer();
-
-					if (response.getSuccess()) {
-						success = true;
+			boolean imageWasSentSuccessful = false;
+			while (imageWasSentSuccessful == false){
+				JsonClient sendImageJson = new JsonClient(new RequestClient("addNewFullImage", nextAvailableId, fileName));
+				if (sendImageJson.sendJsonToServer()) {
+					try {
+						System.out.println("Prøver å sende bilde: "	+ fileToSend.getPath());
+						sendImageJson.sendFileToServer(fileToSend.getPath());
+						ResponseClient response = sendImageJson.receiveJsonFromServer();
+						imageWasSentSuccessful = response.getSuccess();
+						if (response.getSuccess()) {
+							success = true;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
 					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
+					sendImageJson.closeHttpConnection();
 				}
-				sendImageJson.closeHttpConnection();
 			}
-
 		}
-
 		return success;
-
 	}
 
 	public static Hashtable<Integer, String> getSubFoldersIdAndName(int id) {
@@ -425,11 +418,9 @@ public class ServerCommHandler {
 
 	public static ImageView getRotLeft(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
-				"getFullImage", imageID));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("rotate90CounterClock", imageID));
 		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson
-					.receiveJsonFromServer();
+			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()) {
 				bufImage = getThumbnailJson.receiveImageFromServer();
 			}
@@ -438,14 +429,14 @@ public class ServerCommHandler {
 
 		// TODO: FOR DEBUG
 
-		String text = String.valueOf(imageID)
-				+ " rotated left: Ikkje klart på serveren ennå";
+		//String text = String.valueOf(imageID)
+		//		+ " rotated left: Ikkje klart på serveren ennå";
 
 		Graphics2D g = (Graphics2D) bufImage.createGraphics();
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);
 		g.setColor(Color.RED);
-		g.drawString(text, 20, 20);
+		//g.drawString(text, 20, 20);
 
 		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
 		// blander swing og JavaFX?
@@ -456,11 +447,9 @@ public class ServerCommHandler {
 
 	public static ImageView getRotRight(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
-				"getFullImage", imageID));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient("rotate90Clock", imageID));
 		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson
-					.receiveJsonFromServer();
+			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()) {
 				bufImage = getThumbnailJson.receiveImageFromServer();
 			}
@@ -469,14 +458,14 @@ public class ServerCommHandler {
 
 		// TODO: FOR DEBUG
 
-		String text = String.valueOf(imageID)
-				+ " rotated right: Ikkje klart på serveren ennå";
+		//String text = String.valueOf(imageID)
+		//		+ " rotated right: Ikkje klart på serveren ennå";
 
 		Graphics2D g = (Graphics2D) bufImage.createGraphics();
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);
 		g.setColor(Color.RED);
-		g.drawString(text, 20, 20);
+		//g.drawString(text, 20, 20);
 
 		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
 		// blander swing og JavaFX?

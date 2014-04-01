@@ -42,7 +42,7 @@ public class WriteExif {
 			IImageMetadata metadata = Imaging.getMetadata(imageFile);
 			JpegImageMetadata jpegMetadata = (JpegImageMetadata) metadata;
 			if (jpegMetadata != null) {
-				TiffImageMetadata exif = jpegMetadata.getExif();				
+				TiffImageMetadata exif = jpegMetadata.getExif();
 				if (exif != null) {
 					metaDataOutPutSet = exif.getOutputSet();
 					exifDirectory = metaDataOutPutSet.getOrCreateExifDirectory();

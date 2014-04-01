@@ -5,7 +5,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-
+import javaxt.io.Image;
+import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import net.coobird.thumbnailator.Thumbnails;
 import storing.ImageHandler;
 import storing.PictureDb;
@@ -14,6 +15,7 @@ import storing.TreeMenuNode;
 import storing.UpdateDatabase;
 import storing.WriteExif;
 import storing.WriteToDatabase;
+import logic.ImageManipulate;
 
 public class RequestMethods {
 
@@ -173,10 +175,14 @@ public class RequestMethods {
 		}
 	}
 	public static void rotate90Clock(RequestServer request, int id, String detail){
-
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
+		ImageManipulate.RotateImage(pictureDb, false);
+		request.sendJsonResponse(new ResponseServer(true));
 	}
 	public static void rotate90CounterClock(RequestServer request, int id, String detail){
-
+		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
+		ImageManipulate.RotateImage(pictureDb, true);
+		request.sendJsonResponse(new ResponseServer(true));
 	}
 	public static void addNewFullImage(RequestServer request, int id, String detail){
 		System.out.println("id til server: " + id);
