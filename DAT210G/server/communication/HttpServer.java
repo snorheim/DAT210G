@@ -8,6 +8,7 @@ import java.net.Socket;
 import javax.imageio.ImageIO;
 
 import storing.DirectoryMonitor;
+import storing.HibernateUtil;
 import storing.ImageHandler;
 
 public class HttpServer implements Runnable {
@@ -145,6 +146,7 @@ public class HttpServer implements Runnable {
 		} finally {
 			try {
 				serverConnection.close();
+				HibernateUtil.shutdown();
 			} catch (IOException e) {
 				System.err.println("Not able to close server on port " + port);
 			} catch (Exception e) {

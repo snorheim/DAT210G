@@ -24,7 +24,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -46,7 +45,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -67,7 +65,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -89,7 +86,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -111,7 +107,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -133,7 +128,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -155,7 +149,6 @@ public class UpdateDatabase {
 			successful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successful;
 	}
@@ -179,7 +172,6 @@ public class UpdateDatabase {
 //			successful = false;
 //		} finally {
 //			dbSession.close();
-//			HibernateUtil.shutdown();
 //		}
 //		return successful;
 //	}

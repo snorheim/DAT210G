@@ -98,8 +98,10 @@ public class testSkrivBilde {
 //			System.out.println(i);
 //		}
  		
-		boolean t = WriteToDatabase.addTagToPic(1, "jævla github");
-		System.out.println(t);
+//		boolean t = WriteToDatabase.addTagToPic(1, "jævla github");
+//		System.out.println(t);
+		
+		ReadFromDatabase.getAllTags();
 	}
 
 }

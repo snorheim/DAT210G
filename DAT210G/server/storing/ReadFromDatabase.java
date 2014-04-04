@@ -27,7 +27,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return tagList;
 	}
@@ -48,7 +47,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return pictureId;
 	}
@@ -70,7 +68,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		tagStringList = new String[tagsFromDb.size()];
 		for (int i = 0; i < tagStringList.length; i++) {
@@ -96,7 +93,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		if (nextPicId == 0) {
 			return 1;
@@ -119,7 +115,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return picList;
 	}
@@ -145,7 +140,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] pictureIdArray = new int[pictureList.size()];
 		for (int i = 0; i < pictureIdArray.length; i++) {
@@ -180,7 +174,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] imageIdArray = new int[tmpPictureList.size()];
 		for (int i = 0; i < imageIdArray.length; i++) {
@@ -208,7 +201,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] pictureIdArray = new int[returnList.size()];
 		for (int i = 0; i < pictureIdArray.length; i++) {
@@ -238,7 +230,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] pictureIdArray = new int[returnList.size()];
 		for (int i = 0; i < pictureIdArray.length; i++) {
@@ -263,7 +254,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return picture;
 	}
@@ -284,7 +274,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] tempArray = new int[picIdList.size()];
 		for (int i = 0; i < tempArray.length; i++) {
@@ -310,7 +299,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		String allTagsAsString = "";
 		for (TagDb tag : tagList) {
@@ -337,7 +325,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		imageIdArray = new int[pictureFromDb.size()];
 		for (int i = 0; i < imageIdArray.length; i++) {
@@ -362,7 +349,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return folder;
 	}
@@ -393,7 +379,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return foldersFromDb;
 	}
@@ -424,7 +409,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		folderIds = new int[foldersFromDb.size()];
 		for (int i = 0; i < folderIds.length; i++) {
@@ -456,7 +440,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		int[] pictureIds = new int[picturesFromDb.size()];
 		for (int i = 0; i < pictureIds.length; i++) {
@@ -512,7 +495,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return foldersFromDb;
 	}
@@ -568,7 +550,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return folderId;
 	}
@@ -597,7 +578,6 @@ public class ReadFromDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return picturesFromDb;
 	}
