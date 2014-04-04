@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
-import javaxt.io.Image;
-import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
 import net.coobird.thumbnailator.Thumbnails;
 import storing.ImageHandler;
 import storing.PictureDb;
@@ -126,7 +124,7 @@ public class RequestMethods {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getFileLocation();
 		String existingTags = pictureDb.getTagString();
-		WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + fileLocation);
+		WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + "\\" + fileLocation);
 		writeExifInfo.setExifTags(existingTags + detail + ";");
 		writeExifInfo.writeToImage();
 		WriteToDatabase.addTagToPic(id, detail);
@@ -137,7 +135,7 @@ public class RequestMethods {
 		String fileLocation = pictureDb.getFileLocation();
 		boolean setTitleinDb = UpdateDatabase.updatePictureTitle(id, detail);
 		if (setTitleinDb){
-			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + fileLocation);
+			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + "\\" + fileLocation);
 			writeExifInfo.setExifTitle(detail);
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -151,7 +149,7 @@ public class RequestMethods {
 		String fileLocation = pictureDb.getFileLocation();
 		boolean setDescInDb = UpdateDatabase.updatePictureDescription(id, detail);
 		if (setDescInDb){
-			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + fileLocation);
+			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + "\\" + fileLocation);
 			writeExifInfo.setExifComment(detail);
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -165,7 +163,7 @@ public class RequestMethods {
 		String fileLocation = pictureDb.getFileLocation();
 		boolean setDescInDb = UpdateDatabase.updatePictureRating(id, Integer.parseInt(detail));
 		if (setDescInDb){
-			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + fileLocation);
+			WriteExif writeExifInfo = new WriteExif(ImageHandler.getInstance().defaultPath + "\\" + fileLocation);
 			writeExifInfo.setExifRating(Integer.parseInt(detail));
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));

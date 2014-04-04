@@ -19,7 +19,6 @@ import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 import org.apache.commons.imaging.formats.tiff.constants.MicrosoftTagConstants;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
-import org.apache.commons.imaging.util.IoUtils;
 
 public class WriteExif {
 	private File imageFile;
@@ -32,9 +31,10 @@ public class WriteExif {
 
 	public WriteExif(String imageFileString){	
 		imageFile = new File(imageFileString);
-		String[] destFileStringSplit = imageFileString.split("\\.");
-		String destFileString = "." + destFileStringSplit[destFileStringSplit.length-2] + "METADATATEMP." + destFileStringSplit[destFileStringSplit.length-1];
+		String destFileString = imageFileString + "TEMP";
 		destImageFile = new File(destFileString);
+		System.out.println("ImageFile: " + imageFileString);
+		System.out.println("destImageFile: " + destFileString);
 		outPutStream = null;
 		canThrow = false;
 		metaDataOutPutSet = null;
@@ -130,9 +130,15 @@ public class WriteExif {
 		try {
 			outPutStream = new FileOutputStream(destImageFile);
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
+			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
+			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
+			System.out.println("R1");
 			new ExifRewriter().updateExifMetadataLossless(imageFile, bufferedOutPutStream, metaDataOutPutSet);
+			System.out.println("R2");
 			imageFile.delete();
+			System.out.println("R3");
 			destImageFile.renameTo(imageFile);
+			System.out.println("R4");
 			canThrow = true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -143,12 +149,12 @@ public class WriteExif {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		finally {
-			try {
-				IoUtils.closeQuietly(canThrow, outPutStream);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		//		finally {
+		//			try {
+		//				//IoUtils.closeQuietly(canThrow, outPutStream);
+		//			} catch (IOException e) {
+		//				e.printStackTrace();
+		//			}
+		//		}
 	}
 }
