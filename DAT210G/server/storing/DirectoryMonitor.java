@@ -4,8 +4,6 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
-import logic.ResponseServer;
-
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -18,7 +16,7 @@ public class DirectoryMonitor implements FileAlterationListener {
 	FileAlterationMonitor monitor;
 	ArrayList<String> ignoreList;
 
-	public static final int READ_INTERVAL_MS = 5000;
+	public static final int READ_INTERVAL_MS = 10000;
 
 	public DirectoryMonitor(Path dir) {
 		directoryToWatch = dir;
@@ -57,23 +55,30 @@ public class DirectoryMonitor implements FileAlterationListener {
 	}
 
 	@Override
-	public void onDirectoryChange(File arg0) {
+	public void onDirectoryChange(File directory) {
+		log(directory + "was changed (Directory)");
 	}
 
 	@Override
-	public void onDirectoryCreate(File arg0) {
-		log("New directory: " + arg0.getName());
+	public void onDirectoryCreate(File directory) {
+		if (isIgnored(directory)) {
+			unignore(directory);
+			return;
+		}
 
-		int count = arg0.toPath().getParent().getNameCount();
+		log("New directory: " + directory.getName());
+
+		int count = directory.toPath().getParent().getNameCount();
 
 		String parentPath = "\\"
-				+ arg0.toPath().getParent().subpath(1, count).toString() + "\\";
+				+ directory.toPath().getParent().subpath(1, count).toString()
+				+ "\\";
 
 		int parentID = ReadFromDatabase.getFolderID(parentPath);
 
-		String folderPath = parentPath + arg0.getName() + "\\";
+		String folderPath = parentPath + directory.getName() + "\\";
 
-		ParentFolderDb newFolder = new ParentFolderDb(arg0.getName(),
+		ParentFolderDb newFolder = new ParentFolderDb(directory.getName(),
 				folderPath, parentID);
 
 		IsNotOnlyChildObject onlyChild = ReadFromDatabase
@@ -95,14 +100,21 @@ public class DirectoryMonitor implements FileAlterationListener {
 	}
 
 	@Override
-	public void onDirectoryDelete(File arg0) {
-		log("Deleted directory: " + arg0.getName());
-		int count = arg0.toPath().getParent().getNameCount();
+	public void onDirectoryDelete(File directory) {
+
+		if (isIgnored(directory)) {
+			unignore(directory);
+			return;
+		}
+
+		log("Deleted directory: " + directory.getName());
+		int count = directory.toPath().getParent().getNameCount();
 
 		String parentPath = "\\"
-				+ arg0.toPath().getParent().subpath(1, count).toString() + "\\";
+				+ directory.toPath().getParent().subpath(1, count).toString()
+				+ "\\";
 
-		String folderPath = parentPath + arg0.getName() + "\\";
+		String folderPath = parentPath + directory.getName() + "\\";
 
 		int folderId = ReadFromDatabase.getFolderID(folderPath);
 		boolean success = DeleteFromDatabase.deleteFolderAndContent(folderId);
@@ -111,7 +123,8 @@ public class DirectoryMonitor implements FileAlterationListener {
 	}
 
 	@Override
-	public void onFileChange(File arg0) {
+	public void onFileChange(File file) {
+		log(file + "was changed (File)");
 	}
 
 	@Override
@@ -145,16 +158,19 @@ public class DirectoryMonitor implements FileAlterationListener {
 			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
 			System.out.println("Her " + wasWritten);
 
-			if (wasWritten){
+			if (wasWritten) {
 				System.out.println("Her og");
 				if (!(read.getExifTags() == null)) {
 					System.out.println("Og her");
-					int pictureId = ReadFromDatabase.getPictureFromPath(fullPath);
+					int pictureId = ReadFromDatabase
+							.getPictureFromPath(fullPath);
 					System.out.println("picture id til tagbilde: " + pictureId);
 					String[] tagsInString = read.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
-						boolean writeTagsToDb = WriteToDatabase.addTagToPic(pictureId, tagsInString[i]);
-						System.out.println("tag skrevet: " + writeTagsToDb + " : " + tagsInString[i]);
+						boolean writeTagsToDb = WriteToDatabase.addTagToPic(
+								pictureId, tagsInString[i]);
+						System.out.println("tag skrevet: " + writeTagsToDb
+								+ " : " + tagsInString[i]);
 					}
 				}
 			}
@@ -221,11 +237,11 @@ public class DirectoryMonitor implements FileAlterationListener {
 		}
 	}
 
-	private File searchFile(File arg0, String string) {
-		if (arg0 == null)
+	private File searchFile(File file, String string) {
+		if (file == null)
 			return null;
 
-		Path directory = arg0.toPath().getParent();
+		Path directory = file.toPath().getParent();
 
 		if (directory == null)
 			return null;
@@ -234,11 +250,11 @@ public class DirectoryMonitor implements FileAlterationListener {
 		if (children == null)
 			return null;
 
-		for (File file : children) {
-			if (file.getName().equals(
-					arg0.getName().split("[.]")[0] + string + "."
-							+ arg0.getName().split("[.]")[1]))
-				return file;
+		for (File child : children) {
+			if (child.getName().equals(
+					file.getName().split("[.]")[0] + string + "."
+							+ file.getName().split("[.]")[1]))
+				return child;
 		}
 		return null;
 	}
