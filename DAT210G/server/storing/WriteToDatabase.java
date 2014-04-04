@@ -76,9 +76,12 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			PictureDb picFromDb = (PictureDb) dbSession.load(PictureDb.class,
-					picId);
-			TagDb tagFromDb = (TagDb) dbSession.load(TagDb.class, tag);
+			Query query = dbSession.createQuery("FROM PictureDb WHERE id = :picId");
+			query.setParameter("picId", picId);
+			PictureDb picFromDb = (PictureDb) query.uniqueResult();
+			query = dbSession.createQuery("FROM TagDb WHERE tag = :tag");
+			query.setParameter("tag", tag);
+			TagDb tagFromDb = (TagDb) query.uniqueResult();
 			picFromDb.addTag(tagFromDb);
 			dbTransaction.commit();
 			successfulTransfer = true;
