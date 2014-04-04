@@ -82,6 +82,7 @@ public class FolderTree {
 
 					}
 				});
+		
 
 		rootNode = new FolderNode(null, rootFolderId, "/");
 		int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(1);
@@ -99,7 +100,10 @@ public class FolderTree {
 		buildTree(rootFolderId, rootNode, treeItemRoot);
 
 		treeView.setRoot(treeItemRoot);
-
+		
+		
+		
+		
 		getImagesFromFolderAndDown(currentFolder.getFolderId());
 	}
 
@@ -126,6 +130,7 @@ public class FolderTree {
 
 			TreeItem<FolderNode> tempTreeItem = new TreeItem<FolderNode>(
 					tempNode);
+			
 
 			parentTreeItem.getChildren().add(tempTreeItem);
 
@@ -246,6 +251,7 @@ public class FolderTree {
 	}
 
 	public TreeView<FolderNode> getTree() {
+		treeView.setId("filetree");
 		return treeView;
 	}
 

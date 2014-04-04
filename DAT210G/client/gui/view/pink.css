@@ -13,3 +13,20 @@
     -fx-background-insets: 0;
     -fx-text-fill: white;
 }
+
+#scrollpane {
+    -fx-background-color: #CC33CC;
+
+
+}
+
+#textfield {
+    -fx-background-color: #F2CCF2;
+
+}
+
+#filetree {
+    -fx-background-color: #F2CCF2;
+
+
+}
