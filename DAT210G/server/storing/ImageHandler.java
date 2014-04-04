@@ -1,17 +1,8 @@
 package storing;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 
 import javax.imageio.ImageIO;
 
@@ -102,11 +93,8 @@ public class ImageHandler {
 			outStream.close();
 
 			return true;
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
 			return false;
 		}
 
