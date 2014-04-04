@@ -97,7 +97,11 @@ public class testSkrivBilde {
 //		for (int i: img) {
 //			System.out.println(i);
 //		}
- 		
+ 	
+		boolean t = WriteToDatabase.addTagToPic(11, "lol");
+		System.out.println(t);
+		
 	}
+	
 
 }
