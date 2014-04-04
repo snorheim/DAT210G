@@ -132,13 +132,9 @@ public class WriteExif {
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
 			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
 			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
-			System.out.println("R1");
 			new ExifRewriter().updateExifMetadataLossless(imageFile, bufferedOutPutStream, metaDataOutPutSet);
-			System.out.println("R2");
 			imageFile.delete();
-			System.out.println("R3");
 			destImageFile.renameTo(imageFile);
-			System.out.println("R4");
 			canThrow = true;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
