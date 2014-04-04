@@ -29,7 +29,7 @@ public class Main extends Application {
 	@Override
 	public void init() {
 
-		screenBounds = Screen.getPrimary().getVisualBounds();
+		
 
 		System.out.println("Contact with server: " + contactWithServer);
 
@@ -38,6 +38,8 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage primaryStage) {
+		
+		screenBounds = Screen.getPrimary().getVisualBounds();
 
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("DAT210G Photo Gallery");
@@ -53,8 +55,9 @@ public class Main extends Application {
 			scene = new Scene(rootLayout, screenBounds.getWidth() / 2,
 					screenBounds.getHeight() / 2);
 
-			scene.getStylesheets().add(
-					getClass().getResource("view/style.css").toExternalForm());
+			//TODO: må lage bedre stylesheet
+			//scene.getStylesheets().add(
+			//		getClass().getResource("view/style.css").toExternalForm());
 
 			// Give the controller access to Main
 			MainController mainController = loader.getController();

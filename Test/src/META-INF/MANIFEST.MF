@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Implementation-Title: ControlsFX-Samples
+Implementation-Version: 8.0.5
+JavaFX-Version: 2.2
+Class-Path: fxsampler-1.0.5.jar controlsfx-8.0.5.jar jfxrt.jar control
+ sfx-samples-8.0.5.jar
+Created-By: JavaFX Packager
+Main-Class: fxsampler.FXSampler
+

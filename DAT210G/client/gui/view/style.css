@@ -43,4 +43,19 @@
 
 }
 
+.rating > .container > .button {
+  -fx-background-color: #000000;
+  -fx-background-radius: 1,1,1,1;
+  -fx-background-insets: 1,1,1,1;
+}
+
+
+.rating > .container > .button.strong {
+  -fx-background-color: #FFFFFF;
+  -fx-background-radius: 1,1,1,1;
+  -fx-background-insets: 1,1,1,1;
+}
+
+
+
 

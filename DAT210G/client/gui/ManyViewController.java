@@ -79,8 +79,33 @@ public class ManyViewController {
 		
 
 	}
+	
+	private void setupSearchTextFields() {
+		
+		
+		titleTextField.setEditable(false);		
+		descTextField.setEditable(false);
+		ratingTextField.setEditable(false);
+		dateTextField.setEditable(false);
+		tagsTextField.setEditable(false);
+		
+		titleTextField.setDisable(true);		
+		descTextField.setDisable(true);
+		ratingTextField.setDisable(true);
+		dateTextField.setDisable(true);
+		tagsTextField.setDisable(true);
+						
+		
+		
+	}
 
 	public void start() {
+		
+		setupSearchTextFields();
+		
+		
+		
+		
 
 		if (!folderTreeModel.isReady()) {
 
@@ -172,6 +197,8 @@ public class ManyViewController {
 
 		return mediumPane;
 	}
+	
+	
 
 	private void openFileChooser() {
 
