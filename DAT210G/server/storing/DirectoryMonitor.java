@@ -12,13 +12,15 @@ import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
 public class DirectoryMonitor implements FileAlterationListener {
 
+	private static DirectoryMonitor instance;
+
 	Path directoryToWatch;
 	FileAlterationMonitor monitor;
 	ArrayList<String> ignoreList;
 
 	public static final int READ_INTERVAL_MS = 10000;
 
-	public DirectoryMonitor(Path dir) {
+	private DirectoryMonitor(Path dir) {
 		directoryToWatch = dir;
 
 		ignoreList = new ArrayList<String>();
@@ -206,13 +208,16 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 	}
 
-	public void ignore(File file) {
-		ignoreList.add(file.toPath().toString());
+	public boolean ignore(File file) {
+		if (!isIgnored(file))
+			return ignoreList.add(file.toPath().toString());
+		return false;
 	}
 
 	private boolean unignore(File file) {
-		boolean success = ignoreList.remove(file.toPath().toString());
-		return success;
+		if (isIgnored(file))
+			return ignoreList.remove(file.toPath().toString());
+		return false;
 	}
 
 	private boolean isIgnored(File file) {
@@ -273,4 +278,13 @@ public class DirectoryMonitor implements FileAlterationListener {
 			medium.delete();
 		}
 	}
+
+	public static DirectoryMonitor getInstance() {
+		if (instance == null) {
+			instance = new DirectoryMonitor(
+					ImageHandler.getInstance().defaultPath);
+		}
+		return instance;
+	}
+
 }

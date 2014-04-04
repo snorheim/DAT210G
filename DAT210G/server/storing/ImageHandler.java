@@ -1,17 +1,8 @@
 package storing;
 
 import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.*;
+import java.nio.file.*;
 
 import javax.imageio.ImageIO;
 
@@ -22,7 +13,6 @@ public class ImageHandler {
 	private static ImageHandler instance = null;
 
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
-	public DirectoryMonitor directoryMonitor;
 
 	public static final String[] SUPPORTED_EXTENSIONS = { "jpg", "png", "bmp",
 			"jpeg" };
@@ -43,7 +33,6 @@ public class ImageHandler {
 		} catch (FileNotFoundException fnfe) {
 			fnfe.printStackTrace();
 		}
-		directoryMonitor = new DirectoryMonitor(defaultPath);
 	}
 
 	private void log(String string) {
@@ -130,8 +119,8 @@ public class ImageHandler {
 
 		if (wasSuccessful) {
 			log("Saved " + imageFile + " to " + destFile);
-			directoryMonitor.ignore(imageFile);
-			directoryMonitor.ignore(destFile);
+			DirectoryMonitor.getInstance().ignore(imageFile);
+			DirectoryMonitor.getInstance().ignore(destFile);
 			return true;
 		} else
 			log("Could not save fullsized image");
@@ -159,7 +148,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			directoryMonitor.ignore(destFile);
+			DirectoryMonitor.getInstance().ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -191,7 +180,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			directoryMonitor.ignore(destFile);
+			DirectoryMonitor.getInstance().ignore(destFile);
 
 			hideImageFile(destFile);
 
