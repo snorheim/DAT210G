@@ -174,12 +174,12 @@ public class RequestMethods {
 	}
 	public static void rotate90Clock(RequestServer request, int id, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		ImageManipulate.RotateImage(pictureDb, false);
+		ImageManipulate.rotateImage(pictureDb, false);
 		request.sendJsonResponse(new ResponseServer(true));
 	}
 	public static void rotate90CounterClock(RequestServer request, int id, String detail){
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		ImageManipulate.RotateImage(pictureDb, true);
+		ImageManipulate.rotateImage(pictureDb, true);
 		request.sendJsonResponse(new ResponseServer(true));
 	}
 	public static void addNewFullImage(RequestServer request, int id, String detail){
