@@ -142,7 +142,8 @@ public class RequestMethods {
 
 	public static void getTagsStartingWith(RequestServer request, int id,
 			String detail) {
-
+		String[] tagArray = ReadFromDatabase.getTagsStartingWith(detail);
+		request.sendJsonResponse(new ResponseServer(true, tagArray));
 	}
 
 	public static void getNextImageId(RequestServer request, int id,
