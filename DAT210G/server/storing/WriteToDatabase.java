@@ -24,7 +24,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
@@ -45,7 +44,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
@@ -64,7 +62,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
@@ -91,13 +88,11 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 
 		return successfulTransfer;
 	}
 
-	// TODO: brukes ved ensureFolder, snakk med Kjelli
 	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -122,7 +117,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
@@ -159,7 +153,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}
@@ -170,18 +163,15 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession
-					.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
+			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
 			query.setParameter("parentId", parentId);
 			int left = (int) query.uniqueResult();
 
-			query = dbSession
-					.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
 
-			query = dbSession
-					.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
+			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
 
@@ -197,7 +187,6 @@ public class WriteToDatabase {
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return successfulTransfer;
 	}

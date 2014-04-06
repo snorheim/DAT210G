@@ -34,7 +34,6 @@ public class DeleteFromDatabase {
 			succesful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return succesful;
 
@@ -76,7 +75,6 @@ public class DeleteFromDatabase {
 			succesful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return succesful;
 	}
@@ -109,7 +107,6 @@ public class DeleteFromDatabase {
 			succesful = false;
 		} finally {
 			dbSession.close();
-			HibernateUtil.shutdown();
 		}
 		return succesful;
 	}
