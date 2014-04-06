@@ -32,6 +32,8 @@ public class ManyViewController {
 	@FXML
 	private Button importBtn;
 	@FXML
+	private Button dirButton;
+	@FXML
 	private TextField titleTextField;
 	@FXML
 	private TextField descTextField;
@@ -71,6 +73,13 @@ public class ManyViewController {
 
 		main.setManyMode(true);
 
+	}
+
+	//TODO: fix looken?
+	@SuppressWarnings("unused")
+	@FXML
+	private void addNewDirectory() {
+		NewDirDialog dirDialog = new NewDirDialog(folderTreeModel.getCurrentFolder().getFolderId());
 	}
 
 	public void updateFolderTree() {

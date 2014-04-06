@@ -114,6 +114,20 @@ public class ServerCommHandler {
 
 	}
 
+	//TODO: fikse noe her?
+	public static boolean sendNewDirReqToServer(String dirName, int parentId) {
+		boolean success = false;
+		JsonClient sendDirName = new JsonClient(new RequestClient("addNewDirectory", parentId, dirName));
+		if (sendDirName.sendJsonToServer()) {
+			ResponseClient addDirResponse = sendDirName
+					.receiveJsonFromServer();
+			System.out.println("sent til server: " + addDirResponse.getSuccess());
+			sendDirName.closeHttpConnection();
+			success = true;
+		}
+		return success;
+	}
+
 	public static boolean SendImageToServer(File fileToSend) {
 
 		boolean success = false;
