@@ -37,7 +37,7 @@ public class HttpServer implements Runnable {
 			while ((character = inStreamReader.read()) != 13) {
 				inComingString.append((char) character);
 			}
-			System.out.println("Server received: " + inComingString.toString());
+			log("Server received: " + inComingString.toString());
 			@SuppressWarnings("unused")
 			JsonServer json = new JsonServer(this, inComingString.toString());
 		} catch (Exception e) {
@@ -51,6 +51,10 @@ public class HttpServer implements Runnable {
 		}
 	}
 
+	private static void log(String string) {
+		System.out.println("SERVER@ " + string);
+	}
+
 	public void sendData(String outGoingString) {
 		try {
 			BufferedOutputStream bufferOutputStream = new BufferedOutputStream(
@@ -58,7 +62,6 @@ public class HttpServer implements Runnable {
 			OutputStreamWriter outStreamWriter = new OutputStreamWriter(
 					bufferOutputStream);
 			outStreamWriter.write(outGoingString + (char) 13);
-			System.out.println("Server sent: " + outGoingString);
 			outStreamWriter.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -86,10 +89,8 @@ public class HttpServer implements Runnable {
 	public File receiveFile(String fileName) throws Exception {
 		BufferedInputStream bufferedInputStream = new BufferedInputStream(
 				connection.getInputStream());
-		String fileFullPath = ImageHandler.getInstance().defaultPath + "\\"
-				+ fileName;
-		FileWatcher.getInstance().ignore(new File(fileFullPath));
-		System.out.println("Receiving image to file: " + fileFullPath);
+		String fileFullPath = ImageHandler.getDefaultPathString() + fileName;
+		FileWatcher.ignore(new File(fileFullPath));
 		byte[] byteSize = new byte[4];
 		int offset = 0;
 		while (offset < byteSize.length) {
@@ -101,7 +102,6 @@ public class HttpServer implements Runnable {
 		fileSize = (int) (byteSize[0] & 0xff) << 24
 				| (int) (byteSize[1] & 0xff) << 16
 				| (int) (byteSize[2] & 0xff) << 8 | (int) (byteSize[3] & 0xff);
-		System.out.println("Incoming image is: " + fileSize + " bytes long");
 		if (fileSize < 1 | fileSize > 20000000) {
 			throw new Exception();
 		}
@@ -128,15 +128,13 @@ public class HttpServer implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		ImageHandler.getInstance();
-		FileWatcher.getInstance();
+		new ImageHandler();
+		new FileWatcher(ImageHandler.getDefaultPath());
 		int port = 19999;
 		int count = 0;
 		ServerSocket serverConnection = null;
 		try {
 			serverConnection = new ServerSocket(port);
-			System.out.println("HTTP server initialized. Listening to port: "
-					+ port);
 			while (true) {
 				Socket connection = serverConnection.accept();
 				Runnable runnable = new HttpServer(connection, ++count);

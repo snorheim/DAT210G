@@ -10,24 +10,28 @@ import net.coobird.thumbnailator.Thumbnails;
 
 public class ImageHandler {
 
-	private static ImageHandler instance = null;
-
 	private static final int THUMBNAIL_SIZE = 150, MEDIUM_SIZE = 500;
 
 	public static final String[] SUPPORTED_EXTENSIONS = { "jpg", "png", "bmp",
 			"jpeg" };
 
-	public Path defaultPath;
+	private static Path defaultPath;
 
-	private ImageHandler() {
+	public ImageHandler() {
 		init();
 	}
 
-	private void init() {
+	public static void init() {
+		if (defaultPath != null) {
+			log("ImageHandler already initialized!");
+			return;
+		}
+
 		log("Initializing...");
 
-		defaultPath = Paths.get(".\\img");
-		log("Default path: " + defaultPath.normalize().toAbsolutePath());
+		defaultPath = Paths.get(".\\img").normalize().toAbsolutePath();
+		log("Default path: " + defaultPath);
+		log("Relative path: " + getRelativePathString());
 
 		try {
 			log("Default path ready: \t" + ensureLocation());
@@ -36,11 +40,30 @@ public class ImageHandler {
 		}
 	}
 
-	private void log(String string) {
+	public static String getRelativePathString() {
+		int nameCount = defaultPath.getNameCount();
+		return defaultPath.subpath(nameCount - 1, nameCount).toString() + "\\";
+	}
+
+	public static File getImageFileWithSuffix(File original, String suffix) {
+		Path parent = original.toPath().getParent();
+		String name = original.getName().split("[.]")[0];
+		String extension = original.getName().split("[.]")[1];
+
+		File returnFile = new File(parent + "\\" + name + suffix + "."
+				+ extension);
+
+		Path temp = parent.resolve(returnFile.toPath());
+
+		return temp.toFile();
+
+	}
+
+	private static void log(String string) {
 		System.out.println("IH@ " + string);
 	}
 
-	private boolean ensureLocation() throws FileNotFoundException {
+	private static boolean ensureLocation() throws FileNotFoundException {
 
 		if (defaultPath.toFile().exists()) {
 			return true;
@@ -50,16 +73,24 @@ public class ImageHandler {
 		}
 	}
 
-	public BufferedImage load(String filepath) {
-		log("Loading imagefile: " + defaultPath + filepath);
-		File imageFile = new File(defaultPath + "\\" + filepath);
+	public static BufferedImage load(String filepath) {
+		log("Loading imagefile: " + getDefaultPathString() + filepath);
+		File imageFile = new File(getDefaultPathString() + filepath);
 		if (imageFile.exists()) {
 			return load(imageFile);
 		}
 		return null;
 	}
 
-	public BufferedImage load(File file) {
+	public static Path getDefaultPath() {
+		return defaultPath;
+	}
+
+	public static String getDefaultPathString() {
+		return defaultPath.toString() + "\\";
+	}
+
+	public static BufferedImage load(File file) {
 		BufferedImage bufferedImage = null;
 		try {
 			bufferedImage = ImageIO.read(file);
@@ -72,7 +103,7 @@ public class ImageHandler {
 		return bufferedImage;
 	}
 
-	private boolean copyFile(File sourceFile, File destinationFile) {
+	private static boolean copyFile(File sourceFile, File destinationFile) {
 		InputStream inStream = null;
 		OutputStream outStream = null;
 
@@ -102,12 +133,12 @@ public class ImageHandler {
 
 	}
 
-	public boolean saveFullImageToFile(File imageFile) {
+	public static boolean saveFullImageToFile(File imageFile) {
 		Path oldLocation = imageFile.toPath().getParent();
 		return saveFullImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveFullImageToFile(File imageFile, Path destination) {
+	public static boolean saveFullImageToFile(File imageFile, Path destination) {
 		String newFilename = imageFile.getName();
 		File destFile = new File(destination + "\\" + newFilename);
 
@@ -120,20 +151,20 @@ public class ImageHandler {
 
 		if (wasSuccessful) {
 			log("Saved " + imageFile + " to " + destFile);
-			FileWatcher.getInstance().ignore(imageFile);
-			FileWatcher.getInstance().ignore(destFile);
+			FileWatcher.ignore(imageFile);
+			FileWatcher.ignore(destFile);
 			return true;
 		} else
 			log("Could not save fullsized image");
 		return false;
 	}
 
-	public boolean saveMediumImageToFile(File imageFile) {
+	public static boolean saveMediumImageToFile(File imageFile) {
 		Path oldLocation = imageFile.toPath().getParent();
 		return saveMediumImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveMediumImageToFile(File imageFile, Path destination) {
+	public static boolean saveMediumImageToFile(File imageFile, Path destination) {
 		try {
 
 			String newFilename = imageFile.getName().split("[.]")[0]
@@ -149,7 +180,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			FileWatcher.getInstance().ignore(destFile);
+			FileWatcher.ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -162,12 +193,13 @@ public class ImageHandler {
 		}
 	}
 
-	public boolean saveThumbnailImageToFile(File imageFile) {
+	public static boolean saveThumbnailImageToFile(File imageFile) {
 		Path oldLocation = imageFile.toPath().getParent();
 		return saveThumbnailImageToFile(imageFile, oldLocation);
 	}
 
-	public boolean saveThumbnailImageToFile(File imageFile, Path destination) {
+	public static boolean saveThumbnailImageToFile(File imageFile,
+			Path destination) {
 		try {
 			String newFilename = imageFile.getName().split("[.]")[0] + "_thumb"
 					+ "." + imageFile.getName().split("[.]")[1];
@@ -181,7 +213,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			FileWatcher.getInstance().ignore(destFile);
+			FileWatcher.ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -192,7 +224,7 @@ public class ImageHandler {
 		}
 	}
 
-	public boolean saveImageFromDisk(File tempFile) {
+	public static boolean saveImageFromDisk(File tempFile) {
 		if (!saveMediumImageToFile(tempFile)) {
 			return false;
 		}
@@ -205,11 +237,11 @@ public class ImageHandler {
 		return true;
 	}
 
-	public boolean save(File imageFile) {
-		return save(imageFile, defaultPath);
+	public static boolean saveAll(File imageFile) {
+		return saveAll(imageFile, defaultPath);
 	}
 
-	public boolean save(File imageFile, Path destination) {
+	public static boolean saveAll(File imageFile, Path destination) {
 		if (!saveFullImageToFile(imageFile, destination)) {
 			return false;
 		}
@@ -224,22 +256,12 @@ public class ImageHandler {
 		return true;
 	}
 
-	public static ImageHandler getInstance() {
-		if (instance == null)
-			instance = new ImageHandler();
-
-		return instance;
-
-	}
-
 	// Tester metodene:
 
 	public static void main(String[] args) {
-		@SuppressWarnings("unused")
-		ImageHandler ih = ImageHandler.getInstance();
 	}
 
-	private void hideImageFile(File file) {
+	private static void hideImageFile(File file) {
 		try {
 			Object hidden = Files.getAttribute(file.toPath(), "dos:hidden",
 					LinkOption.NOFOLLOW_LINKS);

@@ -3,7 +3,6 @@ package logic;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.util.List;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -23,12 +22,9 @@ public class RequestMethods {
 		String[] subFolderName = null;
 		for (int i = 0; i < folders.size(); i++) {
 			if (folders.get(i).getRoot().getFolderId() == id) {
-				System.out.println("funnet rett folder: " + id);
 				subFolderId = new int[folders.get(i).getChildren().size()];
 				subFolderName = new String[folders.get(i).getChildren().size()];
 				for (int j = 0; j < folders.get(i).getChildren().size(); j++) {
-					System.out.println("subfolder nr: "
-							+ folders.get(i).getChildren().get(j));
 					subFolderId[j] = folders.get(i).getChildren().get(j)
 							.getRoot().getFolderId();
 					subFolderName[j] = folders.get(i).getChildren().get(j)
@@ -57,8 +53,7 @@ public class RequestMethods {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getThumbnailFileLocation();
 		String[] filetypeSplit = fileLocation.split("\\.");
-		BufferedImage thumbnailImage = ImageHandler.getInstance().load(
-				fileLocation);
+		BufferedImage thumbnailImage = ImageHandler.load(fileLocation);
 
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage,
@@ -70,8 +65,7 @@ public class RequestMethods {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getMediumFileLocation();
 		String[] filetypeSplit = fileLocation.split("\\.");
-		BufferedImage thumbnailImage = ImageHandler.getInstance().load(
-				fileLocation);
+		BufferedImage thumbnailImage = ImageHandler.load(fileLocation);
 
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(thumbnailImage,
@@ -82,7 +76,7 @@ public class RequestMethods {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getFileLocation();
 		String[] filetypeSplit = fileLocation.split("\\.");
-		BufferedImage fullImage = ImageHandler.getInstance().load(fileLocation);
+		BufferedImage fullImage = ImageHandler.load(fileLocation);
 
 		request.sendJsonResponse(new ResponseServer(true));
 		request.sendImageResponse(fullImage,
@@ -98,8 +92,7 @@ public class RequestMethods {
 			String[] dimensions = detail.split(";");
 			int imageHeight = Integer.parseInt(dimensions[0]);
 			int imageWidth = Integer.parseInt(dimensions[1]);
-			BufferedImage fullImage = ImageHandler.getInstance().load(
-					fileLocation);
+			BufferedImage fullImage = ImageHandler.load(fileLocation);
 			BufferedImage scaledImage = Thumbnails.of(fullImage)
 					.size(imageHeight, imageWidth).asBufferedImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -158,7 +151,7 @@ public class RequestMethods {
 		String fileLocation = pictureDb.getFileLocation();
 		String existingTags = pictureDb.getTagString();
 		WriteExif writeExifInfo = new WriteExif(
-				ImageHandler.getInstance().defaultPath + "\\" + fileLocation);
+				ImageHandler.getDefaultPathString() + fileLocation);
 		writeExifInfo.setExifTags(existingTags + detail + ";");
 		writeExifInfo.writeToImage();
 		WriteToDatabase.addTagToPic(id, detail);
@@ -171,8 +164,7 @@ public class RequestMethods {
 		boolean setTitleinDb = UpdateDatabase.updatePictureTitle(id, detail);
 		if (setTitleinDb) {
 			WriteExif writeExifInfo = new WriteExif(
-					ImageHandler.getInstance().defaultPath + "\\"
-							+ fileLocation);
+					ImageHandler.getDefaultPathString() + fileLocation);
 			writeExifInfo.setExifTitle(detail);
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -189,8 +181,7 @@ public class RequestMethods {
 				detail);
 		if (setDescInDb) {
 			WriteExif writeExifInfo = new WriteExif(
-					ImageHandler.getInstance().defaultPath + "\\"
-							+ fileLocation);
+					ImageHandler.getDefaultPathString() + fileLocation);
 			writeExifInfo.setExifComment(detail);
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -206,8 +197,7 @@ public class RequestMethods {
 				Integer.parseInt(detail));
 		if (setDescInDb) {
 			WriteExif writeExifInfo = new WriteExif(
-					ImageHandler.getInstance().defaultPath + "\\"
-							+ fileLocation);
+					ImageHandler.getDefaultPathString() + fileLocation);
 			writeExifInfo.setExifRating(Integer.parseInt(detail));
 			writeExifInfo.writeToImage();
 			request.sendJsonResponse(new ResponseServer(true));
@@ -218,24 +208,16 @@ public class RequestMethods {
 
 	public static void rotate90Clock(RequestServer request, int id,
 			String detail) {
-		System.out.println(5);
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		System.out.println(6);
 		ImageManipulate.rotateImage(pictureDb, false);
-		System.out.println(7);
 		request.sendJsonResponse(new ResponseServer(true));
-		System.out.println(8);
 	}
 
 	public static void rotate90CounterClock(RequestServer request, int id,
 			String detail) {
-		System.out.println(1);
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
-		System.out.println(2);
 		ImageManipulate.rotateImage(pictureDb, true);
-		System.out.println(3);
 		request.sendJsonResponse(new ResponseServer(true));
-		System.out.println(4);
 	}
 
 	public static void addNewFullImage(RequestServer request, int id,
@@ -249,21 +231,15 @@ public class RequestMethods {
 			return;
 		}
 		ReadExif exif = new ReadExif(tempImage.getPath());
-		boolean writePictureToFile = ImageHandler.getInstance().save(tempImage,
-				ImageHandler.getInstance().defaultPath);
+		boolean writePictureToFile = ImageHandler.saveAll(tempImage);
 		System.out.println(writePictureToFile + " " + detail);
 		if (writePictureToFile) {
-			Path directory = ImageHandler.getInstance().defaultPath;
-			directory = directory.subpath(1, directory.getNameCount());
 
 			int lio = detail.split("[.]").length;
 			String mediumName = detail.split("[.]")[lio - 2] + "_medium."
 					+ detail.split("[.]")[lio - 1];
-			System.out.println(mediumName);
 			String thumbName = detail.split("[.]")[lio - 2] + "_thumb."
 					+ detail.split("[.]")[lio - 1];
-			System.out.println(thumbName);
-			System.out.println(detail);
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(),
 					exif.getExifComment(), exif.getExifRating(),
 					exif.getExifDateTimeTaken(), detail, mediumName, thumbName,

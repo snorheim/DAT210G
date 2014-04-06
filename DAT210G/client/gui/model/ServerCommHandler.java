@@ -441,7 +441,6 @@ public class ServerCommHandler {
 		try {
 			g = (Graphics2D) bufImage.createGraphics();
 		} catch (Exception e) {
-			System.out.println("SWAG");
 			return null;
 		}
 		Font font = new Font("Verdana", Font.ITALIC, 24);

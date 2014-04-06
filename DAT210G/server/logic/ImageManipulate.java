@@ -11,15 +11,12 @@ import storing.WriteExif;
 public class ImageManipulate {
 
 	public static void rotateImage(PictureDb picDb, boolean counterClockWise) {
-		String relativePath = ImageHandler.getInstance().defaultPath
-				.subpath(1,
-						ImageHandler.getInstance().defaultPath.getNameCount())
-				.toAbsolutePath().toString();
+		String relativePath = ImageHandler.getRelativePathString();
 
-		String fileLocation = relativePath + "\\" + picDb.getFileLocation();
-		String fileLocationMedium = relativePath + "\\"
+		String fileLocation = relativePath + picDb.getFileLocation();
+		String fileLocationMedium = relativePath
 				+ picDb.getMediumFileLocation();
-		String fileLocationThumb = relativePath + "\\"
+		String fileLocationThumb = relativePath
 				+ picDb.getThumbnailFileLocation();
 
 		ReadExif exif = new ReadExif(fileLocation);

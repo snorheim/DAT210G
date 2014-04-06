@@ -12,15 +12,13 @@ import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
 public class FileWatcher implements FileAlterationListener {
 
-	private static FileWatcher instance;
-
-	Path directoryToWatch;
-	FileAlterationMonitor monitor;
-	ArrayList<String> ignoreList;
+	static Path directoryToWatch;
+	static FileAlterationMonitor monitor;
+	static ArrayList<String> ignoreList;
 
 	public static final int READ_INTERVAL_MS = 10000;
 
-	private FileWatcher(Path dir) {
+	public FileWatcher(Path dir) {
 		directoryToWatch = dir;
 
 		ignoreList = new ArrayList<String>();
@@ -34,7 +32,7 @@ public class FileWatcher implements FileAlterationListener {
 
 	}
 
-	public void stop() {
+	public static void stop() {
 		try {
 			log("Stopped.");
 			monitor.stop();
@@ -43,7 +41,7 @@ public class FileWatcher implements FileAlterationListener {
 		}
 	}
 
-	public void start() {
+	public static void start() {
 		try {
 			monitor.start();
 			log("Started.");
@@ -52,13 +50,13 @@ public class FileWatcher implements FileAlterationListener {
 		}
 	}
 
-	private void log(String string) {
-		System.out.println("DM@ " + string);
+	private static void log(String string) {
+		System.out.println("FW@ " + string);
 	}
 
 	@Override
 	public void onDirectoryChange(File directory) {
-		log(directory + "was changed (Directory)");
+		log(directory + " was changed (Directory)");
 	}
 
 	@Override
@@ -69,13 +67,10 @@ public class FileWatcher implements FileAlterationListener {
 		}
 
 		log("New directory: " + directory.getName());
-
 		int count = directory.toPath().getParent().getNameCount();
-
 		String parentPath = "\\"
 				+ directory.toPath().getParent().subpath(1, count).toString()
 				+ "\\";
-
 		int parentID = ReadFromDatabase.getFolderID(parentPath);
 
 		String folderPath = parentPath + directory.getName() + "\\";
@@ -85,18 +80,13 @@ public class FileWatcher implements FileAlterationListener {
 
 		IsNotOnlyChildObject onlyChild = ReadFromDatabase
 				.isFolderOnlyChild(parentID);
-		log("Is only child: " + onlyChild.isOnlyChild());
 
 		if (onlyChild.isOnlyChild) {
-			System.out.println("er onlychild");
 			boolean writ = WriteToDatabase.addFolderAsAnOnlyChildToFolder(
 					newFolder, parentID);
-			log(writ + ", only child");
 		} else {
-			System.out.println("ikke onlychild");
 			boolean writ = WriteToDatabase.addFolderInAFolderWithOtherChildren(
 					newFolder, onlyChild.getLeftChildId());
-			log(writ + ", sibling");
 		}
 
 	}
@@ -126,7 +116,7 @@ public class FileWatcher implements FileAlterationListener {
 
 	@Override
 	public void onFileChange(File file) {
-		log(file + "was changed (File)");
+		log(file + " was changed (File)");
 	}
 
 	@Override
@@ -158,12 +148,9 @@ public class FileWatcher implements FileAlterationListener {
 					thumbPath, parentID);
 
 			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
-			System.out.println("Her " + wasWritten);
 
 			if (wasWritten) {
-				System.out.println("Her og");
 				if (!(read.getExifTags() == null)) {
-					System.out.println("Og her");
 					int pictureId = ReadFromDatabase
 							.getPictureFromPath(fullPath);
 					System.out.println("picture id til tagbilde: " + pictureId);
@@ -178,7 +165,7 @@ public class FileWatcher implements FileAlterationListener {
 			}
 			log("Was written to batadase: " + wasWritten);
 
-			ImageHandler.getInstance().saveImageFromDisk(file);
+			ImageHandler.saveImageFromDisk(file);
 		}
 	}
 
@@ -188,7 +175,6 @@ public class FileWatcher implements FileAlterationListener {
 			unignore(file);
 			return;
 		}
-		log("Deleted file: " + file);
 		if (ImageHandler.isImageFile(file)) {
 			String filename = file.getName().split("[.]")[0];
 			if (!filename.endsWith("_medium") && !filename.endsWith("_thumb")) {
@@ -201,48 +187,61 @@ public class FileWatcher implements FileAlterationListener {
 				int imageID = ReadFromDatabase.getPictureFromPath(fullPath);
 
 				boolean success = DeleteFromDatabase.deletePicture(imageID);
-				log(file.getName() + " was deleted: " + success);
+				log("Image file deleted: " + file.getName() + ", "
+						+ (success ? "" : "not") + " removed from badatase.");
 			}
 
+		} else {
+			log("File deleted: " + file);
 		}
 
 	}
 
-	public boolean ignore(File file) {
-		if (!isIgnored(file))
-			return ignoreList.add(file.toPath().toString());
-		return false;
+	public static void ignore(File... files) {
+		int length = files.length;
+		StringBuilder statusMessage = new StringBuilder("Ignored ");
+		boolean wasIgnored = false;
+		for (int i = 0; i < length; i++) {
+			File file = files[i];
+			if (!isIgnored(file)) {
+				statusMessage.append(file.getName() + " ");
+				ignoreList.add(file.getAbsolutePath());
+				wasIgnored = true;
+			}
+		}
+		if (wasIgnored)
+			log(statusMessage.toString());
 	}
 
-	private boolean unignore(File file) {
+	private static boolean unignore(File file) {
 		if (isIgnored(file))
 			return ignoreList.remove(file.toPath().toString());
 		return false;
 	}
 
-	private boolean isIgnored(File file) {
-		return ignoreList.contains(file.toPath().toString());
+	private static boolean isIgnored(File file) {
+		return ignoreList.contains(file.getAbsolutePath());
 	}
 
 	@Override
 	public void onStart(FileAlterationObserver arg0) {
-		log("Reading...");
+		log("Scanning...");
 	}
 
 	@Override
 	public void onStop(FileAlterationObserver arg0) {
-		log("Read complete.");
-		if (!ignoreList.isEmpty()) {
-			StringBuilder sb = new StringBuilder("");
-			sb.append("Ignoring ");
+		StringBuilder sb = new StringBuilder("");
+		boolean hasItems = !ignoreList.isEmpty();
+		if (hasItems) {
+			sb.append(" Ignoring ");
 			for (String filename : ignoreList) {
 				sb.append(filename + " ");
 			}
-			log(sb.toString());
 		}
+		log("Scan complete." + (hasItems ? sb.toString() : ""));
 	}
 
-	private File searchFile(File file, String string) {
+	private static File searchFile(File file, String string) {
 		if (file == null)
 			return null;
 
@@ -264,27 +263,19 @@ public class FileWatcher implements FileAlterationListener {
 		return null;
 	}
 
-	private void deleteRemaining(File file) {
+	private static void deleteRemaining(File file) {
 		File thumb = searchFile(file, "_thumb");
 		if (thumb != null) {
-			log("Deleted remaining " + thumb);
+			log("Deleted remaining " + thumb.getName());
 			ignore(thumb);
 			thumb.delete();
 		}
 		File medium = searchFile(file, "_medium");
 		if (medium != null) {
-			log("Deleted remaining " + medium);
+			log("Deleted remaining " + medium.getName());
 			ignore(medium);
 			medium.delete();
 		}
-	}
-
-	public static FileWatcher getInstance() {
-		if (instance == null) {
-			instance = new FileWatcher(
-					ImageHandler.getInstance().defaultPath);
-		}
-		return instance;
 	}
 
 }
