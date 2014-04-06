@@ -215,6 +215,11 @@ public class RequestMethods {
 			request.sendJsonResponse(new ResponseServer(false));
 		}
 	}
+	
+	public static void addNewDirectory(RequestServer request, int id, String detail) {
+		System.out.println("skulle lagt til dir nå, parentid: " + id + ", foldername: " + detail);
+		request.sendJsonResponse(new ResponseServer(true));
+	}
 
 	public static void rotate90Clock(RequestServer request, int id,
 			String detail) {
