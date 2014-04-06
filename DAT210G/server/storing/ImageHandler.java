@@ -28,6 +28,7 @@ public class ImageHandler {
 
 		defaultPath = Paths.get(".\\img");
 		log("Default path: " + defaultPath.normalize().toAbsolutePath());
+
 		try {
 			log("Default path ready: \t" + ensureLocation());
 		} catch (FileNotFoundException fnfe) {

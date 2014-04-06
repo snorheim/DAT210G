@@ -26,6 +26,7 @@ public class HttpServer implements Runnable {
 
 	public void run() {
 		try {
+
 			BufferedInputStream bufferInStream = new BufferedInputStream(
 					connection.getInputStream());
 			InputStreamReader inStreamReader = new InputStreamReader(
@@ -127,6 +128,7 @@ public class HttpServer implements Runnable {
 
 	public static void main(String[] args) {
 		ImageHandler.getInstance();
+		DirectoryMonitor.getInstance();
 		int port = 19999;
 		int count = 0;
 		ServerSocket serverConnection = null;

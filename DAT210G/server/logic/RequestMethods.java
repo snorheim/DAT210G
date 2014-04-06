@@ -217,16 +217,24 @@ public class RequestMethods {
 
 	public static void rotate90Clock(RequestServer request, int id,
 			String detail) {
+		System.out.println(5);
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
+		System.out.println(6);
 		ImageManipulate.rotateImage(pictureDb, false);
+		System.out.println(7);
 		request.sendJsonResponse(new ResponseServer(true));
+		System.out.println(8);
 	}
 
 	public static void rotate90CounterClock(RequestServer request, int id,
 			String detail) {
+		System.out.println(1);
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
+		System.out.println(2);
 		ImageManipulate.rotateImage(pictureDb, true);
+		System.out.println(3);
 		request.sendJsonResponse(new ResponseServer(true));
+		System.out.println(4);
 	}
 
 	public static void addNewFullImage(RequestServer request, int id,

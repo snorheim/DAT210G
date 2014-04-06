@@ -1,10 +1,5 @@
 package gui.model;
 
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import communication.JsonClient;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
@@ -12,12 +7,17 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Hashtable;
 
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import logic.RequestClient;
 import logic.ResponseClient;
 
+import communication.JsonClient;
+
 /**
  * Created by Ronnie on 12.02.14.
- *
+ * 
  * Denne snakker med HttpClient og JsonClient
  * 
  */
@@ -121,7 +121,8 @@ public class ServerCommHandler {
 		int nextAvailableId = -1;
 		String fileName = null;
 
-		JsonClient sendImageJson1 = new JsonClient(new RequestClient("getNextImageId"));
+		JsonClient sendImageJson1 = new JsonClient(new RequestClient(
+				"getNextImageId"));
 		if (sendImageJson1.sendJsonToServer()) {
 			ResponseClient sendImageResponse1 = sendImageJson1
 					.receiveJsonFromServer();
@@ -134,13 +135,16 @@ public class ServerCommHandler {
 				+ nextAvailableId);
 		if (nextAvailableId != -1) {
 			boolean imageWasSentSuccessful = false;
-			while (imageWasSentSuccessful == false){
-				JsonClient sendImageJson = new JsonClient(new RequestClient("addNewFullImage", nextAvailableId, fileName));
+			while (imageWasSentSuccessful == false) {
+				JsonClient sendImageJson = new JsonClient(new RequestClient(
+						"addNewFullImage", nextAvailableId, fileName));
 				if (sendImageJson.sendJsonToServer()) {
 					try {
-						System.out.println("Prøver å sende bilde: "	+ fileToSend.getPath());
+						System.out.println("Prøver å sende bilde: "
+								+ fileToSend.getPath());
 						sendImageJson.sendFileToServer(fileToSend.getPath());
-						ResponseClient response = sendImageJson.receiveJsonFromServer();
+						ResponseClient response = sendImageJson
+								.receiveJsonFromServer();
 						imageWasSentSuccessful = response.getSuccess();
 						if (response.getSuccess()) {
 							success = true;
@@ -418,9 +422,11 @@ public class ServerCommHandler {
 
 	public static ImageView getRotLeft(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient("rotate90CounterClock", imageID));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
+				"rotate90CounterClock", imageID));
 		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
+			ResponseClient getThumbnailResponse = getThumbnailJson
+					.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()) {
 				bufImage = getThumbnailJson.receiveImageFromServer();
 			}
@@ -429,14 +435,19 @@ public class ServerCommHandler {
 
 		// TODO: FOR DEBUG
 
-		//String text = String.valueOf(imageID)
-		//		+ " rotated left: Ikkje klart på serveren ennå";
-
-		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		// String text = String.valueOf(imageID)
+		// + " rotated left: Ikkje klart på serveren ennå";
+		Graphics2D g = null;
+		try {
+			g = (Graphics2D) bufImage.createGraphics();
+		} catch (Exception e) {
+			System.out.println("SWAG");
+			return null;
+		}
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);
 		g.setColor(Color.RED);
-		//g.drawString(text, 20, 20);
+		// g.drawString(text, 20, 20);
 
 		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
 		// blander swing og JavaFX?
@@ -447,9 +458,11 @@ public class ServerCommHandler {
 
 	public static ImageView getRotRight(int imageID) {
 		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient("rotate90Clock", imageID));
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
+				"rotate90Clock", imageID));
 		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson.receiveJsonFromServer();
+			ResponseClient getThumbnailResponse = getThumbnailJson
+					.receiveJsonFromServer();
 			if (getThumbnailResponse.getSuccess()) {
 				bufImage = getThumbnailJson.receiveImageFromServer();
 			}
@@ -458,14 +471,19 @@ public class ServerCommHandler {
 
 		// TODO: FOR DEBUG
 
-		//String text = String.valueOf(imageID)
-		//		+ " rotated right: Ikkje klart på serveren ennå";
+		// String text = String.valueOf(imageID)
+		// + " rotated right: Ikkje klart på serveren ennå";
 
-		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		Graphics2D g;
+		try {
+			g = (Graphics2D) bufImage.createGraphics();
+		} catch (Exception e) {
+			return null;
+		}
 		Font font = new Font("Verdana", Font.ITALIC, 24);
 		g.setFont(font);
 		g.setColor(Color.RED);
-		//g.drawString(text, 20, 20);
+		// g.drawString(text, 20, 20);
 
 		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
 		// blander swing og JavaFX?
