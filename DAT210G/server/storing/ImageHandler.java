@@ -120,8 +120,8 @@ public class ImageHandler {
 
 		if (wasSuccessful) {
 			log("Saved " + imageFile + " to " + destFile);
-			DirectoryMonitor.getInstance().ignore(imageFile);
-			DirectoryMonitor.getInstance().ignore(destFile);
+			FileWatcher.getInstance().ignore(imageFile);
+			FileWatcher.getInstance().ignore(destFile);
 			return true;
 		} else
 			log("Could not save fullsized image");
@@ -149,7 +149,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			DirectoryMonitor.getInstance().ignore(destFile);
+			FileWatcher.getInstance().ignore(destFile);
 
 			hideImageFile(destFile);
 
@@ -181,7 +181,7 @@ public class ImageHandler {
 					.toFile(destFile);
 			log("Saved " + imageFile + " to " + destFile);
 
-			DirectoryMonitor.getInstance().ignore(destFile);
+			FileWatcher.getInstance().ignore(destFile);
 
 			hideImageFile(destFile);
 

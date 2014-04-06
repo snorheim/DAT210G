@@ -7,7 +7,7 @@ import java.net.Socket;
 
 import javax.imageio.ImageIO;
 
-import storing.DirectoryMonitor;
+import storing.FileWatcher;
 import storing.HibernateUtil;
 import storing.ImageHandler;
 
@@ -88,7 +88,7 @@ public class HttpServer implements Runnable {
 				connection.getInputStream());
 		String fileFullPath = ImageHandler.getInstance().defaultPath + "\\"
 				+ fileName;
-		DirectoryMonitor.getInstance().ignore(new File(fileFullPath));
+		FileWatcher.getInstance().ignore(new File(fileFullPath));
 		System.out.println("Receiving image to file: " + fileFullPath);
 		byte[] byteSize = new byte[4];
 		int offset = 0;
@@ -129,7 +129,7 @@ public class HttpServer implements Runnable {
 
 	public static void main(String[] args) {
 		ImageHandler.getInstance();
-		DirectoryMonitor.getInstance();
+		FileWatcher.getInstance();
 		int port = 19999;
 		int count = 0;
 		ServerSocket serverConnection = null;

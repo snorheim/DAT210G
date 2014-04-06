@@ -10,9 +10,9 @@ import org.apache.commons.io.monitor.FileAlterationObserver;
 
 import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
-public class DirectoryMonitor implements FileAlterationListener {
+public class FileWatcher implements FileAlterationListener {
 
-	private static DirectoryMonitor instance;
+	private static FileWatcher instance;
 
 	Path directoryToWatch;
 	FileAlterationMonitor monitor;
@@ -20,7 +20,7 @@ public class DirectoryMonitor implements FileAlterationListener {
 
 	public static final int READ_INTERVAL_MS = 10000;
 
-	private DirectoryMonitor(Path dir) {
+	private FileWatcher(Path dir) {
 		directoryToWatch = dir;
 
 		ignoreList = new ArrayList<String>();
@@ -279,9 +279,9 @@ public class DirectoryMonitor implements FileAlterationListener {
 		}
 	}
 
-	public static DirectoryMonitor getInstance() {
+	public static FileWatcher getInstance() {
 		if (instance == null) {
-			instance = new DirectoryMonitor(
+			instance = new FileWatcher(
 					ImageHandler.getInstance().defaultPath);
 		}
 		return instance;
