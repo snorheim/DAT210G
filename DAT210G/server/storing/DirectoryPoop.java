@@ -23,9 +23,11 @@ public class DirectoryPoop {
 
 	public static void addNewDirectory(File directory) {
 		Path relative = getRelativePath(directory.toPath());
+
+		int parentId;
+
 		String parentPath = relative.getParent().toString() + "\\";
-		System.out.println(parentPath);
-		int parentId = ReadFromDatabase.getFolderID(parentPath);
+		parentId = ReadFromDatabase.getFolderID(parentPath);
 
 		writeDirectoryToDatabase(directory, parentId);
 	}
@@ -64,10 +66,11 @@ public class DirectoryPoop {
 	}
 
 	public static String getFilenameWithSuffix(String original, String suffix) {
+		System.out.println(original);
 		String name = original.split("[.]")[0];
-		String extension = name.split("[.]")[1];
+		String extension = original.split("[.]")[1];
 
-		return original + suffix + "." + extension;
+		return name + suffix + "." + extension;
 
 	}
 

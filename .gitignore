@@ -11,3 +11,6 @@
 /bin
 *.db
 *.db
+*.jpg
+*.png
+*.db

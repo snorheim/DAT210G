@@ -40,11 +40,6 @@ public class ImageHandler {
 		}
 	}
 
-	public static Path getRelativePath() {
-		int nameCount = defaultPath.getNameCount();
-		return defaultPath.subpath(nameCount - 1, nameCount);
-	}
-
 	public static String getRelativePathString() {
 		int nameCount = defaultPath.getNameCount();
 		return defaultPath.subpath(nameCount - 1, nameCount).toString() + "\\";

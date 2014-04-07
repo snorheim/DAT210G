@@ -242,14 +242,11 @@ public class RequestMethods {
 		}
 		ReadExif exif = new ReadExif(tempImage.getPath());
 		boolean writePictureToFile = ImageHandler.saveAll(tempImage);
-		System.out.println(writePictureToFile + " " + detail);
 		if (writePictureToFile) {
-
-			int lio = detail.split("[.]").length;
-			String mediumName = detail.split("[.]")[lio - 2] + "_medium."
-					+ detail.split("[.]")[lio - 1];
-			String thumbName = detail.split("[.]")[lio - 2] + "_thumb."
-					+ detail.split("[.]")[lio - 1];
+			String mediumName = DirectoryPoop
+					.getMediumName(tempImage.getName());
+			String thumbName = DirectoryPoop.getThumbnailName(tempImage
+					.getName());
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(),
 					exif.getExifComment(), exif.getExifRating(),
 					exif.getExifDateTimeTaken(), detail, mediumName, thumbName,
