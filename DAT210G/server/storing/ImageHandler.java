@@ -6,6 +6,7 @@ import java.nio.file.*;
 
 import javax.imageio.ImageIO;
 
+import logic.Loggy;
 import net.coobird.thumbnailator.Thumbnails;
 
 public class ImageHandler {
@@ -46,7 +47,7 @@ public class ImageHandler {
 	}
 
 	private static void log(String string) {
-		System.out.println("IH@ " + string);
+		Loggy.log("IH@ " + string);
 	}
 
 	private static boolean ensureLocation() throws FileNotFoundException {

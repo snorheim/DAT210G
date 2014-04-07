@@ -4,6 +4,8 @@ import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
 
+import logic.Loggy;
+
 import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
@@ -49,7 +51,7 @@ public class FileWatcher implements FileAlterationListener {
 	}
 
 	private static void log(String string) {
-		System.out.println("FW@ " + string);
+		Loggy.log("FW@ " + string);
 	}
 
 	@Override
