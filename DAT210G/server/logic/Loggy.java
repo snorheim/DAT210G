@@ -37,8 +37,7 @@ public class Loggy extends JFrame {
 	}
 
 	public static void log(String s) {
-		if (s.startsWith("RQM@"))
-			console.setText(console.getText() + "\n" + s);
+		console.setText(console.getText() + "\n" + s);
 	}
 
 	public static void main(String[] args) {
