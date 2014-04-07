@@ -2,10 +2,7 @@ package storing;
 
 import java.util.ArrayList;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import org.hibernate.*;
 
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
@@ -73,7 +70,8 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("FROM PictureDb WHERE id = :picId");
+			Query query = dbSession
+					.createQuery("FROM PictureDb WHERE id = :picId");
 			query.setParameter("picId", picId);
 			PictureDb picFromDb = (PictureDb) query.uniqueResult();
 			query = dbSession.createQuery("FROM TagDb WHERE tag = :tag");
@@ -100,8 +98,7 @@ public class WriteToDatabase {
 		for (int i : allPicIds) {
 			DeleteFromDatabase.deletePicture(i);
 		}
-		ParentFolderDb newImageFolder = new ParentFolderDb("img", "\\img\\", 1,
-				2);
+		ParentFolderDb newImageFolder = new ParentFolderDb("img", "img\\", 1, 2);
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession.createQuery("DELETE FROM TagDb");
@@ -163,15 +160,18 @@ public class WriteToDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
+			Query query = dbSession
+					.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:parentId");
 			query.setParameter("parentId", parentId);
 			int left = (int) query.uniqueResult();
 
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET rgt = rgt + 2 WHERE rgt > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
 
-			query = dbSession.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
+			query = dbSession
+					.createQuery("UPDATE ParentFolderDb SET lft = lft + 2 WHERE lft > :lftLeft");
 			query.setParameter("lftLeft", left);
 			query.executeUpdate();
 

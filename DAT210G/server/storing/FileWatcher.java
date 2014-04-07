@@ -8,8 +8,6 @@ import org.apache.commons.io.monitor.FileAlterationListener;
 import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 
-import storing.ReadFromDatabase.IsNotOnlyChildObject;
-
 public class FileWatcher implements FileAlterationListener {
 
 	static Path directoryToWatch;
@@ -67,27 +65,28 @@ public class FileWatcher implements FileAlterationListener {
 		}
 
 		log("New directory: " + directory.getName());
-		int count = directory.toPath().getParent().getNameCount();
-		String parentPath = "\\"
-				+ directory.toPath().getParent().subpath(1, count).toString()
-				+ "\\";
-		int parentID = ReadFromDatabase.getFolderID(parentPath);
-
-		String folderPath = parentPath + directory.getName() + "\\";
-
-		ParentFolderDb newFolder = new ParentFolderDb(directory.getName(),
-				folderPath, parentID);
-
-		IsNotOnlyChildObject onlyChild = ReadFromDatabase
-				.isFolderOnlyChild(parentID);
-
-		if (onlyChild.isOnlyChild) {
-			boolean writ = WriteToDatabase.addFolderAsAnOnlyChildToFolder(
-					newFolder, parentID);
-		} else {
-			boolean writ = WriteToDatabase.addFolderInAFolderWithOtherChildren(
-					newFolder, onlyChild.getLeftChildId());
-		}
+		DirectoryPoop.addNewDirectory(directory);
+		// int count = directory.toPath().getParent().getNameCount();
+		// String parentPath = "\\"
+		// + directory.toPath().getParent().subpath(1, count).toString()
+		// + "\\";
+		// int parentID = ReadFromDatabase.getFolderID(parentPath);
+		//
+		// String folderPath = parentPath + directory.getName() + "\\";
+		//
+		// ParentFolderDb newFolder = new ParentFolderDb(directory.getName(),
+		// folderPath, parentID);
+		//
+		// IsNotOnlyChildObject onlyChild = ReadFromDatabase
+		// .isFolderOnlyChild(parentID);
+		//
+		// if (onlyChild.isOnlyChild) {
+		// boolean writ = WriteToDatabase.addFolderAsAnOnlyChildToFolder(
+		// newFolder, parentID);
+		// } else {
+		// boolean writ = WriteToDatabase.addFolderInAFolderWithOtherChildren(
+		// newFolder, onlyChild.getLeftChildId());
+		// }
 
 	}
 
@@ -128,19 +127,16 @@ public class FileWatcher implements FileAlterationListener {
 		log("New file: " + file);
 		if (ImageHandler.isImageFile(file)) {
 
-			int length = file.toPath().getNameCount();
-			String parentPath = "\\"
-					+ file.toPath().getParent().subpath(1, length - 1)
-							.toString() + "\\";
+			String parentPath = DirectoryPoop.getRelativePath(file) + "\\";
 
 			int parentID = ReadFromDatabase.getFolderID(parentPath);
 
-			String fullPath = file.toPath().subpath(2, length).toString();
-			int lio = fullPath.split("[.]").length;
-			String mediumPath = fullPath.split("[.]")[lio - 2] + "_medium"
-					+ "." + fullPath.split("[.]")[lio - 1];
-			String thumbPath = fullPath.split("[.]")[lio - 2] + "_thumb" + "."
-					+ fullPath.split("[.]")[lio - 1];
+			String fullPath = parentPath + file.getName();
+			String mediumPath = parentPath
+					+ DirectoryPoop.getMediumName(file.getName());
+			String thumbPath = parentPath
+					+ DirectoryPoop.getThumbnailName(file.getName());
+
 			ReadExif read = new ReadExif(file.getPath().toString());
 			PictureDb pictureDb = new PictureDb(read.getExifTitle(),
 					read.getExifComment(), read.getExifRating(),

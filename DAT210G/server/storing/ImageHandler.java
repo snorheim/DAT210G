@@ -40,23 +40,14 @@ public class ImageHandler {
 		}
 	}
 
+	public static Path getRelativePath() {
+		int nameCount = defaultPath.getNameCount();
+		return defaultPath.subpath(nameCount - 1, nameCount);
+	}
+
 	public static String getRelativePathString() {
 		int nameCount = defaultPath.getNameCount();
 		return defaultPath.subpath(nameCount - 1, nameCount).toString() + "\\";
-	}
-
-	public static File getImageFileWithSuffix(File original, String suffix) {
-		Path parent = original.toPath().getParent();
-		String name = original.getName().split("[.]")[0];
-		String extension = original.getName().split("[.]")[1];
-
-		File returnFile = new File(parent + "\\" + name + suffix + "."
-				+ extension);
-
-		Path temp = parent.resolve(returnFile.toPath());
-
-		return temp.toFile();
-
 	}
 
 	private static void log(String string) {
@@ -88,6 +79,10 @@ public class ImageHandler {
 
 	public static String getDefaultPathString() {
 		return defaultPath.toString() + "\\";
+	}
+
+	public static String getDefaultPathParentString() {
+		return defaultPath.getParent().toString() + "\\";
 	}
 
 	public static BufferedImage load(File file) {
@@ -259,6 +254,8 @@ public class ImageHandler {
 	// Tester metodene:
 
 	public static void main(String[] args) {
+		new ImageHandler();
+		System.out.println(getDefaultPathParentString());
 	}
 
 	private static void hideImageFile(File file) {
