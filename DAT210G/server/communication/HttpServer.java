@@ -7,6 +7,7 @@ import java.net.Socket;
 
 import javax.imageio.ImageIO;
 
+import logic.Loggy;
 import storing.FileWatcher;
 import storing.HibernateUtil;
 import storing.ImageHandler;
@@ -15,6 +16,7 @@ public class HttpServer implements Runnable {
 
 	private Socket connection;
 	private int id;
+	private int count = 0;
 
 	public HttpServer(Socket socket, int id) {
 		this.connection = socket;
@@ -52,7 +54,7 @@ public class HttpServer implements Runnable {
 	}
 
 	private static void log(String string) {
-		System.out.println("SERVER@ " + string);
+		Loggy.log("SERVER@ " + string);
 	}
 
 	public void sendData(String outGoingString) {
@@ -142,17 +144,18 @@ public class HttpServer implements Runnable {
 				thread.start();
 			}
 		} catch (IOException e) {
-			System.err.println("Not able to open server on port " + port);
+			log("Not able to open server on port " + port);
 		} finally {
 			try {
 				serverConnection.close();
 				HibernateUtil.shutdown();
 			} catch (IOException e) {
-				System.err.println("Not able to close server on port " + port);
+				log("Not able to close server on port " + port);
 			} catch (Exception e) {
-				System.err.println("Not able to close server on port " + port);
+				log("Not able to close server on port " + port);
 			}
 
 		}
 	}
+
 }

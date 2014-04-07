@@ -3,6 +3,7 @@ package logic;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.List;
 
 import net.coobird.thumbnailator.Thumbnails;
@@ -92,6 +93,7 @@ public class RequestMethods {
 			String[] dimensions = detail.split(";");
 			int imageHeight = Integer.parseInt(dimensions[0]);
 			int imageWidth = Integer.parseInt(dimensions[1]);
+			log(fileLocation);
 			BufferedImage fullImage = ImageHandler.load(fileLocation);
 			BufferedImage scaledImage = Thumbnails.of(fullImage)
 					.size(imageHeight, imageWidth).asBufferedImage();
@@ -239,17 +241,31 @@ public class RequestMethods {
 			request.sendJsonResponse(new ResponseServer(false));
 			return;
 		}
+
+		ParentFolderDb pfdb = ReadFromDatabase.getFolderInfo(id);
+		String path = Paths.get(pfdb.getPath()).toString() + "\\";
+		boolean writePictureToFile = ImageHandler.saveAll(tempImage,
+				Paths.get(pfdb.getPath()));
+
 		ReadExif exif = new ReadExif(tempImage.getPath());
-		boolean writePictureToFile = ImageHandler.saveAll(tempImage);
+
+		log(path);
+		if (path.startsWith("img\\"))
+			path = path.substring(4, path.length());
+
 		if (writePictureToFile) {
-			String mediumName = DirectoryPoop
-					.getMediumName(tempImage.getName());
-			String thumbName = DirectoryPoop.getThumbnailName(tempImage
-					.getName());
+			String fullName = path + detail;
+			String mediumName = path
+					+ DirectoryPoop.getMediumName(tempImage.getName());
+			String thumbName = path
+					+ DirectoryPoop.getThumbnailName(tempImage.getName());
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(),
 					exif.getExifComment(), exif.getExifRating(),
-					exif.getExifDateTimeTaken(), detail, mediumName, thumbName,
-					id);
+					exif.getExifDateTimeTaken(), fullName, mediumName,
+					thumbName, id);
+			if (id != 1)
+				tempImage.delete();
+
 			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
 			if (writePictureToDb) {
 				if (!(exif.getExifTags() == null)) {
@@ -265,5 +281,9 @@ public class RequestMethods {
 			}
 
 		}
+	}
+
+	private static void log(String s) {
+		Loggy.log("RQM@ " + s);
 	}
 }
