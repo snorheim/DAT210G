@@ -128,48 +128,34 @@ public class ServerCommHandler {
 		return success;
 	}
 
-	public static boolean SendImageToServer(File fileToSend) {
+	public static boolean SendImageToServer(File fileToSend, int parentId) {
 
 		boolean success = false;
-
-		int nextAvailableId = -1;
 		String fileName = null;
 
-		JsonClient sendImageJson1 = new JsonClient(new RequestClient(
-				"getNextImageId"));
-		if (sendImageJson1.sendJsonToServer()) {
-			ResponseClient sendImageResponse1 = sendImageJson1
-					.receiveJsonFromServer();
-			nextAvailableId = sendImageResponse1.getImageId();
-			System.out.println("Next available id: " + nextAvailableId);
-			sendImageJson1.closeHttpConnection();
-		}
 		fileName = fileToSend.getName();
-		System.out.println("Filtype til nytt bilde: " + fileName + " id: "
-				+ nextAvailableId);
-		if (nextAvailableId != -1) {
-			boolean imageWasSentSuccessful = false;
-			while (imageWasSentSuccessful == false) {
-				JsonClient sendImageJson = new JsonClient(new RequestClient(
-						"addNewFullImage", nextAvailableId, fileName));
-				if (sendImageJson.sendJsonToServer()) {
-					try {
-						System.out.println("Prøver å sende bilde: "
-								+ fileToSend.getPath());
-						sendImageJson.sendFileToServer(fileToSend.getPath());
-						ResponseClient response = sendImageJson
-								.receiveJsonFromServer();
-						imageWasSentSuccessful = response.getSuccess();
-						if (response.getSuccess()) {
-							success = true;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
+		boolean imageWasSentSuccessful = false;
+		while (imageWasSentSuccessful == false) {
+			JsonClient sendImageJson = new JsonClient(new RequestClient(
+					"addNewFullImage", parentId, fileName));
+			if (sendImageJson.sendJsonToServer()) {
+				try {
+					System.out.println("Prøver å sende bilde: "
+							+ fileToSend.getPath());
+					sendImageJson.sendFileToServer(fileToSend.getPath());
+					ResponseClient response = sendImageJson
+							.receiveJsonFromServer();
+					imageWasSentSuccessful = response.getSuccess();
+					if (response.getSuccess()) {
+						success = true;
 					}
-					sendImageJson.closeHttpConnection();
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
+				sendImageJson.closeHttpConnection();
 			}
 		}
+
 		return success;
 	}
 

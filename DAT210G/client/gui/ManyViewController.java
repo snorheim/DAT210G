@@ -199,7 +199,7 @@ public class ManyViewController {
 		if (fileList != null) {
 			for (File file : fileList) {
 
-				ServerCommHandler.SendImageToServer(file);
+				ServerCommHandler.SendImageToServer(file, folderTreeModel.getCurrentFolder().getFolderId());
 
 			}
 		}

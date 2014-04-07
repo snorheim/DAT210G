@@ -30,7 +30,25 @@ public class ReadFromDatabase {
 		}
 		return tagList;
 	}
-
+	
+	public static int getNewestPicId() {
+		int picId = -1;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("SELECT MAX(id) FROM PictureDb");
+			picId = (int) query.uniqueResult();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null)
+				dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+		}
+		return picId;
+	}
+	
 	public static int getPictureFromPath(String path) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
