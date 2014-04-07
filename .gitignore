@@ -9,3 +9,6 @@
 .classpath
 .project
 /bin
+*.jpg
+*.db
+*.png
