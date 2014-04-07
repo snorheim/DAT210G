@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="gui.SingleViewController">
+  <!-- TODO Add Nodes -->
+  <children>
+    <BorderPane prefHeight="-1.0" prefWidth="-1.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <center>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <AnchorPane id="Content" fx:id="anchorPaneForSingle" minHeight="-1.0" minWidth="-1.0" prefHeight="600.0" prefWidth="471.0" style="" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+              </padding>
+            </AnchorPane>
+          </children>
+        </AnchorPane>
+      </center>
+      <left>
+        <AnchorPane minHeight="0.0" minWidth="0.0" padding="$x1" prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <VBox id="VBox" alignment="TOP_LEFT" prefHeight="600.0" prefWidth="100.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <Button fx:id="homeBtn" mnemonicParsing="false" onAction="#homeBtnAction" text="Home" />
+                <Button fx:id="nextBtn" mnemonicParsing="false" onAction="#nextBtnAction" text="Next" />
+                <Button fx:id="prevBtn" mnemonicParsing="false" onAction="#prevBtnAction" text="Prev" />
+                <Button fx:id="rotLeftBtn" mnemonicParsing="false" onAction="#rotLeftBtnAction" text="Rotate Left" />
+                <Button fx:id="rotRightBtn" mnemonicParsing="false" onAction="#rotRightBtnAction" text="Rotate Right" />
+              </children>
+            </VBox>
+            <Label layoutX="32.0" layoutY="291.0" text="Current folder:" />
+            <Label id="currentImageLabel" fx:id="currentFolder" layoutX="49.0" layoutY="314.0" text="Label" />
+          </children>
+        </AnchorPane>
+      </left>
+      <right>
+        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="-1.0" prefWidth="-1.0">
+          <children>
+            <VBox id="VBox" alignment="TOP_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+              <children>
+                <Label text="Title" />
+                <TextField fx:id="titleTextField" prefWidth="200.0" />
+                <Label text="Description" />
+                <TextField fx:id="descTextField" prefWidth="200.0" />
+                <Label text="Rating" />
+                <TextField fx:id="ratingTextField" prefWidth="200.0" />
+                <Label text="Date" />
+                <TextField fx:id="dateTextField" prefWidth="200.0" />
+                <Label text="Tags" />
+                <TextField fx:id="tagsTextField" prefWidth="200.0" />
+                <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+                  <children>
+                    <Button id="storeMetaButton" fx:id="storeMetaBtn" mnemonicParsing="false" onAction="#storeMetaBtnAction" text="Apply" />
+                  </children>
+                </HBox>
+              </children>
+              <padding>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />
+              </padding>
+            </VBox>
+          </children>
+        </AnchorPane>
+      </right>
+    </BorderPane>
+  </children>
+</AnchorPane>

@@ -14,11 +14,13 @@ public class PictureDb {
 	private String mediumFileLocation;
 	private String thumbnailFileLocation;
 	private Set<TagDb> tags;
+	private int parentFolderId;
 	
 	public PictureDb() {}
 	
 	public PictureDb(String title, String description, int rating, String dateTime,
-			String fileLocation, String mediumFileLocation, String thumbnailFileLocation) {
+			String fileLocation, String mediumFileLocation, String thumbnailFileLocation
+			,int parentFolderId) {
 		this.title = title;
 		this.description = description;
 		this.rating = rating;
@@ -26,7 +28,7 @@ public class PictureDb {
 		this.fileLocation = fileLocation;
 		this.mediumFileLocation = mediumFileLocation;
 		this.thumbnailFileLocation = thumbnailFileLocation;
-		
+		this.parentFolderId = parentFolderId;
 	}
 	
 	public void addTag(TagDb t) {
@@ -109,4 +111,14 @@ public class PictureDb {
 	public void setTags(Set<TagDb> tags) {
 		this.tags = tags;
 	}
+
+	public int getParentFolderId() {
+		return parentFolderId;
+	}
+
+	public void setParentFolderId(int parentFolderId) {
+		this.parentFolderId = parentFolderId;
+	}
+	
+	
 }

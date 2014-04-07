@@ -5,7 +5,7 @@ public class ResponseServer {
 	private int imageId;
 	private int[] imageIdArray;
 	private String[] stringArray;
-	
+
 	public ResponseServer(boolean success){
 		this.success = success;
 	}
@@ -24,6 +24,11 @@ public class ResponseServer {
 	public ResponseServer(boolean success, int imageId, String[] stringArray){
 		this.success = success;
 		this.imageId = imageId;
+		this.stringArray = stringArray;
+	}
+	public ResponseServer(boolean success, int[] imageIdArray, String[] stringArray){
+		this.success = success;
+		this.imageIdArray = imageIdArray;
 		this.stringArray = stringArray;
 	}
 }

@@ -9,24 +9,24 @@ import logic.ResponseServer;
 
 public class RequestServer {
 	private String order;
-	private int imageId;
+	private int id;
 	private String detail;
 	private JsonServer jsonServer;
 
 	public RequestServer(String order){
 		this.order = order;
 	}
-	public RequestServer(String order, int imageId){
+	public RequestServer(String order, int id){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 	}
 	public RequestServer(String order, String detail){
 		this.order = order;
 		this.detail = detail;
 	}
-	public RequestServer(String order, int imageId, String detail){
+	public RequestServer(String order, int id, String detail){
 		this.order = order;
-		this.imageId = imageId;
+		this.id = id;
 		this.detail = detail;
 	}
 	public void setJsonServer(JsonServer jsonServer){
@@ -38,13 +38,6 @@ public class RequestServer {
 	}	
 	public void sendImageResponse(BufferedImage image, String type){
 		jsonServer.getHttpServer().sendImage(image, type);
-	}
-	public void sendImageResponseToAndroid(String fileLocation){
-		try {
-			jsonServer.getHttpServer().sendImageToAndroid(fileLocation);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	public BufferedImage receiveImage(){
 		return jsonServer.getHttpServer().receiveImage();
@@ -63,21 +56,26 @@ public class RequestServer {
 			thisMethod = requestMethodsClass.getMethod(order, parameterTypes);
 		} catch (NoSuchMethodException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (SecurityException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		}
 		try {
-			thisMethod.invoke(this,this,imageId,detail);
+			thisMethod.invoke(this,this,id,detail);
 		} catch (IllegalAccessException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (IllegalArgumentException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		} catch (InvocationTargetException e) {
 			RequestServer.this.sendJsonResponse(new ResponseServer(false));
+			e.printStackTrace();
 			return;
 		}
 	}

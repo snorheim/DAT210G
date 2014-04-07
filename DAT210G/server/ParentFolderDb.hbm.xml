@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" 
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+<class name="storing.ParentFolderDb" table="parentFolder">
+	<id name="folderId" column="folderId" type="integer">
+		<generator class="native"></generator>
+	</id>
+	<property name="name" column="name" type="string"></property>
+	<property name="path" column="path" type="string"></property>
+	<property name="lft" column="lft" type="integer"></property>
+	<property name="rgt" column="rgt" type="integer"></property>
+	<property name="parentId" column="parentId" type="integer"></property>
+</class>
+</hibernate-mapping>
