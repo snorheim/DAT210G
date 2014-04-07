@@ -101,7 +101,8 @@ public class testSkrivBilde {
 //		boolean t = WriteToDatabase.addTagToPic(1, "jævla github");
 //		System.out.println(t);
 		
-		ReadFromDatabase.getAllTags();
+		int i = ReadFromDatabase.getNewestPicId();
+		System.out.println(i);
 	}
 
 }

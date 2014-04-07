@@ -232,7 +232,6 @@ public class RequestMethods {
 
 	public static void addNewFullImage(RequestServer request, int id,
 			String detail) {
-		System.out.println("id til server: " + id);
 		File tempImage = null;
 		try {
 			tempImage = request.receiveFile(detail);
@@ -250,14 +249,14 @@ public class RequestMethods {
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(),
 					exif.getExifComment(), exif.getExifRating(),
 					exif.getExifDateTimeTaken(), detail, mediumName, thumbName,
-					// TODO Endre 1 til mappe id.
-					1);
+					id);
 			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
 			if (writePictureToDb) {
 				if (!(exif.getExifTags() == null)) {
+					int picId = ReadFromDatabase.getNewestPicId();
 					String[] tagsInString = exif.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
-						boolean test = WriteToDatabase.addTagToPic(id,
+						boolean test = WriteToDatabase.addTagToPic(picId,
 								tagsInString[i]);
 						System.out.println("tag skrevet: " + test);
 					}
