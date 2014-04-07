@@ -30,11 +30,11 @@
                 <Label text="Description" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <Label text="Date" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                 <Label text="Tags" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                <TextField fx:id="titleTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                <TextField fx:id="ratingTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                <TextField fx:id="descTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                <TextField fx:id="dateTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                <TextField fx:id="tagsTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                <TextField fx:id="titleTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#titleSearchAl" />
+                <TextField fx:id="ratingTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" onAction="#ratingSearchAl" />
+                <TextField fx:id="descTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#descSearchAl" />
+                <TextField fx:id="dateTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="3" onAction="#dateSearchAl" />
+                <TextField fx:id="tagsTextField" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4" onAction="#tagSearchAl" />
               </children>
               <columnConstraints>
                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="99.0" minWidth="10.0" prefWidth="67.0" />

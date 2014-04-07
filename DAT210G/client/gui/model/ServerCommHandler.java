@@ -114,7 +114,6 @@ public class ServerCommHandler {
 
 	}
 
-	//TODO: fikse noe her?
 	public static boolean sendNewDirReqToServer(String dirName, int parentId) {
 		boolean success = false;
 		JsonClient sendDirName = new JsonClient(new RequestClient("addNewDirectory", parentId, dirName));
@@ -128,6 +127,66 @@ public class ServerCommHandler {
 		return success;
 	}
 
+	public static int[] searchTilePictures(String title, int parentId) {
+		int[] pictureIdArray = null;
+		JsonClient sendTitle = new JsonClient(new RequestClient("getImagesWithTitle", parentId, title));
+		if (sendTitle.sendJsonToServer()) {
+			ResponseClient searchTitleResponse = sendTitle.receiveJsonFromServer();
+			sendTitle.closeHttpConnection();
+			pictureIdArray = searchTitleResponse.getImageIdArray();
+		}
+		return pictureIdArray;		
+	}
+	
+	public static int[] searchRatingPictures(String rating, int parentId) {
+		int[] pictureIdArray = null;
+		JsonClient sendRating = new JsonClient(new RequestClient("getImagesWithMinRating", parentId, rating));
+		if (sendRating.sendJsonToServer()) {
+			ResponseClient searchRatingResponse = sendRating.receiveJsonFromServer();
+			sendRating.closeHttpConnection();
+			pictureIdArray = searchRatingResponse.getImageIdArray();
+		}
+		return pictureIdArray;
+	}
+
+	public static int[] searchDescriptionPictures(String desc, int parentId) {
+		int[] pictureIdArray = null;
+		JsonClient sendDesc = new JsonClient(new RequestClient("getImagesWithDesc", parentId, desc));
+		if (sendDesc.sendJsonToServer()) {
+			ResponseClient searchDescResponse = sendDesc.receiveJsonFromServer();
+			sendDesc.closeHttpConnection();
+			pictureIdArray = searchDescResponse.getImageIdArray();
+		}
+		return pictureIdArray;
+	}
+	
+	public static int[] searchDateTimePictures(String dateTime, int parentId) {
+		int[] pictureIdArray = null;
+		JsonClient sendDateTime = new JsonClient(new RequestClient("getImagesWithDateTime", parentId, dateTime));
+		if (sendDateTime.sendJsonToServer()) {
+			ResponseClient searchDescResponse = sendDateTime.receiveJsonFromServer();
+			sendDateTime.closeHttpConnection();
+			pictureIdArray = searchDescResponse.getImageIdArray();
+		}
+		return pictureIdArray;
+	}
+	
+	public static int[] searchTagsPictures(String tag, int parentId) {
+		int[] pictureIdArray = null;
+		JsonClient sendTag = null;
+		if (tag.contains(";")) {
+			sendTag = new JsonClient(new RequestClient("getImagesWithManyTags", parentId, tag));
+		} else {
+			sendTag = new JsonClient(new RequestClient("getImagesWithTag", parentId, tag));
+		}
+		if (sendTag.sendJsonToServer()) {
+			ResponseClient searchDescResponse = sendTag.receiveJsonFromServer();
+			sendTag.closeHttpConnection();
+			pictureIdArray = searchDescResponse.getImageIdArray();
+		}
+		return pictureIdArray;
+	}
+	
 	public static boolean SendImageToServer(File fileToSend, int parentId) {
 
 		boolean success = false;
@@ -490,5 +549,7 @@ public class ServerCommHandler {
 
 		return new ImageView(image);
 	}
+
+
 
 }

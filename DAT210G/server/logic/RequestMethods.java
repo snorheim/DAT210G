@@ -116,9 +116,26 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true, metadataStringArray));
 	}
 
+	public static void getImagesWithTitle(RequestServer request, int id, String detail) {
+		int[] idArray = ReadFromDatabase.getPicturesBasedOnTitle(detail, id);
+		request.sendJsonResponse(new ResponseServer(true, idArray));
+	}
+
+	public static void getImagesWithDesc(RequestServer request, int id, String detail) {
+		int[] idArray = ReadFromDatabase.getPicturesBasedOnDesc(detail, id);
+		request.sendJsonResponse(new ResponseServer(true, idArray));
+	}
+
 	public static void getImagesWithTag(RequestServer request, int id,
 			String detail) {
 		int[] idArray = ReadFromDatabase.getPicturesBasedOnTag(detail, id);
+		request.sendJsonResponse(new ResponseServer(true, idArray));
+	}
+
+	public static void getImagesWithManyTags(RequestServer request, int id,
+			String detail) {
+		String[] tags = detail.split(";");
+		int[] idArray = ReadFromDatabase.getPicturesBasedOnManyTags(tags, id);
 		request.sendJsonResponse(new ResponseServer(true, idArray));
 	}
 

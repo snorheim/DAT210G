@@ -75,11 +75,84 @@ public class ManyViewController {
 
 	}
 
-	//TODO: fix looken?
 	@SuppressWarnings("unused")
 	@FXML
 	private void addNewDirectory() {
 		NewDirDialog dirDialog = new NewDirDialog(folderTreeModel.getCurrentFolder().getFolderId());
+	}
+
+
+	@FXML
+	private void titleSearchAl() {
+		String titleText = titleTextField.getText();
+		int[] pictureIds = null;
+		if (!titleText.equals("")) {
+			pictureIds = ServerCommHandler.searchTilePictures(titleText, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+		}
+	}
+
+	@FXML
+	private void ratingSearchAl() {
+		//TODO: sjekke input
+		String rating = ratingTextField.getText();
+		int ratingCheck = Integer.parseInt(rating);
+		int[] pictureIds = null;
+		if (ratingCheck > 0 && ratingCheck < 6) {
+			pictureIds = ServerCommHandler.searchRatingPictures(rating, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+		}
+	}
+
+	@FXML
+	private void descSearchAl() {
+		String description = descTextField.getText();
+		int[] pictureIds = null;
+		if (!description.equals("")) {
+			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+		}
+
+	}
+
+	@FXML
+	private void dateSearchAl() {
+		String dateTime = dateTextField.getText();
+		int[] pictureIds = null;
+		if (!dateTime.equals("")) {
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+		}
+	}
+
+	@FXML
+	private void tagSearchAl() {
+		
+		//TODO: bug ved skifting av mapper
+		String tags = tagsTextField.getText();
+		int[] pictureIds = null;
+		if (!tags.equals("")) {
+			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+		}
+
 	}
 
 	public void updateFolderTree() {
