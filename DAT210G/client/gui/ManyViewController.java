@@ -142,8 +142,8 @@ public class ManyViewController {
 	@FXML
 	private void tagSearchAl() {
 		
-		//TODO: bug ved skifting av mapper
-		String tags = tagsTextField.getText();
+		//TODO: bug ved skifting av mapper/nytt sok
+		String tags = tagsTextField.getText().toLowerCase();
 		int[] pictureIds = null;
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
