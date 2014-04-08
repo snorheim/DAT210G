@@ -22,17 +22,16 @@ public class WriteToDatabase {
 		} finally {
 			dbSession.close();
 		}
-		System.out.println(pictureId + " <----------------------------------------------------");
 		return pictureId;
 	}
 
-	public static boolean writeManyPics(ArrayList<PictureDb> picList) {
+	public static boolean writeManyPics(ArrayList<PictureDb> pictureList) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			for (PictureDb pic : picList) {
-				dbSession.save(pic);
+			for (PictureDb picture: pictureList) {
+				dbSession.save(picture);
 			}
 			dbTransaction.commit();
 			successfulTransfer = true;
@@ -88,16 +87,15 @@ public class WriteToDatabase {
 		} finally {
 			dbSession.close();
 		}
-
 		return successfulTransfer;
 	}
 
 	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		int[] allPicIds = ReadFromDatabase.getAllPicIds();
-		for (int i : allPicIds) {
-			DeleteFromDatabase.deletePicture(i);
+		int[] allPictureIds = ReadFromDatabase.getAllPicIds();
+		for (int picture : allPictureIds) {
+			DeleteFromDatabase.deletePicture(picture);
 		}
 		ParentFolderDb newImageFolder = new ParentFolderDb("img", "img\\", 1, 2);
 		try {
