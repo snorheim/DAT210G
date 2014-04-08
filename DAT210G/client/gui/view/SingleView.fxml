@@ -44,17 +44,18 @@
             <VBox id="VBox" alignment="TOP_LEFT" prefHeight="-1.0" prefWidth="-1.0" spacing="5.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <children>
                 <Label text="Title" />
-                <TextField fx:id="titleTextField" prefWidth="200.0" />
+                <TextField id="textfield" fx:id="titleTextField" prefWidth="200.0" />
                 <Label text="Description" />
-                <TextField fx:id="descTextField" prefWidth="200.0" />
+                <TextField id="textfield" fx:id="descTextField" prefWidth="200.0" />
                 <Label text="Rating" />
-                <TextField fx:id="ratingTextField" prefWidth="200.0" />
+                <HBox fx:id="ratingHBox" prefHeight="-1.0" prefWidth="-1.0" />
                 <Label text="Date" />
-                <TextField fx:id="dateTextField" prefWidth="200.0" />
+                <TextField id="textfield" fx:id="dateTextField" prefWidth="200.0" />
                 <Label text="Tags" />
-                <TextField fx:id="tagsTextField" prefWidth="200.0" />
+                <TextField id="textfield" fx:id="tagsTextField" editable="false" prefWidth="200.0" />
                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
+                    <Button fx:id="addTagBtn" mnemonicParsing="false" onAction="#addTagBtnAction" text="Add tag" />
                     <Button id="storeMetaButton" fx:id="storeMetaBtn" mnemonicParsing="false" onAction="#storeMetaBtnAction" text="Apply" />
                   </children>
                 </HBox>

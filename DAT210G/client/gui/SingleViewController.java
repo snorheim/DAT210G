@@ -1,7 +1,12 @@
 package gui;
 
+import org.controlsfx.control.Rating;
+import org.controlsfx.dialog.Dialogs;
+
 import gui.model.FolderTree;
 import gui.model.OneImage;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -11,6 +16,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
 
 public class SingleViewController {
 
@@ -35,21 +41,33 @@ public class SingleViewController {
 	private TextField titleTextField;
 	@FXML
 	private TextField descTextField;
-	@FXML
-	private TextField ratingTextField;
+	
 	@FXML
 	private TextField dateTextField;
 	@FXML
 	private TextField tagsTextField;
 	@FXML
 	private Label currentFolder;
+	@FXML
+	private HBox ratingHBox;
+	@FXML
+	private Button addTagBtn;
+	
+	private Rating ratingStars;
 
 	private ImageView imageToDisplay;
 
 	private OneImage currentImage;
+	
+	
 
 	public void displayImage() {
+		
+		
+		
+		
 		anchorPaneForSingle.getChildren().clear();
+		
 
 		currentImage = folderTreeModel.getCurrentImage();
 
@@ -79,6 +97,32 @@ public class SingleViewController {
 
 		currentFolder.setText(folderTreeModel.getCurrentFolder()
 				.getFolderName());
+	}
+	
+	private void makeRatingStars() {
+		
+	
+		
+		ratingStars = new Rating(5);
+		
+		ratingStars.setId("ratingStars");
+		
+		
+		
+       
+        
+        
+        ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
+            @Override public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
+                System.out.println("Rating = " + t1);
+            }
+        });
+		
+		ratingHBox.getChildren().addAll(ratingStars);
+		
+		
+		
+		
 	}
 
 	private void showFull() {
@@ -118,7 +162,7 @@ public class SingleViewController {
 
 		titleTextField.setText(currentImage.getTitleMeta());
 		descTextField.setText(currentImage.getDescMeta());
-		ratingTextField.setText(currentImage.getRatingMeta());
+		ratingStars.setRating(Double.parseDouble(currentImage.getRatingMeta()));
 		dateTextField.setText(currentImage.getDateMeta());
 		tagsTextField.setText(currentImage.getTagsMeta());
 
@@ -133,6 +177,7 @@ public class SingleViewController {
 
 	public void setMainController(Main mainController) {
 		this.mainController = mainController;
+		makeRatingStars();
 	}
 
 	@FXML
@@ -181,18 +226,14 @@ public class SingleViewController {
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
-		tagsTextFieldAction();
+		
 
 	}
 
-	private void tagsTextFieldAction() {
-
-		currentImage.addTag(tagsTextField.getText());
-
-	}
+	
 
 	private void ratingTextFieldAction() {
-		currentImage.modifyRating(ratingTextField.getText());
+		currentImage.modifyRating(Double.toString(ratingStars.getRating()));
 
 	}
 
@@ -209,6 +250,35 @@ public class SingleViewController {
 	public void setModel(FolderTree folderTreeModel) {
 		this.folderTreeModel = folderTreeModel;
 
+	}
+	
+	public void addTagBtnAction() {
+		
+		
+		String tagToAdd = Dialogs.create()
+			     .masthead(null)
+			      .title("Add a tag")
+			 
+			      .message( "Enter a tag!")
+			      .showTextInput();
+		
+		
+		if (tagToAdd != null) {
+		 
+			if (!tagToAdd.isEmpty()) {
+				currentImage.addTag(tagToAdd);
+				updateMetaFields();
+				
+			}
+		}
+		
+		
+	}
+	
+	public void addTag(String tag) {
+		
+		currentImage.addTag(tag);
+		
 	}
 
 }

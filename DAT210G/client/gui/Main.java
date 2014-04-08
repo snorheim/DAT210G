@@ -54,8 +54,10 @@ public class Main extends Application {
 			scene = new Scene(rootLayout, screenBounds.getWidth() / 2,
 					screenBounds.getHeight() / 2);
 
-			scene.getStylesheets().add(
-					getClass().getResource("view/style.css").toExternalForm());
+			
+			// TODO: Lag bedre css style sheet!!!!!!!
+			//scene.getStylesheets().add(
+			//		getClass().getResource("view/style.css").toExternalForm());
 
 			// Give the controller access to Main
 			MainController mainController = loader.getController();
