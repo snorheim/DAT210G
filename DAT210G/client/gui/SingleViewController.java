@@ -59,20 +59,29 @@ public class SingleViewController {
 
 	private OneImage currentImage;
 	
+	private boolean hasFullImageInMemory = false;
+	
+	
 	
 
-	public void displayImage() {
+	public void showScaledToScreenImage() {
 		
 		
 		
 		
 		anchorPaneForSingle.getChildren().clear();
 		
+		
+				
 
 		currentImage = folderTreeModel.getCurrentImage();
+		
+		
 
-		if (imageToDisplay == null) {
+		if (!hasFullImageInMemory) {
 			imageToDisplay = currentImage.getFullImage();
+			hasFullImageInMemory = true;
+			System.out.println("ImageView imageToDisplay er nå: " + currentImage.getImageId());
 		}
 
 		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
@@ -80,7 +89,7 @@ public class SingleViewController {
 			@Override
 			public void handle(Event event) {
 
-				showFull();
+				showFullImage();
 
 			}
 		});
@@ -91,6 +100,9 @@ public class SingleViewController {
 				anchorPaneForSingle.heightProperty());
 		imageToDisplay.setPreserveRatio(true);
 
+		
+		
+		
 		anchorPaneForSingle.getChildren().add(imageToDisplay);
 
 		updateMetaFields();
@@ -125,7 +137,7 @@ public class SingleViewController {
 		
 	}
 
-	private void showFull() {
+	private void showFullImage() {
 
 		ScrollPane scrollPane = new ScrollPane();
 
@@ -142,7 +154,7 @@ public class SingleViewController {
 			@Override
 			public void handle(Event event) {
 
-				displayImage();
+				showScaledToScreenImage();
 
 			}
 		});
@@ -171,6 +183,7 @@ public class SingleViewController {
 	@FXML
 	private void homeBtnAction() {
 
+		hasFullImageInMemory = false;
 		mainController.setManyMode(false);
 
 	}
@@ -183,40 +196,48 @@ public class SingleViewController {
 	@FXML
 	private void nextBtnAction() {
 
+		hasFullImageInMemory = false;
+		
 		folderTreeModel.getNextImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
-		displayImage();
+		showScaledToScreenImage();
 
 	}
 
 	@FXML
 	private void prevBtnAction() {
+		
+		hasFullImageInMemory = false;
 
 		folderTreeModel.getPrevImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
-		displayImage();
+		showScaledToScreenImage();
 
 	}
 
 	@FXML
 	private void rotRightBtnAction() {
+		
+		hasFullImageInMemory = false;
 
 		imageToDisplay = folderTreeModel.getCurrentImage().getRotRight();
 
-		displayImage();
+		showScaledToScreenImage();
 
 	}
 
 	@FXML
 	private void rotLeftBtnAction() {
+		
+		hasFullImageInMemory = false;
 
 		imageToDisplay = folderTreeModel.getCurrentImage().getRotLeft();
 
-		displayImage();
+		showScaledToScreenImage();
 
 	}
 
@@ -233,7 +254,12 @@ public class SingleViewController {
 	
 
 	private void ratingTextFieldAction() {
-		currentImage.modifyRating(Double.toString(ratingStars.getRating()));
+		
+		int rating = (int) ratingStars.getRating();
+		
+		String stringOfRating = String.valueOf(rating);
+		
+		currentImage.modifyRating(stringOfRating);
 
 	}
 
