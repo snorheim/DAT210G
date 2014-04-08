@@ -88,7 +88,7 @@ public class FileWatcher implements FileAlterationListener {
 
 		String folderPath = parentPath + directory.getName() + "\\";
 
-		int folderId = ReadFromDatabase.getFolderID(folderPath);
+		int folderId = ReadFromDatabase.getFolderId(folderPath);
 		boolean success = DeleteFromDatabase.deleteFolderAndContent(folderId);
 		if (success)
 			log("Folder was deleted: " + success);
@@ -111,7 +111,7 @@ public class FileWatcher implements FileAlterationListener {
 			String parentPath = DirectoryPoop.getRelativePath(file.toPath()
 					.getParent()) + "\\";
 
-			int parentID = ReadFromDatabase.getFolderID(parentPath);
+			int parentID = ReadFromDatabase.getFolderId(parentPath);
 
 			String fullPath = parentPath.substring(4) + file.getName();
 			String mediumPath = parentPath.substring(4)
