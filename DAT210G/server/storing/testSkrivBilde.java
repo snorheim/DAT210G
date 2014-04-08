@@ -5,14 +5,9 @@ package storing;
 public class testSkrivBilde {
 
 	public static void main(String[] args) {
-		int[] i = ReadFromDatabase.getFolderAndSubFolderId(1);
-		for (int s: i) {
+		String[] tags = ReadFromDatabase.getTagsStartingWith("l");
+		for (String s: tags) {
 			System.out.println(s);
-		}
-		
-		int[] t = ReadFromDatabase.getFolderAndSubFolderId(1);
-		for (int r: t) {
-			System.out.println(r);
 		}
 	}
 }

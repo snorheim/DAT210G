@@ -158,13 +158,6 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true, tagArray));
 	}
 
-	public static void getNextImageId(RequestServer request, int id,
-			String detail) {
-		int nextAvailableId = ReadFromDatabase.findNextPicId();
-		System.out.println("Neste id er: " + nextAvailableId);
-		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
-	}
-
 	public static void addTag(RequestServer request, int id, String detail) {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getFileLocation();
@@ -286,12 +279,11 @@ public class RequestMethods {
 			int writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
 			if (writePictureToDb != 0) {
 				if (!(exif.getExifTags() == null)) {
-					int picId = ReadFromDatabase.getNewestPicId();
 					String[] tagsInString = exif.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
-						boolean test = WriteToDatabase.addTagToPic(picId,
+						boolean addTagToPicture = WriteToDatabase.addTagToPic(writePictureToDb,
 								tagsInString[i]);
-						System.out.println("tag skrevet: " + test);
+						System.out.println("tag skrevet: " + addTagToPicture);
 					}
 				}
 				request.sendJsonResponse(new ResponseServer(true));

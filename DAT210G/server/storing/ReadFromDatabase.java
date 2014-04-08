@@ -31,24 +31,6 @@ public class ReadFromDatabase {
 		return tagList;
 	}
 
-	public static int getNewestPicId() {
-		int picId = -1;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT MAX(id) FROM PictureDb");
-			picId = (int) query.uniqueResult();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-		}
-		return picId;
-	}
-
 	public static int getPictureFromPath(String path) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -74,37 +56,12 @@ public class ReadFromDatabase {
 		List<TagDb> tagsFromDb = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		String[] tagStringList = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
 					.createQuery("FROM TagDb WHERE tag LIKE :tagStart");
 			query.setParameter("tagStart", tagStart.toLowerCase() + "%");
 			tagsFromDb = query.list();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-		}
-		tagStringList = new String[tagsFromDb.size()];
-		for (int i = 0; i < tagStringList.length; i++) {
-			tagStringList[i] = tagsFromDb.get(i).getTag();
-		}
-		return tagStringList;
-	}
-
-	public static int findNextPicId() {
-		int nextPicId = 0;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession
-					.createQuery("SELECT max(id) FROM PictureDb");
-			if (!(query.uniqueResult() == null)) {
-				nextPicId = (int) query.uniqueResult() + 1;
-			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
@@ -112,10 +69,16 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		if (nextPicId == 0) {
-			return 1;
+		String[] tagStringList = convertTagDbToString(tagsFromDb);
+		return tagStringList;
+	}
+	
+	private static String[] convertTagDbToString(List<TagDb> tagsFromDb) {
+		String[] tagStringList = new String[tagsFromDb.size()];
+		for (int i = 0; i < tagStringList.length; i++) {
+			tagStringList[i] = tagsFromDb.get(i).getTag();
 		}
-		return nextPicId;
+		return tagStringList;
 	}
 
 	@SuppressWarnings("unchecked")
