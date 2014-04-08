@@ -81,25 +81,6 @@ public class ReadFromDatabase {
 		return tagStringList;
 	}
 
-	@SuppressWarnings("unchecked")
-	public static List<PictureDb> getAllPictures() {
-		List<PictureDb> picList = null;
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			picList = dbSession.createQuery(
-					"FROM PictureDb ORDER BY dateTime DESC").list();
-			dbTransaction.commit();
-		} catch (HibernateException e) {
-			if (dbTransaction != null)
-				dbTransaction.rollback();
-		} finally {
-			dbSession.close();
-		}
-		return picList;
-	}
-
 	public static int[] getPicturesBasedOnTag(String tag, int folderId) {
 		List<PictureDb> pictureList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
