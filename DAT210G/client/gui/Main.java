@@ -97,7 +97,8 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		
-		
+		folderTreeModel = new FolderTree(this);
+		folderTreeModel.setManyViewController(manyViewController);
 
 		setManyMode(true);;
 
@@ -132,8 +133,7 @@ public class Main extends Application {
 	}
 
 	public void update() {
-		folderTreeModel = new FolderTree(this);
-		folderTreeModel.setManyViewController(manyViewController);
+		
 		folderTreeModel.update();
 	}
 

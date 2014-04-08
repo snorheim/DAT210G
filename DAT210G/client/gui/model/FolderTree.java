@@ -22,6 +22,8 @@ public class FolderTree {
 	private TreeItem<FolderNode> treeItemRoot;
 
 	private FolderNode currentFolder;
+	private TreeItem<FolderNode> currentTreeItem;
+	private int currentFolderId;
 	private OneImage currentImage;
 	private ArrayList<OneImage> imagesInThisFolderAndDown;
 
@@ -29,16 +31,23 @@ public class FolderTree {
 	private Main mainController;
 	private Task<Void> task;
 	private boolean ready;
+	
 
 	public FolderTree(Main mainController) {
 
 		ready = false;
 
 		this.mainController = mainController;
+		
+		currentFolderId = rootFolderId;
+		
+		
 
 	}
 
 	public void update() {
+		
+		ready = false;
 
 		task = new Task<Void>() {
 			@Override
@@ -76,7 +85,12 @@ public class FolderTree {
 							TreeItem<FolderNode> oldItem,
 							TreeItem<FolderNode> newItem) {
 
+						
+						
 						currentFolder = newItem.getValue();
+						
+						currentFolderId = currentFolder.getFolderId();
+						
 						getImagesFromFolderAndDown(currentFolder.getFolderId());
 						manyViewController.makeGridAndDisplayImages();
 
@@ -90,17 +104,29 @@ public class FolderTree {
 		for (int i = 0; i < imageIdsHere.length; i++) {
 			tempArrayList.add(new OneImage(imageIdsHere[i], 1, this));
 		}
-		rootNode.setImageList(tempArrayList);
-
-		currentFolder = rootNode;
+		rootNode.setImageList(tempArrayList);		
 
 		treeItemRoot = new TreeItem<FolderNode>(rootNode);
+		
+		treeItemRoot.setExpanded(true);
+				
+		if (currentFolder == null) {
+			currentFolder = rootNode;
+		}
 
 		buildTree(rootFolderId, rootNode, treeItemRoot);
 
 		treeView.setRoot(treeItemRoot);
+		
+		if (currentTreeItem == null) {
+			currentTreeItem = treeItemRoot;
+		}
+		
 
 		getImagesFromFolderAndDown(currentFolder.getFolderId());
+		
+		traverseUpRecursiveTreeItems(currentTreeItem);
+				
 	}
 
 	private void buildTree(int parentFolder, FolderNode parentNode,
@@ -126,6 +152,11 @@ public class FolderTree {
 
 			TreeItem<FolderNode> tempTreeItem = new TreeItem<FolderNode>(
 					tempNode);
+			
+			if (tempNode.getFolderId() == currentFolderId) {
+				currentTreeItem = tempTreeItem;
+			}
+			
 
 			parentTreeItem.getChildren().add(tempTreeItem);
 
@@ -175,6 +206,15 @@ public class FolderTree {
 
 		for (FolderNode child : node.getChildren()) {
 			traverseRecursive(child, returnList);
+		}
+	}
+	
+	private void traverseUpRecursiveTreeItems(TreeItem<FolderNode> node) {
+
+		node.setExpanded(true);		
+
+		if (node.getParent() != null) {
+			traverseUpRecursiveTreeItems(node.getParent());
 		}
 	}
 
@@ -267,6 +307,7 @@ public class FolderTree {
 
 	public void setCurrentImage(OneImage currentImage) {
 		this.currentImage = currentImage;
+
 	}
 
 	public Main getMainController() {

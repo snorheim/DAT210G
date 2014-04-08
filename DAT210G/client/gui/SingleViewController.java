@@ -50,8 +50,7 @@ public class SingleViewController {
 	private Label currentFolder;
 	@FXML
 	private HBox ratingHBox;
-	@FXML
-	private Button addTagBtn;
+	
 	
 	private Rating ratingStars;
 

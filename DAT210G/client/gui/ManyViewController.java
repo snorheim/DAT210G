@@ -71,11 +71,15 @@ public class ManyViewController {
 	@FXML
 	private void handleImportBtn() {
 
+		
+		
 		openFileChooser();
 
-		//main.setManyMode(true);
+		
 		
 		folderTreeModel.update();
+		
+		
 		start();
 
 	}
