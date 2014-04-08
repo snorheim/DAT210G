@@ -125,17 +125,14 @@ public class FileWatcher implements FileAlterationListener {
 					read.getExifDateTimeTaken(), fullPath, mediumPath,
 					thumbPath, parentID);
 
-			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
+			int wasWritten = WriteToDatabase.writeOnePic(pictureDb);
 
-			if (wasWritten) {
+			if (wasWritten != 0) {
 				if (!(read.getExifTags() == null)) {
-					int pictureId = ReadFromDatabase
-							.getPictureFromPath(fullPath);
-					System.out.println("picture id til tagbilde: " + pictureId);
 					String[] tagsInString = read.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
 						boolean writeTagsToDb = WriteToDatabase.addTagToPic(
-								pictureId, tagsInString[i]);
+								wasWritten, tagsInString[i]);
 						System.out.println("tag skrevet: " + writeTagsToDb
 								+ " : " + tagsInString[i]);
 					}

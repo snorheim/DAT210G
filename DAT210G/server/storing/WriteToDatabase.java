@@ -7,22 +7,23 @@ import org.hibernate.*;
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
 
-	public static boolean writeOnePic(PictureDb pic) {
+	public static int writeOnePic(PictureDb picture) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		int pictureId = 0;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			dbSession.save(pic);
+			dbSession.save(picture);
+			pictureId = picture.getId();
 			dbTransaction.commit();
-			successfulTransfer = true;
 		} catch (HibernateException e) {
-			successfulTransfer = false;
 			if (dbTransaction != null)
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 		}
-		return successfulTransfer;
+		System.out.println(pictureId + " <----------------------------------------------------");
+		return pictureId;
 	}
 
 	public static boolean writeManyPics(ArrayList<PictureDb> picList) {

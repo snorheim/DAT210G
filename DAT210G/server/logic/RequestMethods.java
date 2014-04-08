@@ -283,8 +283,8 @@ public class RequestMethods {
 			if (id != 1)
 				tempImage.delete();
 
-			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
-			if (writePictureToDb) {
+			int writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
+			if (writePictureToDb != 0) {
 				if (!(exif.getExifTags() == null)) {
 					int picId = ReadFromDatabase.getNewestPicId();
 					String[] tagsInString = exif.getExifTags().split(";");
