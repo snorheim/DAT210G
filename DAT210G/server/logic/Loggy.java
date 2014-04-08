@@ -37,7 +37,11 @@ public class Loggy extends JFrame {
 	}
 
 	public static void log(String s) {
-		console.setText(console.getText() + "\n" + s);
+		if(console == null) {
+			System.out.println(s);
+		} else {
+			console.setText(console.getText() + "\n" + s);
+		}
 	}
 
 	public static void main(String[] args) {

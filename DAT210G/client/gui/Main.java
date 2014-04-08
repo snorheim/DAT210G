@@ -29,7 +29,7 @@ public class Main extends Application {
 	@Override
 	public void init() {
 
-		screenBounds = Screen.getPrimary().getVisualBounds();
+		
 
 		System.out.println("Contact with server: " + contactWithServer);
 
@@ -39,6 +39,7 @@ public class Main extends Application {
 	@Override
 	public void start(Stage primaryStage) {
 
+		screenBounds = Screen.getPrimary().getVisualBounds();
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("DAT210G Photo Gallery");
 
