@@ -143,8 +143,8 @@ public class WriteExif {
 		try {
 			outPutStream = new FileOutputStream(destImageFile);
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
-			// ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
-			// ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
+			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
+			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
 			new ExifRewriter().updateExifMetadataLossless(destImageFile,
 					bufferedOutPutStream, metaDataOutPutSet);
 			imageFile.delete();

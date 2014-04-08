@@ -464,6 +464,7 @@ public class ReadFromDatabase {
 			foldersFromDb = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
+			e.printStackTrace();
 			if (dbTransaction != null)
 				dbTransaction.rollback();
 		} finally {
@@ -482,16 +483,15 @@ public class ReadFromDatabase {
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		List<PictureDb> tmp = null;
+		List<PictureDb> tmpList = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = null;
 			for (int i : folderIds) {
-				query = dbSession
+				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
-				tmp = query.list();
-				picturesFromDb.addAll(tmp);
+				tmpList = query.list();
+				picturesFromDb.addAll(tmpList);
 			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -512,19 +512,18 @@ public class ReadFromDatabase {
 			int startFolderId, Session dbSession) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
-		dbSession = HibernateUtil.getSessionFactory().openSession();
 		List<PictureDb> tmp = null;
 		try {
-			Query query = null;
+			
 			for (int i : folderIds) {
-				query = dbSession
+				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
 				tmp = query.list();
 				picturesFromDb.addAll(tmp);
 			}
 		} catch (HibernateException e) {
-
+			
 		}
 		return picturesFromDb;
 	}
@@ -623,9 +622,8 @@ public class ReadFromDatabase {
 		List<PictureDb> tmp = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = null;
 			for (int i : folderIds) {
-				query = dbSession
+				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
 				tmp = query.list();
