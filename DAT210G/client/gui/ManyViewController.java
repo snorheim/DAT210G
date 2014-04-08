@@ -117,7 +117,6 @@ public class ManyViewController {
 		if (!description.equals("")) {
 			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
@@ -141,13 +140,13 @@ public class ManyViewController {
 
 	@FXML
 	private void tagSearchAl() {
-		
-		//TODO: bug ved skifting av mapper/nytt sok
+		//TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
 		int[] pictureIds = null;
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
 		}
+		
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
