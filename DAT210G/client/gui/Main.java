@@ -92,9 +92,11 @@ public class Main extends Application {
 			manyViewController = loader.getController();
 			manyViewController.setMainController(this);
 
+			
 			if (doUpdate) {
 				update();
 			}
+			
 
 			manyViewController.setFolderTreeModel(folderTreeModel);
 

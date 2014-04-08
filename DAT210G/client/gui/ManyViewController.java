@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.controlsfx.dialog.Dialogs;
+
 import gui.model.FolderTree;
 import gui.model.OneImage;
 import gui.model.ServerCommHandler;
@@ -71,14 +73,39 @@ public class ManyViewController {
 
 		openFileChooser();
 
-		main.setManyMode(true);
+		//main.setManyMode(true);
+		
+		folderTreeModel.update();
+		start();
 
 	}
 
-	@SuppressWarnings("unused")
+	
+	
 	@FXML
-	private void addNewDirectory() {
-		NewDirDialog dirDialog = new NewDirDialog(folderTreeModel.getCurrentFolder().getFolderId());
+	private void handleNewDirectoryBtn() {
+		
+		
+		String newDirectoryName = Dialogs.create()
+			     .masthead(null)
+			      .title("Add a directory")
+			 
+			      .message( "Enter name of new directory!")
+			      .showTextInput();
+		
+		
+		if (newDirectoryName != null) {
+		 
+			if (!newDirectoryName.isEmpty()) {
+				ServerCommHandler.sendNewDirReqToServer(newDirectoryName,
+						folderTreeModel.getCurrentFolder().getFolderId());
+				
+				folderTreeModel.update();
+				start();
+				
+			}
+		}
+		
 	}
 
 
@@ -155,6 +182,8 @@ public class ManyViewController {
 	}
 
 	public void updateFolderTree() {
+		
+		hboxForTree.getChildren().clear();
 
 		hboxForTree.getChildren().add(folderTreeModel.getTree());
 
