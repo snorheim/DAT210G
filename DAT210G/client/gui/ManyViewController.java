@@ -143,12 +143,20 @@ public class ManyViewController {
 	@FXML
 	private void titleSearchAl() {
 		String titleText = titleTextField.getText();
+		
+		if (!titleText.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!titleText.equals("")) {
 			pictureIds = ServerCommHandler.searchTilePictures(titleText, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 
 		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
+		}
 
 	}
 
@@ -156,45 +164,77 @@ public class ManyViewController {
 	private void ratingSearchAl() {
 		//TODO: sjekke input
 		String rating = ratingTextField.getText();
+		
+		if (!rating.isEmpty()) {
+		
 		int ratingCheck = Integer.parseInt(rating);
 		int[] pictureIds = null;
 		if (ratingCheck > 0 && ratingCheck < 6) {
 			pictureIds = ServerCommHandler.searchRatingPictures(rating, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
+		}
 	}
 
 	@FXML
 	private void descSearchAl() {
 		String description = descTextField.getText();
+		
+		if (!description.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!description.equals("")) {
 			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
+		}
 
 	}
 
 	@FXML
 	private void dateSearchAl() {
 		String dateTime = dateTextField.getText();
+		
+		if (!dateTime.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!dateTime.equals("")) {
 			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
+		}
 	}
 
 	@FXML
 	private void tagSearchAl() {
 		//TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
+		
+		if (!tags.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 
 		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
+		}
 
 	}
 
