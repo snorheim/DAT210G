@@ -148,7 +148,8 @@ public class RequestMethods {
 
 	public static void getImagesWithDateTime(RequestServer request, int id,
 			String detail) {
-		int[] idArray = ReadFromDatabase.getPicturesBasedOnDate(detail, id);
+		String[] dates = detail.split(";");
+		int[] idArray = ReadFromDatabase.getPicturesBasedOnDate(dates, id);
 		request.sendJsonResponse(new ResponseServer(true, idArray));
 	}
 

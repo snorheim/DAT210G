@@ -1,6 +1,10 @@
 package storing;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import logic.Loggy;
@@ -224,17 +228,17 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
+	public static int[] getPicturesBasedOnDate(String[] timeDate, int folderId) {
 		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
-			dbTransaction = dbSession.beginTransaction();
+			dbTransaction = dbSession.beginTransaction();			
 			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
 			for (PictureDb picture: pictureDbList) {
 				if (picture.getDateTime() != null) {
-					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
+					if (compareDates(picture.getDateTime(), timeDate[0], timeDate[1])) {
 						picturesMatchingCriteria.add(picture);
 					}
 				}
@@ -248,6 +252,23 @@ public class ReadFromDatabase {
 		}
 		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
 		return pictureIdArray;
+	}
+	
+	private static boolean compareDates(String pictureDateString, String fromDateString, String toDateString) {
+		Date fromDate = null;
+		Date toDate = null;
+		Date pictureDate = null;
+			try {
+				String fromOnlyDate = fromDateString.substring(0, 10);
+				fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromOnlyDate);
+				String toOnlyDate = toDateString.substring(0, 10);
+				toDate = new SimpleDateFormat("yyyy-MM-dd").parse(toOnlyDate);
+				String pictureOnlyDate = pictureDateString.substring(0, 10);
+				pictureDate = new SimpleDateFormat("yyyy-MM-dd").parse(pictureOnlyDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return !pictureDate.before(fromDate) && !pictureDate.after(toDate);
 	}
 
 	public static PictureDb getPictureBasedOnId(int picId) {

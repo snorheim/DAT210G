@@ -1,8 +1,11 @@
 package gui;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import gui.model.FolderTree;
 import gui.model.OneImage;
@@ -12,6 +15,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -20,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 public class ManyViewController {
 
@@ -40,7 +46,11 @@ public class ManyViewController {
 	@FXML
 	private TextField ratingTextField;
 	@FXML
-	private TextField dateTextField;
+	private HBox dateFromField;
+	@FXML
+	private HBox dateToField;
+	@FXML
+	private Button searchByDateButton;
 	@FXML
 	private TextField tagsTextField;
 	@FXML
@@ -51,6 +61,9 @@ public class ManyViewController {
 	ScrollPane scrollPane;
 
 	private ZoomLevel currentZooom;
+
+	private DatePicker datePickerFromDate;
+	private DatePicker datePickerToDate;
 
 	private enum ZoomLevel {
 		SMALL, MEDIUM
@@ -124,14 +137,17 @@ public class ManyViewController {
 
 	}
 
+
+
 	@FXML
 	private void dateSearchAl() {
-		String dateTime = dateTextField.getText();
 		int[] pictureIds = null;
-		if (!dateTime.equals("")) {
-			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, folderTreeModel.getCurrentFolder().getFolderId());
-		}
-
+		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
+			String fromDate = datePickerFromDate.getValue().toString();
+			String toDate = datePickerToDate.getValue().toString();
+			String dateValues = fromDate + ";" + toDate;
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, folderTreeModel.getCurrentFolder().getFolderId());
+		} else System.out.println("dialog boks me forklaring paa error yo");
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
@@ -146,7 +162,7 @@ public class ManyViewController {
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		
+
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
@@ -163,7 +179,19 @@ public class ManyViewController {
 	public void start() {
 
 		if (!folderTreeModel.isReady()) {
+			
+			//TODO: flytt koden
+			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
+			dateFromField.getChildren().add(datePickerFromDate);
 
+			datePickerToDate = new DatePicker(LocalDate.now());
+			dateToField.getChildren().add(datePickerToDate);
+
+			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
+			calendarSettings.configFromDatePicker();
+			calendarSettings.configToDatePicker();
+			/////////////////////////////
+			
 			ProgressIndicator bar = new ProgressIndicator();
 			bar.progressProperty().bind(
 					folderTreeModel.getTask().progressProperty());
@@ -252,8 +280,6 @@ public class ManyViewController {
 
 	private void openFileChooser() {
 
-		// TODO: hvordan få til importere directories?
-
 		ArrayList<String> fileTypes = new ArrayList<>();
 		fileTypes.add("*.jpg");
 		fileTypes.add("*.jpeg");
@@ -293,7 +319,7 @@ public class ManyViewController {
 	private void setModel() {
 
 		updateFolderTree();
-
+		
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
