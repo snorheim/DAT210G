@@ -50,6 +50,9 @@ public class ManyViewController {
 	@FXML
 	private HBox hboxForTree;
 
+	private boolean filterImages = false;
+	private ArrayList<OneImage> filteredImages;
+
 	ScrollPane scrollPane;
 
 	private ZoomLevel currentZooom;
@@ -71,47 +74,71 @@ public class ManyViewController {
 	@FXML
 	private void handleImportBtn() {
 
-		
-		
+
+
 		openFileChooser();
 
-		
-		
+
+
 		folderTreeModel.update();
-		
-		
+
+
 		start();
 
 	}
 
-	
-	
+
+
 	@FXML
 	private void handleNewDirectoryBtn() {
-		
-		
+
+
 		String newDirectoryName = Dialogs.create()
-			     .masthead(null)
-			      .title("Add a directory")
-			 
-			      .message( "Enter name of new directory!")
-			      .showTextInput();
-		
-		
+				.masthead(null)
+				.title("Add a directory")
+
+				.message( "Enter name of new directory!")
+				.showTextInput();
+
+
 		if (newDirectoryName != null) {
-		 
+
 			if (!newDirectoryName.isEmpty()) {
 				ServerCommHandler.sendNewDirReqToServer(newDirectoryName,
 						folderTreeModel.getCurrentFolder().getFolderId());
-				
+
 				folderTreeModel.update();
 				start();
-				
+
 			}
 		}
-		
+
 	}
 
+	private void findImagesMatchingFilter(int[] pictureIds) {
+		filteredImages = new ArrayList<>();
+
+
+
+		for (int i: pictureIds) {
+
+			for (OneImage image : folderTreeModel.getAllImagesList()) {
+				if (image.getImageId() == i) {
+					filteredImages.add(image);
+				}
+			}
+
+		}
+
+		filterImages = true;
+
+		makeGridAndDisplayImages();
+		
+		hboxForTree.getChildren().clear();
+		
+
+		filterImages = false;
+	}
 
 	@FXML
 	private void titleSearchAl() {
@@ -120,10 +147,9 @@ public class ManyViewController {
 		if (!titleText.equals("")) {
 			pictureIds = ServerCommHandler.searchTilePictures(titleText, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
-		}
+
+		findImagesMatchingFilter(pictureIds);
+
 	}
 
 	@FXML
@@ -135,10 +161,7 @@ public class ManyViewController {
 		if (ratingCheck > 0 && ratingCheck < 6) {
 			pictureIds = ServerCommHandler.searchRatingPictures(rating, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
-		}
+		findImagesMatchingFilter(pictureIds);
 	}
 
 	@FXML
@@ -148,10 +171,7 @@ public class ManyViewController {
 		if (!description.equals("")) {
 			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
-		}
+		findImagesMatchingFilter(pictureIds);
 
 	}
 
@@ -162,11 +182,7 @@ public class ManyViewController {
 		if (!dateTime.equals("")) {
 			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
-		}
+		findImagesMatchingFilter(pictureIds);
 	}
 
 	@FXML
@@ -177,16 +193,13 @@ public class ManyViewController {
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
-		}
+
+		findImagesMatchingFilter(pictureIds);
 
 	}
 
 	public void updateFolderTree() {
-		
+
 		hboxForTree.getChildren().clear();
 
 		hboxForTree.getChildren().add(folderTreeModel.getTree());
@@ -214,6 +227,7 @@ public class ManyViewController {
 		}
 
 	}
+
 
 	public void makeGridAndDisplayImages() {
 
@@ -247,8 +261,16 @@ public class ManyViewController {
 		smallPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 
-		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
-				.getImagesInThisFolderAndDown();
+		ArrayList<OneImage> imagesToBeDisplayed;
+
+		if (filterImages) { 
+			imagesToBeDisplayed = filteredImages;
+
+		} else {
+			imagesToBeDisplayed = folderTreeModel
+					.getImagesInThisFolderAndDown();
+
+		}
 
 		for (OneImage image : imagesToBeDisplayed) {
 
@@ -270,9 +292,17 @@ public class ManyViewController {
 
 		mediumPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
+		ArrayList<OneImage> imagesToBeDisplayed;
 
-		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
-				.getImagesInThisFolderAndDown();
+		if (filterImages) { 
+
+			imagesToBeDisplayed = filteredImages;
+
+		} else {
+			imagesToBeDisplayed = folderTreeModel
+					.getImagesInThisFolderAndDown();
+
+		}
 
 		for (OneImage image : imagesToBeDisplayed) {
 

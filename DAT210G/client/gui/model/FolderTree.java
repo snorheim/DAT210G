@@ -26,6 +26,7 @@ public class FolderTree {
 	private int currentFolderId;
 	private OneImage currentImage;
 	private ArrayList<OneImage> imagesInThisFolderAndDown;
+	private ArrayList<OneImage> allImagesList;
 
 	private ManyViewController manyViewController;
 	private Main mainController;
@@ -35,6 +36,8 @@ public class FolderTree {
 
 	public FolderTree(Main mainController) {
 
+		
+		
 		ready = false;
 
 		this.mainController = mainController;
@@ -46,6 +49,8 @@ public class FolderTree {
 	}
 
 	public void update() {
+		
+		allImagesList = new ArrayList<>();
 		
 		ready = false;
 
@@ -66,6 +71,8 @@ public class FolderTree {
 				super.succeeded();
 
 				ready = true;
+				
+				System.out.println("NUMBER OF IMAGES IN TOTAL: " + allImagesList.size());
 
 				manyViewController.start();
 
@@ -102,7 +109,10 @@ public class FolderTree {
 		ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 		for (int i = 0; i < imageIdsHere.length; i++) {
-			tempArrayList.add(new OneImage(imageIdsHere[i], 1, this));
+			OneImage tempImage = new OneImage(imageIdsHere[i], 1, this);
+			tempArrayList.add(tempImage);
+			allImagesList.add(tempImage);
+			
 		}
 		rootNode.setImageList(tempArrayList);		
 
@@ -143,7 +153,9 @@ public class FolderTree {
 			ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 			for (int i = 0; i < imageIdsHere.length; i++) {
-				tempArrayList.add(new OneImage(imageIdsHere[i], id, this));
+				OneImage tempImage = new OneImage(imageIdsHere[i], id, this);
+				tempArrayList.add(tempImage);
+				allImagesList.add(tempImage);
 			}
 
 			tempNode = new FolderNode(null, id, subFolderIdAndName.get(id));
@@ -316,6 +328,10 @@ public class FolderTree {
 
 	public ArrayList<OneImage> getImagesInThisFolderAndDown() {
 		return imagesInThisFolderAndDown;
+	}
+
+	public ArrayList<OneImage> getAllImagesList() {
+		return allImagesList;
 	}
 
 	public Task<Void> getTask() {
