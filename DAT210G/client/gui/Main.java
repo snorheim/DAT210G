@@ -19,12 +19,12 @@ public class Main extends Application {
 	private BorderPane rootLayout;
 	private Boolean contactWithServer;
 	private FolderTree folderTreeModel;
-	private Rectangle2D screenBounds;
-	private FXMLLoader loader;
+	private Rectangle2D screenBounds;	
 	private Scene scene;
-	private AnchorPane thumbnailsMode;
-	private AnchorPane singleMode;
+	private AnchorPane manyModePane;	
+	private AnchorPane singleModePane;
 	private ManyViewController manyViewController;
+	private SingleViewController singleViewController;
 
 	@Override
 	public void init() {
@@ -46,7 +46,7 @@ public class Main extends Application {
 		try {
 			// Load the root layout from the fxml file
 
-			loader = new FXMLLoader(
+			FXMLLoader loader = new FXMLLoader(
 					Main.class.getResource("view/MainView.fxml"));
 
 			rootLayout = (BorderPane) loader.load();
@@ -70,49 +70,70 @@ public class Main extends Application {
 			// Exception if fxml file isn't loaded
 			e.printStackTrace();
 		}
-
-		setManyMode(true);
-
-	}
-
-	/**
-	 * Shows the thumbnails scene.
-	 */
-	public void setManyMode(boolean doUpdate) {
+		
+		
+		
 		try {
-
-			// Load the fxml file and set into the center of the main layout
-			loader = new FXMLLoader(
+			FXMLLoader loader = new FXMLLoader(
 					Main.class.getResource("view/ManyView.fxml"));
-			thumbnailsMode = (AnchorPane) loader.load();
-
-			rootLayout.setCenter(thumbnailsMode);
-
-			// Give the controller access to the mainController
+			manyModePane = (AnchorPane) loader.load();
 			manyViewController = loader.getController();
 			manyViewController.setMainController(this);
-
-			if (doUpdate) {
-				update();
-			}
-
-			manyViewController.setFolderTreeModel(folderTreeModel);
-
-			manyViewController.start();
-
-			// folderTreeModel = new FolderTree(this);
-
-			// manyViewController.start(folderTreeModel);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		try {
+			// Load the fxml file and set into the center of the main layout
+			FXMLLoader loader = new FXMLLoader(
+					Main.class.getResource("view/SingleView.fxml"));
+			singleModePane = (AnchorPane) loader.load();
+			singleViewController = loader.getController();
+			singleViewController.setMainController(this);
 
 		} catch (IOException e) {
 			// Exception gets thrown if the fxml file could not be loaded
 			e.printStackTrace();
 		}
+		
+		folderTreeModel = new FolderTree(this);
+		folderTreeModel.setManyViewController(manyViewController);
+
+		setManyMode(true);;
+
+	}
+	
+	
+	
+
+
+	/**
+	 * Shows the thumbnails scene.
+	 */
+	public void setManyMode(boolean doUpdate) {
+	
+			rootLayout.setCenter(manyModePane);
+
+			// Give the controller access to the mainController
+			
+			
+
+			
+			if (doUpdate) {
+				update();
+			}
+			
+
+			manyViewController.setFolderTreeModel(folderTreeModel);
+
+			manyViewController.start();
+
+	
 	}
 
 	public void update() {
-		folderTreeModel = new FolderTree(this);
-		folderTreeModel.setManyViewController(manyViewController);
+		
 		folderTreeModel.update();
 	}
 
@@ -120,24 +141,20 @@ public class Main extends Application {
 	 * Shows the single image scene.
 	 */
 	public void setSingleMode() {
-		try {
-			// Load the fxml file and set into the center of the main layout
-			FXMLLoader loader = new FXMLLoader(
-					Main.class.getResource("view/SingleView.fxml"));
-			singleMode = (AnchorPane) loader.load();
+		
+			
 
-			rootLayout.setCenter(singleMode);
+			System.out.println("ImageId: " + folderTreeModel.getCurrentImage().getImageId());
+
+			rootLayout.setCenter(singleModePane);
 
 			// Give the controller access to the mainController
-			SingleViewController singleViewController = loader.getController();
-			singleViewController.setMainController(this);
+			
+			
 			singleViewController.setModel(folderTreeModel);
-			singleViewController.displayImage();
+			singleViewController.showScaledToScreenImage();
 
-		} catch (IOException e) {
-			// Exception gets thrown if the fxml file could not be loaded
-			e.printStackTrace();
-		}
+			
 	}
 
 	public Stage getPrimaryStage() {

@@ -7,6 +7,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.controlsfx.dialog.Dialogs;
+
 import gui.model.FolderTree;
 import gui.model.OneImage;
 import gui.model.ServerCommHandler;
@@ -58,6 +60,9 @@ public class ManyViewController {
 	@FXML
 	private HBox hboxForTree;
 
+	private boolean filterImages = false;
+	private ArrayList<OneImage> filteredImages;
+
 	ScrollPane scrollPane;
 
 	private ZoomLevel currentZooom;
@@ -82,57 +87,127 @@ public class ManyViewController {
 	@FXML
 	private void handleImportBtn() {
 
+
+
 		openFileChooser();
 
-		main.setManyMode(true);
+
+
+		folderTreeModel.update();
+
+
+		start();
 
 	}
 
-	@SuppressWarnings("unused")
+
+
 	@FXML
-	private void addNewDirectory() {
-		NewDirDialog dirDialog = new NewDirDialog(folderTreeModel.getCurrentFolder().getFolderId());
+	private void handleNewDirectoryBtn() {
+
+
+		String newDirectoryName = Dialogs.create()
+				.masthead(null)
+				.title("Add a directory")
+
+				.message( "Enter name of new directory!")
+				.showTextInput();
+
+
+		if (newDirectoryName != null) {
+
+			if (!newDirectoryName.isEmpty()) {
+				ServerCommHandler.sendNewDirReqToServer(newDirectoryName,
+						folderTreeModel.getCurrentFolder().getFolderId());
+
+				folderTreeModel.update();
+				start();
+
+			}
+		}
+
 	}
 
+	private void findImagesMatchingFilter(int[] pictureIds) {
+		filteredImages = new ArrayList<>();
+
+
+
+		for (int i: pictureIds) {
+
+			for (OneImage image : folderTreeModel.getAllImagesList()) {
+				if (image.getImageId() == i) {
+					filteredImages.add(image);
+				}
+			}
+
+		}
+
+		filterImages = true;
+
+		makeGridAndDisplayImages();
+		
+		hboxForTree.getChildren().clear();
+		
+
+		filterImages = false;
+	}
 
 	@FXML
 	private void titleSearchAl() {
 		String titleText = titleTextField.getText();
+		
+		if (!titleText.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!titleText.equals("")) {
 			pictureIds = ServerCommHandler.searchTilePictures(titleText, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
+
+		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
 		}
+
 	}
 
 	@FXML
 	private void ratingSearchAl() {
 		//TODO: sjekke input
 		String rating = ratingTextField.getText();
+		
+		if (!rating.isEmpty()) {
+		
 		int ratingCheck = Integer.parseInt(rating);
 		int[] pictureIds = null;
 		if (ratingCheck > 0 && ratingCheck < 6) {
 			pictureIds = ServerCommHandler.searchRatingPictures(rating, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
+		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
 		}
 	}
 
 	@FXML
 	private void descSearchAl() {
 		String description = descTextField.getText();
+		
+		if (!description.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!description.equals("")) {
 			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
 		}
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
+		findImagesMatchingFilter(pictureIds);
+		
+		} else {
+			makeGridAndDisplayImages();
+			updateFolderTree();
 		}
 
 	}
@@ -141,6 +216,7 @@ public class ManyViewController {
 
 	@FXML
 	private void dateSearchAl() {
+
 		int[] pictureIds = null;
 		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
 			String fromDate = datePickerFromDate.getValue().toString();
@@ -151,6 +227,7 @@ public class ManyViewController {
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
+
 		}
 	}
 
@@ -158,19 +235,27 @@ public class ManyViewController {
 	private void tagSearchAl() {
 		//TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
+		
+		if (!tags.isEmpty()) {
+		
 		int[] pictureIds = null;
 		if (!tags.equals("")) {
 			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
 		}
 
+
 		//TODO: update gui
 		for (int i: pictureIds) {
 			System.out.println(i);
+
+		}
 		}
 
 	}
 
 	public void updateFolderTree() {
+
+		hboxForTree.getChildren().clear();
 
 		hboxForTree.getChildren().add(folderTreeModel.getTree());
 
@@ -210,6 +295,7 @@ public class ManyViewController {
 
 	}
 
+
 	public void makeGridAndDisplayImages() {
 
 		anchorPaneForMany.getChildren().clear();
@@ -242,8 +328,16 @@ public class ManyViewController {
 		smallPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 
-		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
-				.getImagesInThisFolderAndDown();
+		ArrayList<OneImage> imagesToBeDisplayed;
+
+		if (filterImages) { 
+			imagesToBeDisplayed = filteredImages;
+
+		} else {
+			imagesToBeDisplayed = folderTreeModel
+					.getImagesInThisFolderAndDown();
+
+		}
 
 		for (OneImage image : imagesToBeDisplayed) {
 
@@ -265,9 +359,17 @@ public class ManyViewController {
 
 		mediumPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
+		ArrayList<OneImage> imagesToBeDisplayed;
 
-		ArrayList<OneImage> imagesToBeDisplayed = folderTreeModel
-				.getImagesInThisFolderAndDown();
+		if (filterImages) { 
+
+			imagesToBeDisplayed = filteredImages;
+
+		} else {
+			imagesToBeDisplayed = folderTreeModel
+					.getImagesInThisFolderAndDown();
+
+		}
 
 		for (OneImage image : imagesToBeDisplayed) {
 

@@ -52,10 +52,9 @@
                 <Label text="Date" />
                 <TextField id="textfield" fx:id="dateTextField" prefWidth="200.0" />
                 <Label text="Tags" />
-                <TextField id="textfield" fx:id="tagsTextField" editable="false" prefWidth="200.0" />
+                <TextField id="textfield" fx:id="tagsTextField" editable="false" onMouseClicked="#addTagBtnAction" prefWidth="200.0" />
                 <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                   <children>
-                    <Button fx:id="addTagBtn" mnemonicParsing="false" onAction="#addTagBtnAction" text="Add tag" />
                     <Button id="storeMetaButton" fx:id="storeMetaBtn" mnemonicParsing="false" onAction="#storeMetaBtnAction" text="Apply" />
                   </children>
                 </HBox>
