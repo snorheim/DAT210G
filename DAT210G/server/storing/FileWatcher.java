@@ -88,7 +88,7 @@ public class FileWatcher implements FileAlterationListener {
 
 		String folderPath = parentPath + directory.getName() + "\\";
 
-		int folderId = ReadFromDatabase.getFolderId(folderPath);
+		int folderId = ReadFromDatabase.getFolderID(folderPath);
 		boolean success = DeleteFromDatabase.deleteFolderAndContent(folderId);
 		if (success)
 			log("Folder was deleted: " + success);
@@ -111,7 +111,7 @@ public class FileWatcher implements FileAlterationListener {
 			String parentPath = DirectoryPoop.getRelativePath(file.toPath()
 					.getParent()) + "\\";
 
-			int parentID = ReadFromDatabase.getFolderId(parentPath);
+			int parentID = ReadFromDatabase.getFolderID(parentPath);
 
 			String fullPath = parentPath.substring(4) + file.getName();
 			String mediumPath = parentPath.substring(4)
@@ -125,14 +125,17 @@ public class FileWatcher implements FileAlterationListener {
 					read.getExifDateTimeTaken(), fullPath, mediumPath,
 					thumbPath, parentID);
 
-			int wasWritten = WriteToDatabase.writeOnePic(pictureDb);
+			boolean wasWritten = WriteToDatabase.writeOnePic(pictureDb);
 
-			if (wasWritten != 0) {
+			if (wasWritten) {
 				if (!(read.getExifTags() == null)) {
+					int pictureId = ReadFromDatabase
+							.getPictureFromPath(fullPath);
+					System.out.println("picture id til tagbilde: " + pictureId);
 					String[] tagsInString = read.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
 						boolean writeTagsToDb = WriteToDatabase.addTagToPic(
-								wasWritten, tagsInString[i]);
+								pictureId, tagsInString[i]);
 						System.out.println("tag skrevet: " + writeTagsToDb
 								+ " : " + tagsInString[i]);
 					}

@@ -8,9 +8,10 @@
 .settings
 .classpath
 .project
-/bin
+/bin/*
 *.db
 *.db
 *.jpg
 *.png
 *.db
+

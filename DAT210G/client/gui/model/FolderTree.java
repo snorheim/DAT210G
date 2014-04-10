@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Task;
@@ -33,10 +34,12 @@ public class FolderTree {
 	private Task<Void> task;
 	private boolean ready;
 	
+	
+	
 
 	public FolderTree(Main mainController) {
 
-		
+	
 		
 		ready = false;
 
@@ -55,6 +58,8 @@ public class FolderTree {
 		ready = false;
 
 		task = new Task<Void>() {
+			
+
 			@Override
 			public Void call() {
 
@@ -72,113 +77,143 @@ public class FolderTree {
 
 				ready = true;
 				
-				System.out.println("NUMBER OF IMAGES IN TOTAL: " + allImagesList.size());
+				
 
 				manyViewController.start();
 
 			}
+			
 		};
+			
+			
 
 		new Thread(task).start();
 
 	}
 
-	public void updateTask() {
-		treeView = new TreeView<FolderNode>();
-		treeView.getSelectionModel().selectedItemProperty()
-				.addListener(new ChangeListener<TreeItem<FolderNode>>() {
-					public void changed(
-							ObservableValue<? extends TreeItem<FolderNode>> observableValue,
-							TreeItem<FolderNode> oldItem,
-							TreeItem<FolderNode> newItem) {
-
-						
-						
-						currentFolder = newItem.getValue();
-						
-						currentFolderId = currentFolder.getFolderId();
-						
-						getImagesFromFolderAndDown(currentFolder.getFolderId());
-						manyViewController.makeGridAndDisplayImages();
-
-					}
-				});
-
-		rootNode = new FolderNode(null, rootFolderId, "/");
-		int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(1);
-		ArrayList<OneImage> tempArrayList = new ArrayList<>();
-
-		for (int i = 0; i < imageIdsHere.length; i++) {
-			OneImage tempImage = new OneImage(imageIdsHere[i], 1, this);
-			tempArrayList.add(tempImage);
-			allImagesList.add(tempImage);
+	
+		public void updateTask() {
 			
-		}
-		rootNode.setImageList(tempArrayList);		
+			treeView = new TreeView<>();
+			treeView.getSelectionModel().selectedItemProperty()
+					.addListener(new ChangeListener<TreeItem<FolderNode>>() {
+						public void changed(
+								ObservableValue<? extends TreeItem<FolderNode>> observableValue,
+								TreeItem<FolderNode> oldItem,
+								TreeItem<FolderNode> newItem) {
 
-		treeItemRoot = new TreeItem<FolderNode>(rootNode);
-		
-		treeItemRoot.setExpanded(true);
-				
-		if (currentFolder == null) {
-			currentFolder = rootNode;
-		}
+							
+							
+							currentFolder = newItem.getValue();
+							
+							currentFolderId = currentFolder.getFolderId();
+							
+							getImagesFromFolderAndDown(currentFolder.getFolderId());
+							manyViewController.beginDrawingImages();
 
-		buildTree(rootFolderId, rootNode, treeItemRoot);
+						}
+					});
 
-		treeView.setRoot(treeItemRoot);
-		
-		if (currentTreeItem == null) {
-			currentTreeItem = treeItemRoot;
-		}
-		
-
-		getImagesFromFolderAndDown(currentFolder.getFolderId());
-		
-		traverseUpRecursiveTreeItems(currentTreeItem);
-				
-	}
-
-	private void buildTree(int parentFolder, FolderNode parentNode,
-			TreeItem<FolderNode> parentTreeItem) {
-
-		Hashtable<Integer, String> subFolderIdAndName = ServerCommHandler
-				.getSubFoldersIdAndName(parentFolder);
-
-		FolderNode tempNode;
-
-		for (Integer id : subFolderIdAndName.keySet()) {
-
-			int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(id);
+			
+			
+			rootNode = new FolderNode(null, rootFolderId, "/");
+			int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(1);
 			ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 			for (int i = 0; i < imageIdsHere.length; i++) {
-				OneImage tempImage = new OneImage(imageIdsHere[i], id, this);
+				OneImage tempImage = new OneImage(imageIdsHere[i], 1, this);
 				tempArrayList.add(tempImage);
 				allImagesList.add(tempImage);
+				
+			}
+			rootNode.setImageList(tempArrayList);		
+
+			treeItemRoot = new TreeItem<FolderNode>(rootNode);
+			
+			treeItemRoot.setExpanded(true);
+					
+			if (currentFolder == null) {
+				currentFolder = rootNode;
 			}
 
-			tempNode = new FolderNode(null, id, subFolderIdAndName.get(id));
-
-			tempNode.setImageList(tempArrayList);
-
-			TreeItem<FolderNode> tempTreeItem = new TreeItem<FolderNode>(
-					tempNode);
 			
-			if (tempNode.getFolderId() == currentFolderId) {
-				currentTreeItem = tempTreeItem;
+			
+			buildTree(rootFolderId, rootNode, treeItemRoot);
+
+			treeView.setRoot(treeItemRoot);
+			
+			if (currentTreeItem == null) {
+				currentTreeItem = treeItemRoot;
 			}
 			
 
-			parentTreeItem.getChildren().add(tempTreeItem);
-
-			parentNode.addChild(tempNode);
-
-			buildTree(id, tempNode, tempTreeItem);
-
+			getImagesFromFolderAndDown(currentFolder.getFolderId());
+			
+			traverseUpRecursiveTreeItems(currentTreeItem);
+					
 		}
 
-	}
+		private void buildTree(int parentFolder, FolderNode parentNode,
+				TreeItem<FolderNode> parentTreeItem) {
+
+			Hashtable<Integer, String> subFolderIdAndName = ServerCommHandler
+					.getSubFoldersIdAndName(parentFolder);
+
+			FolderNode tempNode;
+
+			for (Integer id : subFolderIdAndName.keySet()) {
+
+				int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(id);
+				ArrayList<OneImage> tempArrayList = new ArrayList<>();
+
+				for (int i = 0; i < imageIdsHere.length; i++) {
+					OneImage tempImage = new OneImage(imageIdsHere[i], id, this);
+					tempArrayList.add(tempImage);
+					
+					// TODO: legg inn bilde i view her
+					
+					
+					
+							
+							Platform.runLater(new Runnable() {
+			                    @Override public void run() {
+			                    	manyViewController.addImageDuringLoading(tempImage);
+			                    }
+			                });
+							
+						
+					
+					
+					allImagesList.add(tempImage);
+				}
+
+				tempNode = new FolderNode(null, id, subFolderIdAndName.get(id));
+
+				tempNode.setImageList(tempArrayList);
+
+				TreeItem<FolderNode> tempTreeItem = new TreeItem<FolderNode>(
+						tempNode);
+				
+				if (tempNode.getFolderId() == currentFolderId) {
+					currentTreeItem = tempTreeItem;
+				}
+				
+
+				parentTreeItem.getChildren().add(tempTreeItem);
+
+				parentNode.addChild(tempNode);
+				
+				
+
+				buildTree(id, tempNode, tempTreeItem);
+
+			}
+
+		}
+		
+		
+	
+	
 
 	private void getImagesFromFolderAndDown(int id) {
 

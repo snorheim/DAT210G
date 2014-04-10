@@ -14,6 +14,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -52,13 +53,22 @@ public class ManyViewController {
 
 	private boolean filterImages = false;
 	private ArrayList<OneImage> filteredImages;
+	
 
-	ScrollPane scrollPane;
+	private ScrollPane scrollPane;
+	private FlowPane drawPane;
 
 	private ZoomLevel currentZooom;
 
 	private enum ZoomLevel {
 		SMALL, MEDIUM
+	}
+	
+	public ManyViewController() {
+	
+		scrollPane = new ScrollPane();
+		drawPane = new FlowPane();
+		
 	}
 
 	@FXML
@@ -132,7 +142,7 @@ public class ManyViewController {
 
 		filterImages = true;
 
-		makeGridAndDisplayImages();
+		beginDrawingImages();
 		
 		hboxForTree.getChildren().clear();
 		
@@ -154,7 +164,7 @@ public class ManyViewController {
 		findImagesMatchingFilter(pictureIds);
 		
 		} else {
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 			updateFolderTree();
 		}
 
@@ -175,7 +185,7 @@ public class ManyViewController {
 		findImagesMatchingFilter(pictureIds);
 		
 		} else {
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 			updateFolderTree();
 		}
 	}
@@ -193,7 +203,7 @@ public class ManyViewController {
 		findImagesMatchingFilter(pictureIds);
 		
 		} else {
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 			updateFolderTree();
 		}
 
@@ -212,7 +222,7 @@ public class ManyViewController {
 		findImagesMatchingFilter(pictureIds);
 		
 		} else {
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 			updateFolderTree();
 		}
 	}
@@ -232,7 +242,7 @@ public class ManyViewController {
 		findImagesMatchingFilter(pictureIds);
 		
 		} else {
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 			updateFolderTree();
 		}
 
@@ -254,32 +264,63 @@ public class ManyViewController {
 			bar.progressProperty().bind(
 					folderTreeModel.getTask().progressProperty());
 
+			
+			setupScrollingArea();
+			
 			anchorPaneForMany.getChildren().add(bar);
+			
+			
+			
 
 		} else {
 
 			setModel();
 
-			makeGridAndDisplayImages();
+			beginDrawingImages();
 
 			folderTreeModel.setManyViewController(this);
 
 		}
 
 	}
+	
+	public void setupScrollingArea() {
+		anchorPaneForMany.getChildren().clear();
+		
+		drawPane.getChildren().clear();
+		
+		scrollPane.prefViewportWidthProperty().bind(
+				anchorPaneForMany.widthProperty());
+		scrollPane.prefViewportHeightProperty().bind(
+				anchorPaneForMany.heightProperty());
+		
+		
+		
+		
+		
+		scrollPane.setContent(drawPane);
+		
+		anchorPaneForMany.getChildren().add(scrollPane);
+		
+	}
+	
+	public void addImageDuringLoading(OneImage image) {
+		
+		System.out.println("**********************++ " + image.getThumbnailImage().getImage().getHeight());
+		
+		drawPane.getChildren().add(image.getThumbnailImage());
+		
+		
+	}
 
 
-	public void makeGridAndDisplayImages() {
+	public void beginDrawingImages() {
 
 		anchorPaneForMany.getChildren().clear();
 
-		scrollPane = new ScrollPane();
+		
 
-		if (currentZooom == ZoomLevel.SMALL) {
-			scrollPane.setContent(smallZoomLevelImages());
-		} else if (currentZooom == ZoomLevel.MEDIUM) {
-			scrollPane.setContent(mediumZoomLevelImages());
-		}
+		scrollPane.setContent(drawImages());
 
 		scrollPane.prefViewportWidthProperty().bind(
 				anchorPaneForMany.widthProperty());
@@ -290,47 +331,17 @@ public class ManyViewController {
 
 	}
 
-	private FlowPane smallZoomLevelImages() {
+	
+	private FlowPane drawImages() {
+		
+		
+		drawPane.getChildren().clear();
 
-		FlowPane smallPane = new FlowPane();
+		drawPane.setPadding(new Insets(5, 0, 5, 0));
+		drawPane.setVgap(4);
+		drawPane.setHgap(4);
 
-		smallPane.setPadding(new Insets(5, 0, 5, 0));
-		smallPane.setVgap(4);
-		smallPane.setHgap(4);
-
-		smallPane.prefWrapLengthProperty().bind(
-				anchorPaneForMany.widthProperty());
-
-		ArrayList<OneImage> imagesToBeDisplayed;
-
-		if (filterImages) { 
-			imagesToBeDisplayed = filteredImages;
-
-		} else {
-			imagesToBeDisplayed = folderTreeModel
-					.getImagesInThisFolderAndDown();
-
-		}
-
-		for (OneImage image : imagesToBeDisplayed) {
-
-			smallPane.getChildren().add(image.getThumbnailImage());
-
-		}
-
-		return smallPane;
-
-	}
-
-	private FlowPane mediumZoomLevelImages() {
-
-		FlowPane mediumPane = new FlowPane();
-
-		mediumPane.setPadding(new Insets(5, 0, 5, 0));
-		mediumPane.setVgap(4);
-		mediumPane.setHgap(4);
-
-		mediumPane.prefWrapLengthProperty().bind(
+		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
 
@@ -346,12 +357,23 @@ public class ManyViewController {
 
 		for (OneImage image : imagesToBeDisplayed) {
 
-			mediumPane.getChildren().add(image.getMediumImage());
+			if (currentZooom == ZoomLevel.SMALL) {
+				drawPane.getChildren().add(image.getThumbnailImage());
+			} else if (currentZooom == ZoomLevel.MEDIUM) {
+				drawPane.getChildren().add(image.getMediumImage());
+			}
+			
 
 		}
 
-		return mediumPane;
+		return drawPane;
+		
+		
 	}
+
+	
+	
+	
 
 	private void openFileChooser() {
 
@@ -379,12 +401,7 @@ public class ManyViewController {
 			}
 		}
 
-		/*
-		 * final DirectoryChooser directoryChooser = new DirectoryChooser();
-		 * final File selectedDirectory =
-		 * directoryChooser.showDialog(mainController.getPrimaryStage()); if
-		 * (selectedDirectory != null) { selectedDirectory.getAbsolutePath(); }
-		 */
+		
 
 	}
 
@@ -406,11 +423,11 @@ public class ManyViewController {
 				if (newValue.intValue() == 1) {
 					currentZooom = ZoomLevel.MEDIUM;
 
-					makeGridAndDisplayImages();
+					beginDrawingImages();
 				} else if (newValue.intValue() == 0) {
 					currentZooom = ZoomLevel.SMALL;
 
-					makeGridAndDisplayImages();
+					beginDrawingImages();
 				}
 
 			}

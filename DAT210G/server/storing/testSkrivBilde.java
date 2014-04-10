@@ -5,11 +5,14 @@ package storing;
 public class testSkrivBilde {
 
 	public static void main(String[] args) {
-//		int[] tags = ReadFromDatabase.getPicturesInFolderAndSubFolderId(1);
-//		for (int s: tags) {
-//			System.out.println(s);
-//		}
-		boolean test = UpdateDatabase.updatePictureParent(1, 2);
-		System.out.println(test);
+		int[] i = ReadFromDatabase.getFolderAndSubFolderId(1);
+		for (int s: i) {
+			System.out.println(s);
+		}
+		
+		int[] t = ReadFromDatabase.getFolderAndSubFolderId(1);
+		for (int r: t) {
+			System.out.println(r);
+		}
 	}
 }

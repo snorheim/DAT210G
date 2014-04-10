@@ -27,7 +27,7 @@ public class DirectoryPoop {
 		int parentId;
 
 		String parentPath = relative.getParent().toString() + "\\";
-		parentId = ReadFromDatabase.getFolderId(parentPath);
+		parentId = ReadFromDatabase.getFolderID(parentPath);
 
 		writeDirectoryToDatabase(directory, parentId);
 	}

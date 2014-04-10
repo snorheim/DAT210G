@@ -85,7 +85,9 @@ public class DeleteFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:folderId");
+			Query query = null;
+
+			query = dbSession.createQuery("SELECT lft FROM ParentFolderDb WHERE folderId=:folderId");
 			query.setParameter("folderId", folderId);
 			int lft = (int) query.uniqueResult();
 			query = dbSession.createQuery("SELECT rgt FROM ParentFolderDb WHERE folderId=:folderId");
@@ -101,6 +103,7 @@ public class DeleteFromDatabase {
 			succesful = true;
 		} catch (HibernateException e) {
 			if (dbTransaction != null) dbTransaction.rollback();
+			e.printStackTrace();
 			succesful = false;
 		} finally {
 			dbSession.close();
@@ -112,19 +115,19 @@ public class DeleteFromDatabase {
 	@SuppressWarnings("unchecked")
 	private static void deletePicturesInDeletedFolders(
 			int[] folderAndSubfolderId, Session dbSession) {
-		List<PictureDb> pictureList;
+		List<PictureDb> tmpList;
 		Query query;
 		for (int i: folderAndSubfolderId) {
 			query = dbSession.createQuery("FROM PictureDb WHERE parentFolderId=:folderID");
 			query.setParameter("folderID", i);
-			pictureList = query.list();
-			for (PictureDb p: pictureList) {
-				ArrayList<TagDb> pictureTagList = new ArrayList<>();
+			tmpList = query.list();
+			for (PictureDb p: tmpList) {
+				ArrayList<TagDb> tmpTagList = new ArrayList<>();
 				Set<TagDb> tagsToPic = removeTagOnPictureDelete(p);
-				pictureTagList.addAll(tagsToPic);
+				tmpTagList.addAll(tagsToPic);
 				p.getTags().removeAll(tagsToPic);
 				dbSession.delete(p);
-				cleanTags(pictureTagList, dbSession);
+				cleanTags(tmpTagList, dbSession);
 			}
 		}
 	}

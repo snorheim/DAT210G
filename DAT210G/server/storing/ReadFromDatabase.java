@@ -3,8 +3,6 @@ package storing;
 import java.util.ArrayList;
 import java.util.List;
 
-import logic.Loggy;
-
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
@@ -33,6 +31,24 @@ public class ReadFromDatabase {
 		return tagList;
 	}
 
+	public static int getNewestPicId() {
+		int picId = -1;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession.createQuery("SELECT MAX(id) FROM PictureDb");
+			picId = (int) query.uniqueResult();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null)
+				dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+		}
+		return picId;
+	}
+
 	public static int getPictureFromPath(String path) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -58,12 +74,37 @@ public class ReadFromDatabase {
 		List<TagDb> tagsFromDb = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		String[] tagStringList = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
 					.createQuery("FROM TagDb WHERE tag LIKE :tagStart");
 			query.setParameter("tagStart", tagStart.toLowerCase() + "%");
 			tagsFromDb = query.list();
+		} catch (HibernateException e) {
+			if (dbTransaction != null)
+				dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+		}
+		tagStringList = new String[tagsFromDb.size()];
+		for (int i = 0; i < tagStringList.length; i++) {
+			tagStringList[i] = tagsFromDb.get(i).getTag();
+		}
+		return tagStringList;
+	}
+
+	public static int findNextPicId() {
+		int nextPicId = 0;
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			Query query = dbSession
+					.createQuery("SELECT max(id) FROM PictureDb");
+			if (!(query.uniqueResult() == null)) {
+				nextPicId = (int) query.uniqueResult() + 1;
+			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
@@ -71,30 +112,43 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		String[] tagStringList = convertTagDbToString(tagsFromDb);
-		return tagStringList;
-	}
-	
-	private static String[] convertTagDbToString(List<TagDb> tagsFromDb) {
-		String[] tagStringList = new String[tagsFromDb.size()];
-		for (int i = 0; i < tagStringList.length; i++) {
-			tagStringList[i] = tagsFromDb.get(i).getTag();
+		if (nextPicId == 0) {
+			return 1;
 		}
-		return tagStringList;
+		return nextPicId;
 	}
 
-	public static int[] getPicturesBasedOnTag(String tag, int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+	@SuppressWarnings("unchecked")
+	public static List<PictureDb> getAllPictures() {
+		List<PictureDb> picList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+			picList = dbSession.createQuery(
+					"FROM PictureDb ORDER BY dateTime DESC").list();
+			dbTransaction.commit();
+		} catch (HibernateException e) {
+			if (dbTransaction != null)
+				dbTransaction.rollback();
+		} finally {
+			dbSession.close();
+		}
+		return picList;
+	}
+
+	public static int[] getPicturesBasedOnTag(String tag, int folderId) {
+		List<PictureDb> pictureList = new ArrayList<>();
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
-				for (TagDb t: picture.getTags()) {
+			for (PictureDb picture : picList) {
+				for (TagDb t : picture.getTags()) {
 					if (t.getTag().equals(tag)) {
-						picturesMatchingCriteria.add(picture);
+						pictureList.add(picture);
 					}
 				}
 			}
@@ -105,7 +159,7 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
+		int[] pictureIdArray = idArrayFromPictureArray(pictureList);
 		return pictureIdArray;
 	}
 
@@ -119,19 +173,19 @@ public class ReadFromDatabase {
 
 	public static int[] getPicturesBasedOnManyTags(String[] tag,
 			int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		List<PictureDb> tmpPictureList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
+			for (PictureDb picture: picList) {
 				for (TagDb t: picture.getTags()) {
 					for (String tagString: tag) {
 						if (t.getTag().equals(tagString)) {
-							if (!picturesMatchingCriteria.contains(picture)) {
-								picturesMatchingCriteria.add(picture);
+							if (!tmpPictureList.contains(picture)) {
+								tmpPictureList.add(picture);
 							}
 						}
 					}
@@ -144,12 +198,12 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
-		return pictureIdArray;
+		int[] imageIdArray = idArrayFromPictureArray(tmpPictureList);
+		return imageIdArray;
 	}
 
 	public static int[] getPicturesBasedOnTitle(String title, int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		List<PictureDb> picList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
@@ -159,7 +213,7 @@ public class ReadFromDatabase {
 			for (PictureDb picture: pictureDbList) {
 				if (picture.getTitle() != null) {
 					if (picture.getTitle().equals(title)) {
-						picturesMatchingCriteria.add(picture);
+						picList.add(picture);
 					}
 				}
 			}
@@ -170,22 +224,22 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
+		int[] pictureIdArray = idArrayFromPictureArray(picList);
 		return pictureIdArray;
 	}
 
 	public static int[] getPicturesBasedOnDesc(String description, int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
+			for (PictureDb picture: picList) {
 				if (picture.getDescription() != null) {
 					if (picture.getDescription().matches(".*" + description + ".*")) {
-						picturesMatchingCriteria.add(picture);
+						returnList.add(picture);
 					}
 				}
 			}
@@ -196,21 +250,21 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
+		int[] pictureIdArray = idArrayFromPictureArray(returnList);
 		return pictureIdArray;
 	}
 
 	public static int[] getPicturesBasedOnRating(int rating, int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		List<PictureDb> pictureDbList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture : pictureDbList) {
+			for (PictureDb picture : picList) {
 				if (picture.getRating() >= rating) {
-					picturesMatchingCriteria.add(picture);
+					pictureDbList.add(picture);
 				}
 			}
 			dbTransaction.commit();
@@ -220,22 +274,22 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
+		int[] pictureIdArray = idArrayFromPictureArray(pictureDbList);
 		return pictureIdArray;
 	}
 
 	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
-		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
+			for (PictureDb picture : picList) {
 				if (picture.getDateTime() != null) {
 					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
-						picturesMatchingCriteria.add(picture);
+						returnList.add(picture);
 					}
 				}
 			}
@@ -246,7 +300,7 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
+		int[] pictureIdArray = idArrayFromPictureArray(returnList);
 		return pictureIdArray;
 	}
 
@@ -272,14 +326,14 @@ public class ReadFromDatabase {
 
 	@SuppressWarnings("unchecked")
 	public static int[] getAllPicIds() {
-		List<PictureDb> pictureDbList = null;
+		List<PictureDb> picIdList = null;
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
 					.createQuery("FROM PictureDb ORDER BY dateTime DESC");
-			pictureDbList = query.list();
+			picIdList = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
@@ -287,8 +341,8 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(pictureDbList);
-		return pictureIdArray;
+		int[] tempArray = idArrayFromPictureArray(picIdList);
+		return tempArray;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -320,13 +374,13 @@ public class ReadFromDatabase {
 	public static int[] getImagesInAFolder(int folderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		List<PictureDb> picturesFromDb = null;
+		List<PictureDb> pictureFromDb = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
-					.createQuery("FROM PictureDb WHERE parentFolderId=:parentId ORDER BY dateTime DESC");
-			query.setParameter("parentId", folderId);
-			picturesFromDb = query.list();
+					.createQuery("FROM PictureDb WHERE parentFolderId=:parent ORDER BY dateTime DESC");
+			query.setParameter("parent", folderId);
+			pictureFromDb = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
 			if (dbTransaction != null)
@@ -334,8 +388,8 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(picturesFromDb);
-		return pictureIdArray;
+		int[] imageIdArray = idArrayFromPictureArray(pictureFromDb);
+		return imageIdArray;
 	}
 
 	public static ParentFolderDb getFolderInfo(int folderId) {
@@ -364,19 +418,19 @@ public class ReadFromDatabase {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		List<ParentFolderDb> foldersFromDb = null;
-		ParentFolderDb parentFolderFromDb = null;
+		ParentFolderDb st = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
 					.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
 			query.setParameter("startFolderId", startFolderId);
-			parentFolderFromDb = (ParentFolderDb) query.uniqueResult();
-			int parentLeftNumber = parentFolderFromDb.getLft();
-			int parentRightNumber = parentFolderFromDb.getRgt();
+			st = (ParentFolderDb) query.uniqueResult();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
 			query = dbSession
 					.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent ORDER BY lft ASC");
-			query.setParameter("lftParent", parentLeftNumber);
-			query.setParameter("rgtParent", parentRightNumber);
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
 			foldersFromDb = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -392,20 +446,21 @@ public class ReadFromDatabase {
 	public static int[] getFolderAndSubFolderId(int startFolderId) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
+		int[] folderIds = null;
 		List<ParentFolderDb> foldersFromDb = null;
-		ParentFolderDb parentFolderFromDb = null;
+		ParentFolderDb st = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			Query query = dbSession
 					.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
 			query.setParameter("startFolderId", startFolderId);
-			parentFolderFromDb = (ParentFolderDb) query.uniqueResult();
-			int parentLeftNumber = parentFolderFromDb.getLft();
-			int parentRightNumber = parentFolderFromDb.getRgt();
+			st = (ParentFolderDb) query.uniqueResult();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
 			query = dbSession
 					.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
-			query.setParameter("lftParent", parentLeftNumber);
-			query.setParameter("rgtParent", parentRightNumber);
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
 			foldersFromDb = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -415,33 +470,28 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] folderIds = convertFoldersFromDbToIntIdArray(foldersFromDb);
-		return folderIds;
-	}
-
-	private static int[] convertFoldersFromDbToIntIdArray(List<ParentFolderDb> foldersFromDb) {
-		int[] folderIds = new int[foldersFromDb.size()];
+		folderIds = new int[foldersFromDb.size()];
 		for (int i = 0; i < folderIds.length; i++) {
 			folderIds[i] = foldersFromDb.get(i).getFolderId();
 		}
 		return folderIds;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static int[] getPicturesInFolderAndSubFolderId(int startFolderId) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		List<PictureDb> tmpPictureList = null;
+		List<PictureDb> tmpList = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			for (int i : folderIds) {
 				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
-				tmpPictureList = query.list();
-				picturesFromDb.addAll(tmpPictureList);
+				tmpList = query.list();
+				picturesFromDb.addAll(tmpList);
 			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -450,7 +500,10 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIds = idArrayFromPictureArray(picturesFromDb);
+		int[] pictureIds = new int[picturesFromDb.size()];
+		for (int i = 0; i < pictureIds.length; i++) {
+			pictureIds[i] = picturesFromDb.get(i).getId();
+		}
 		return pictureIds;
 	}
 
@@ -459,14 +512,15 @@ public class ReadFromDatabase {
 			int startFolderId, Session dbSession) {
 		ArrayList<PictureDb> picturesFromDb = new ArrayList<>();
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
-		List<PictureDb> tmpPictureList = null;
+		List<PictureDb> tmp = null;
 		try {
+			
 			for (int i : folderIds) {
 				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
-				tmpPictureList = query.list();
-				picturesFromDb.addAll(tmpPictureList);
+				tmp = query.list();
+				picturesFromDb.addAll(tmp);
 			}
 		} catch (HibernateException e) {
 			
@@ -486,12 +540,12 @@ public class ReadFromDatabase {
 					.createQuery("FROM ParentFolderDb WHERE folderId = :startFolderId");
 			query.setParameter("startFolderId", startFolderId);
 			st = (ParentFolderDb) query.uniqueResult();
-			int parentLeftNumber = st.getLft();
-			int parentRightNumber = st.getRgt();
+			int leftParent = st.getLft();
+			int rightParent = st.getRgt();
 			query = dbSession
 					.createQuery("FROM ParentFolderDb WHERE lft BETWEEN :lftParent AND :rgtParent");
-			query.setParameter("lftParent", parentLeftNumber);
-			query.setParameter("rgtParent", parentRightNumber);
+			query.setParameter("lftParent", leftParent);
+			query.setParameter("rgtParent", rightParent);
 			foldersFromDb = query.list();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -515,30 +569,31 @@ public class ReadFromDatabase {
 	}
 
 	public static List<TreeMenuNode> getTreeForMenu() {
-		List<ParentFolderDb> foldersFromDb = ReadFromDatabase.getFolderAndSubFolderInfo(1);
-		List<TreeMenuNode> treeNodeList = new ArrayList<>();
-		for (ParentFolderDb pFolder : foldersFromDb) {
+		List<ParentFolderDb> li = ReadFromDatabase.getFolderAndSubFolderInfo(1);
+		List<TreeMenuNode> tList = new ArrayList<>();
+		for (ParentFolderDb pFolder : li) {
 			TreeMenuNode t = new TreeMenuNode(pFolder);
-			treeNodeList.add(t);
+			tList.add(t);
 		}
-		for (TreeMenuNode trN : treeNodeList) {
-			addChildren(trN, treeNodeList);
+		for (TreeMenuNode trN : tList) {
+			addChildren(trN, tList);
 		}
-		return treeNodeList;
+		return tList;
 	}
 
 	private static void addChildren(TreeMenuNode root,
 			List<TreeMenuNode> nodeList) {
 		ArrayList<TreeMenuNode> children = new ArrayList<>();
-		for (TreeMenuNode treeNode: nodeList) {
-			if (treeNode.getRoot().getParentId() == root.getRoot().getFolderId()) {
-				children.add(treeNode);
+		for (TreeMenuNode db : nodeList) {
+			if (db.getRoot().getParentId() == root.getRoot().getFolderId()) {
+				children.add(db);
 			}
 		}
 		root.setChildren(children);
 	}
 
-	public static int getFolderId(String folderPath) {
+	public static int getFolderID(String folderPath) {
+		System.out.println("søker på denne pathen: " + folderPath);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		int folderId = 0;
@@ -564,15 +619,15 @@ public class ReadFromDatabase {
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		List<PictureDb> tmpPictureList = null;
+		List<PictureDb> tmp = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			for (int i : folderIds) {
 				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
 				query.setParameter("folderId", i);
-				tmpPictureList = query.list();
-				picturesFromDb.addAll(tmpPictureList);
+				tmp = query.list();
+				picturesFromDb.addAll(tmp);
 			}
 			dbTransaction.commit();
 		} catch (HibernateException e) {

@@ -7,31 +7,31 @@ import org.hibernate.*;
 public class WriteToDatabase {
 	private static boolean successfulTransfer;
 
-	public static int writeOnePic(PictureDb picture) {
+	public static boolean writeOnePic(PictureDb pic) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		int pictureId = 0;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			dbSession.save(picture);
-			pictureId = picture.getId();
+			dbSession.save(pic);
 			dbTransaction.commit();
+			successfulTransfer = true;
 		} catch (HibernateException e) {
+			successfulTransfer = false;
 			if (dbTransaction != null)
 				dbTransaction.rollback();
 		} finally {
 			dbSession.close();
 		}
-		return pictureId;
+		return successfulTransfer;
 	}
 
-	public static boolean writeManyPics(ArrayList<PictureDb> pictureList) {
+	public static boolean writeManyPics(ArrayList<PictureDb> picList) {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			for (PictureDb picture: pictureList) {
-				dbSession.save(picture);
+			for (PictureDb pic : picList) {
+				dbSession.save(pic);
 			}
 			dbTransaction.commit();
 			successfulTransfer = true;
@@ -87,15 +87,16 @@ public class WriteToDatabase {
 		} finally {
 			dbSession.close();
 		}
+
 		return successfulTransfer;
 	}
 
 	public static boolean ensureImgFolderDatabase() {
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
-		int[] allPictureIds = ReadFromDatabase.getAllPicIds();
-		for (int picture : allPictureIds) {
-			DeleteFromDatabase.deletePicture(picture);
+		int[] allPicIds = ReadFromDatabase.getAllPicIds();
+		for (int i : allPicIds) {
+			DeleteFromDatabase.deletePicture(i);
 		}
 		ParentFolderDb newImageFolder = new ParentFolderDb("img", "img\\", 1, 2);
 		try {

@@ -158,6 +158,13 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true, tagArray));
 	}
 
+	public static void getNextImageId(RequestServer request, int id,
+			String detail) {
+		int nextAvailableId = ReadFromDatabase.findNextPicId();
+		System.out.println("Neste id er: " + nextAvailableId);
+		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
+	}
+
 	public static void addTag(RequestServer request, int id, String detail) {
 		PictureDb pictureDb = ReadFromDatabase.getPictureBasedOnId(id);
 		String fileLocation = pictureDb.getFileLocation();
@@ -276,14 +283,15 @@ public class RequestMethods {
 			if (id != 1)
 				tempImage.delete();
 
-			int writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
-			if (writePictureToDb != 0) {
+			boolean writePictureToDb = WriteToDatabase.writeOnePic(pictureDb);
+			if (writePictureToDb) {
 				if (!(exif.getExifTags() == null)) {
+					int picId = ReadFromDatabase.getNewestPicId();
 					String[] tagsInString = exif.getExifTags().split(";");
 					for (int i = 0; i < tagsInString.length; i++) {
-						boolean addTagToPicture = WriteToDatabase.addTagToPic(writePictureToDb,
+						boolean test = WriteToDatabase.addTagToPic(picId,
 								tagsInString[i]);
-						System.out.println("tag skrevet: " + addTagToPicture);
+						System.out.println("tag skrevet: " + test);
 					}
 				}
 				request.sendJsonResponse(new ResponseServer(true));
