@@ -187,7 +187,7 @@ public class SingleViewController {
 	private void prevBtnAction() {
 
 		disableButtons();
-		
+
 		hasFullImageInMemory = false;
 
 		FolderTree.getPrevImageInImageList(currentImage);
@@ -203,7 +203,7 @@ public class SingleViewController {
 	private void rotRightBtnAction() {
 
 		disableButtons();
-		
+
 		hasFullImageInMemory = false;
 
 		imageToDisplay = FolderTree.getCurrentImage().getRotRight();
@@ -217,13 +217,13 @@ public class SingleViewController {
 	private void rotLeftBtnAction() {
 
 		disableButtons();
-		
+
 		hasFullImageInMemory = false;
 
 		imageToDisplay = FolderTree.getCurrentImage().getRotLeft();
 
 		showScaledToScreenImage();
-		
+
 		enableButtons();
 	}
 
@@ -231,17 +231,17 @@ public class SingleViewController {
 	private void storeMetaBtnAction() {
 
 		disableButtons();
-		
+
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
-		
+
 		enableButtons();
 
 	}
 
 	private void ratingTextFieldAction() {
-		
+
 		disableButtons();
 
 		int rating = (int) ratingStars.getRating();
@@ -251,20 +251,34 @@ public class SingleViewController {
 		currentImage.modifyRating(stringOfRating);
 
 		enableButtons();
-		
+
 	}
 
 	private void descTextFieldAction() {
-		
+
 		disableButtons();
-		currentImage.modifyDesc(descTextField.getText());
-		enableButtons();
 		
+		if (descTextField.getText() == null) {
+			currentImage.modifyDesc("");			
+		} else {
+			currentImage.modifyDesc(descTextField.getText());
+		}
+		
+		
+		enableButtons();
+
 	}
 
 	private void titleTextFieldAction() {
 		disableButtons();
-		currentImage.modifyTitle(titleTextField.getText());
+		
+		
+		if (titleTextField.getText() == null) {
+			
+			currentImage.modifyTitle("");			
+		} else {
+			currentImage.modifyTitle(titleTextField.getText());
+		}
 
 		enableButtons();
 	}
@@ -284,7 +298,7 @@ public class SingleViewController {
 
 			}
 		}
-		
+
 		enableButtons();
 
 	}
@@ -294,24 +308,24 @@ public class SingleViewController {
 		currentImage.addTag(tag);
 
 	}
-	
+
 	private void disableButtons() {
-		
-		System.out.println("diabling buttons");
-		
+
+		System.out.println("disabling buttons");
+
 		homeBtn.setDisable(true);
 		nextBtn.setDisable(true);
 		prevBtn.setDisable(true);
 		rotLeftBtn.setDisable(true);
 		rotRightBtn.setDisable(true);
 		storeMetaBtn.setDisable(true);
-		
+
 	}
-	
+
 	private void enableButtons() {
-		
+
 		System.out.println("enabling buttons");
-		
+
 		homeBtn.setDisable(false);
 		nextBtn.setDisable(false);
 		prevBtn.setDisable(false);
