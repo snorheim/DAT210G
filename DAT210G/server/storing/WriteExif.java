@@ -4,6 +4,8 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import logic.Loggy;
+
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
@@ -143,8 +145,8 @@ public class WriteExif {
 		try {
 			outPutStream = new FileOutputStream(destImageFile);
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
-			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
-			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
+			// ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
+			// ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
 			new ExifRewriter().updateExifMetadataLossless(destImageFile,
 					bufferedOutPutStream, metaDataOutPutSet);
 			imageFile.delete();
@@ -166,5 +168,9 @@ public class WriteExif {
 		// e.printStackTrace();
 		// }
 		// }
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.EXIF_WRITE);
 	}
 }

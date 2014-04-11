@@ -54,7 +54,7 @@ public class HttpServer implements Runnable {
 	}
 
 	private static void log(String string) {
-		System.out.println("SERVER@ " + string);
+		Loggy.log(string, Loggy.SERVER);
 	}
 
 	public void sendData(String outGoingString) {

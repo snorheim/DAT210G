@@ -116,12 +116,14 @@ public class RequestMethods {
 		request.sendJsonResponse(new ResponseServer(true, metadataStringArray));
 	}
 
-	public static void getImagesWithTitle(RequestServer request, int id, String detail) {
+	public static void getImagesWithTitle(RequestServer request, int id,
+			String detail) {
 		int[] idArray = ReadFromDatabase.getPicturesBasedOnTitle(detail, id);
 		request.sendJsonResponse(new ResponseServer(true, idArray));
 	}
 
-	public static void getImagesWithDesc(RequestServer request, int id, String detail) {
+	public static void getImagesWithDesc(RequestServer request, int id,
+			String detail) {
 		int[] idArray = ReadFromDatabase.getPicturesBasedOnDesc(detail, id);
 		request.sendJsonResponse(new ResponseServer(true, idArray));
 	}
@@ -161,7 +163,7 @@ public class RequestMethods {
 	public static void getNextImageId(RequestServer request, int id,
 			String detail) {
 		int nextAvailableId = ReadFromDatabase.findNextPicId();
-		System.out.println("Neste id er: " + nextAvailableId);
+		log("Neste id er: " + nextAvailableId);
 		request.sendJsonResponse(new ResponseServer(true, nextAvailableId));
 	}
 
@@ -230,8 +232,8 @@ public class RequestMethods {
 
 		DirectoryPoop.addNewDirectory(detail, id);
 
-		System.out.println("skulle lagt til dir nå, parentid: " + id
-				+ ", foldername: " + detail);
+		log("skulle lagt til dir nå, parentid: " + id + ", foldername: "
+				+ detail);
 		request.sendJsonResponse(new ResponseServer(true));
 	}
 
@@ -291,7 +293,7 @@ public class RequestMethods {
 					for (int i = 0; i < tagsInString.length; i++) {
 						boolean test = WriteToDatabase.addTagToPic(picId,
 								tagsInString[i]);
-						System.out.println("tag skrevet: " + test);
+						log("tag skrevet: " + test);
 					}
 				}
 				request.sendJsonResponse(new ResponseServer(true));
@@ -301,6 +303,6 @@ public class RequestMethods {
 	}
 
 	private static void log(String s) {
-		Loggy.log("RQM@ " + s);
+		Loggy.log(s, Loggy.RQ_METHODS);
 	}
 }

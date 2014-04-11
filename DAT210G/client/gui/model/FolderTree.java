@@ -19,6 +19,8 @@ public class FolderTree {
 	private static int rootFolderId = 1;
 	private static FolderNode rootNode;
 
+	private static OneImage tempImage;
+
 	private static TreeView<FolderNode> treeView;
 	private static TreeItem<FolderNode> treeItemRoot;
 
@@ -103,26 +105,21 @@ public class FolderTree {
 				int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(1);
 
 				ArrayList<OneImage> tempArrayList = new ArrayList<>();
-
 				for (int i = 0; i < imageIdsHere.length; i++) {
-					OneImage tempImage = new OneImage(imageIdsHere[i], 1);
+					tempImage = new OneImage(imageIdsHere[i], 1);
 					tempArrayList.add(tempImage);
 					allImagesList.add(tempImage);
 
-					
 					Platform.runLater(new Runnable() {
 						@Override
 						public void run() {
-							manyViewController
-									.addImageDuringLoading(tempImage);
+							manyViewController.addImageDuringLoading(tempImage);
 						}
 					});
-					
-					
+
 					progress++;
 
 					updateProgress((progress / progressGoal) * 100, 100);
-					
 
 				}
 				rootNode.setImageList(tempArrayList);
@@ -164,7 +161,7 @@ public class FolderTree {
 					ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 					for (int i = 0; i < imageIdsHere.length; i++) {
-						OneImage tempImage = new OneImage(imageIdsHere[i], id);
+						tempImage = new OneImage(imageIdsHere[i], id);
 						tempArrayList.add(tempImage);
 
 						// TODO: legg inn bilde i view her

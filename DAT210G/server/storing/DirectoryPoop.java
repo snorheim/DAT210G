@@ -66,7 +66,6 @@ public class DirectoryPoop {
 	}
 
 	public static String getFilenameWithSuffix(String original, String suffix) {
-		System.out.println(original);
 		String name = original.split("[.]")[0];
 		String extension = original.split("[.]")[1];
 

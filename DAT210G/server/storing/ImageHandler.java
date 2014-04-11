@@ -47,7 +47,7 @@ public class ImageHandler {
 	}
 
 	private static void log(String string) {
-		Loggy.log("IH@ " + string);
+		Loggy.log(string, Loggy.IMG_HANDLER);
 	}
 
 	private static boolean ensureLocation() throws FileNotFoundException {

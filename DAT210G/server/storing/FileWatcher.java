@@ -51,7 +51,7 @@ public class FileWatcher implements FileAlterationListener {
 	}
 
 	private static void log(String string) {
-		Loggy.log("FW@ " + string);
+		Loggy.log(string, Loggy.FILE_WATCHER);
 	}
 
 	@Override

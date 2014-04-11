@@ -3,11 +3,9 @@ package storing;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import logic.Loggy;
+
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 
 public class ReadFromDatabase {
@@ -37,7 +35,8 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT MAX(id) FROM PictureDb");
+			Query query = dbSession
+					.createQuery("SELECT MAX(id) FROM PictureDb");
 			picId = (int) query.uniqueResult();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -171,8 +170,7 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	public static int[] getPicturesBasedOnManyTags(String[] tag,
-			int folderId) {
+	public static int[] getPicturesBasedOnManyTags(String[] tag, int folderId) {
 		List<PictureDb> tmpPictureList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -180,9 +178,9 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: picList) {
-				for (TagDb t: picture.getTags()) {
-					for (String tagString: tag) {
+			for (PictureDb picture : picList) {
+				for (TagDb t : picture.getTags()) {
+					for (String tagString : tag) {
 						if (t.getTag().equals(tagString)) {
 							if (!tmpPictureList.contains(picture)) {
 								tmpPictureList.add(picture);
@@ -210,7 +208,7 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
+			for (PictureDb picture : pictureDbList) {
 				if (picture.getTitle() != null) {
 					if (picture.getTitle().equals(title)) {
 						picList.add(picture);
@@ -236,9 +234,10 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: picList) {
+			for (PictureDb picture : picList) {
 				if (picture.getDescription() != null) {
-					if (picture.getDescription().matches(".*" + description + ".*")) {
+					if (picture.getDescription().matches(
+							".*" + description + ".*")) {
 						returnList.add(picture);
 					}
 				}
@@ -514,7 +513,7 @@ public class ReadFromDatabase {
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		List<PictureDb> tmp = null;
 		try {
-			
+
 			for (int i : folderIds) {
 				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
@@ -523,7 +522,7 @@ public class ReadFromDatabase {
 				picturesFromDb.addAll(tmp);
 			}
 		} catch (HibernateException e) {
-			
+
 		}
 		return picturesFromDb;
 	}
@@ -667,6 +666,10 @@ public class ReadFromDatabase {
 			this.isOnlyChild = isOnlyChild;
 		}
 
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.DB_READ);
 	}
 
 }

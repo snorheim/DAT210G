@@ -2,6 +2,8 @@ package storing;
 
 import java.util.ArrayList;
 
+import logic.Loggy;
+
 import org.hibernate.*;
 
 public class WriteToDatabase {
@@ -189,6 +191,10 @@ public class WriteToDatabase {
 			dbSession.close();
 		}
 		return successfulTransfer;
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.DB_WRITE);
 	}
 
 }
