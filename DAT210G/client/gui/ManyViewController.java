@@ -194,7 +194,6 @@ public class ManyViewController {
 
 	@FXML
 	private void ratingSearchAl() {
-		// TODO: sjekke input
 		String rating = ratingTextField.getText();
 
 		if (!rating.isEmpty()) {
@@ -244,6 +243,7 @@ public class ManyViewController {
 			String toDate = datePickerToDate.getValue().toString();
 			String dateValues = fromDate + ";" + toDate;
 			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, FolderTree.getCurrentFolder().getFolderId());
+			findImagesMatchingFilter(pictureIds);
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -287,22 +287,22 @@ public class ManyViewController {
 			bar.progressProperty()
 			.bind(FolderTree.getTask().progressProperty());
 
-			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
-			dateFromField.getChildren().add(datePickerFromDate);
-
-			datePickerToDate = new DatePicker(LocalDate.now());
-			dateToField.getChildren().add(datePickerToDate);
-
-			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
-			calendarSettings.configFromDatePicker();
-			calendarSettings.configToDatePicker();
-
 			setupScrollingArea();
 
 			stackPane.getChildren().addAll(scrollPane, bar);
 
 		} else {
-
+			dateFromField.getChildren().clear();
+			dateToField.getChildren().clear();
+			
+			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
+			dateFromField.getChildren().add(datePickerFromDate);
+			datePickerToDate = new DatePicker(LocalDate.now());
+			dateToField.getChildren().add(datePickerToDate);
+			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
+			calendarSettings.configFromDatePicker();
+			calendarSettings.configToDatePicker();
+			
 			setModel();
 
 			beginDrawingImages();
