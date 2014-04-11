@@ -95,7 +95,6 @@ public class Main extends Application {
 		FolderTree.setManyViewController(manyViewController);
 
 		setManyMode(true);
-		;
 
 	}
 
@@ -125,9 +124,6 @@ public class Main extends Application {
 	 * Shows the single image scene.
 	 */
 	public void setSingleMode() {
-
-		System.out.println("ImageId: "
-				+ FolderTree.getCurrentImage().getImageId());
 
 		rootLayout.setCenter(singleModePane);
 

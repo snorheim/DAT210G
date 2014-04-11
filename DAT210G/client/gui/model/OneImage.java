@@ -120,7 +120,6 @@ public class OneImage {
 
 			@Override
 			public void handle(Event event) {
-				System.out.println("Clicked full image");
 
 			}
 		});
@@ -207,8 +206,6 @@ public class OneImage {
 		if (success) {
 			cacheMeta();
 
-			System.out
-					.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		}
 	}
 

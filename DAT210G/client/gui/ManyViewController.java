@@ -3,10 +3,9 @@ package gui;
 import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+import org.controlsfx.control.Rating;
 import org.controlsfx.dialog.Dialogs;
 
 import gui.model.FolderTree;
@@ -16,8 +15,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
@@ -29,7 +28,6 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
-import javafx.util.Callback;
 
 public class ManyViewController {
 
@@ -59,6 +57,10 @@ public class ManyViewController {
 	private Slider zoomSlider;
 	@FXML
 	private HBox hboxForTree;
+	@FXML
+	private HBox ratingHBox;
+
+	private Rating ratingStars;
 
 	private boolean filterImages = false;
 	private ArrayList<OneImage> filteredImages;
@@ -127,6 +129,32 @@ public class ManyViewController {
 
 	}
 
+	private void makeRatingStars() {
+
+		ratingHBox.getChildren().clear();
+
+		ratingStars = new Rating(5);
+
+		ratingStars.setRating(0);
+
+		ratingStars.setId("ratingStars");
+
+		ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number t,
+					Number t1) {
+
+				int rating = t1.intValue();
+
+				ratingSearchAl(rating);
+
+			}
+		});
+
+		ratingHBox.getChildren().addAll(ratingStars);
+
+	}
+
 	@FXML
 	private void handleNewDirectoryBtn() {
 
@@ -173,6 +201,9 @@ public class ManyViewController {
 
 	@FXML
 	private void titleSearchAl() {
+
+		disableNodes(titleTextField);
+
 		String titleText = titleTextField.getText();
 
 		if (!titleText.isEmpty()) {
@@ -190,30 +221,40 @@ public class ManyViewController {
 			updateFolderTree();
 		}
 
+		enableNodes(titleTextField);
+
 	}
 
-	@FXML
-	private void ratingSearchAl() {
-		String rating = ratingTextField.getText();
+	private void ratingSearchAl(int ratingNum) {
+
+		disableNodes(ratingStars);
+
+		String rating = String.valueOf(ratingNum);
 
 		if (!rating.isEmpty()) {
 
-			int ratingCheck = Integer.parseInt(rating);
 			int[] pictureIds = null;
-			if (ratingCheck > 0 && ratingCheck < 6) {
-				pictureIds = ServerCommHandler.searchRatingPictures(rating,
-						FolderTree.getCurrentFolder().getFolderId());
-			}
+
+			pictureIds = ServerCommHandler.searchRatingPictures(rating,
+					FolderTree.getCurrentFolder().getFolderId());
+
 			findImagesMatchingFilter(pictureIds);
 
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
+
 		}
+
+		enableNodes(ratingStars);
+
 	}
 
 	@FXML
 	private void descSearchAl() {
+
+		disableNodes(descTextField);
+
 		String description = descTextField.getText();
 
 		if (!description.isEmpty()) {
@@ -222,7 +263,7 @@ public class ManyViewController {
 			if (!description.equals("")) {
 				pictureIds = ServerCommHandler.searchDescriptionPictures(
 						description, FolderTree.getCurrentFolder()
-						.getFolderId());
+								.getFolderId());
 			}
 			findImagesMatchingFilter(pictureIds);
 
@@ -231,27 +272,36 @@ public class ManyViewController {
 			updateFolderTree();
 		}
 
+		enableNodes(descTextField);
+
 	}
-
-
 
 	@FXML
 	private void dateSearchAl() {
+		disableNodes(searchByDateButton);
+
 		int[] pictureIds = null;
-		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
+		if (datePickerFromDate.getValue() != null
+				&& datePickerToDate.getValue() != null) {
 			String fromDate = datePickerFromDate.getValue().toString();
 			String toDate = datePickerToDate.getValue().toString();
 			String dateValues = fromDate + ";" + toDate;
-			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, FolderTree.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues,
+					FolderTree.getCurrentFolder().getFolderId());
 			findImagesMatchingFilter(pictureIds);
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
 		}
+
+		enableNodes(searchByDateButton);
 	}
 
 	@FXML
 	private void tagSearchAl() {
+
+		disableNodes(tagsTextField);
+
 		String tags = tagsTextField.getText().toLowerCase();
 		if (!tags.isEmpty()) {
 			int[] pictureIds = null;
@@ -267,6 +317,8 @@ public class ManyViewController {
 			updateFolderTree();
 		}
 
+		enableNodes(tagsTextField);
+
 	}
 
 	public void updateFolderTree() {
@@ -279,30 +331,31 @@ public class ManyViewController {
 
 	public void start() {
 
-
 		if (!FolderTree.isReady()) {
 
 			ProgressIndicator bar = new ProgressIndicator(0);
 			bar.setMaxSize(50, 50);
 			bar.progressProperty()
-			.bind(FolderTree.getTask().progressProperty());
+					.bind(FolderTree.getTask().progressProperty());
 
 			setupScrollingArea();
 
 			stackPane.getChildren().addAll(scrollPane, bar);
+			makeRatingStars();
 
 		} else {
 			dateFromField.getChildren().clear();
 			dateToField.getChildren().clear();
-			
+
 			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
 			dateFromField.getChildren().add(datePickerFromDate);
 			datePickerToDate = new DatePicker(LocalDate.now());
 			dateToField.getChildren().add(datePickerToDate);
-			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
+			CalendarSettings calendarSettings = new CalendarSettings(
+					datePickerFromDate, datePickerToDate);
 			calendarSettings.configFromDatePicker();
 			calendarSettings.configToDatePicker();
-			
+
 			setModel();
 
 			beginDrawingImages();
@@ -374,7 +427,6 @@ public class ManyViewController {
 		drawPane.setVgap(4);
 		drawPane.setHgap(4);
 
-
 		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
@@ -429,6 +481,48 @@ public class ManyViewController {
 			}
 		});
 
+	}
+
+	private void disableNodes(Node doNotDisableThis) {
+
+		if (!titleTextField.equals(doNotDisableThis)) {
+			titleTextField.clear();
+			titleTextField.setDisable(true);
+		}
+		if (!ratingStars.equals(doNotDisableThis)) {
+			ratingStars.setRating(0);
+			ratingStars.setDisable(true);
+		}
+		if (!descTextField.equals(doNotDisableThis)) {
+			descTextField.clear();
+			descTextField.setDisable(true);
+		}
+		if (!tagsTextField.equals(doNotDisableThis)) {
+			tagsTextField.clear();
+			tagsTextField.setDisable(true);
+		}
+		if (!searchByDateButton.equals(doNotDisableThis)) {
+			searchByDateButton.setDisable(true);
+		}
+
+	}
+
+	private void enableNodes(Node doNotDisableThis) {
+
+		if (!titleTextField.equals(doNotDisableThis))
+			titleTextField.setDisable(false);
+
+		if (!ratingStars.equals(doNotDisableThis))
+			ratingStars.setDisable(false);
+
+		if (!descTextField.equals(doNotDisableThis))
+			descTextField.setDisable(false);
+
+		if (!tagsTextField.equals(doNotDisableThis))
+			tagsTextField.setDisable(false);
+
+		if (!searchByDateButton.equals(doNotDisableThis))
+			searchByDateButton.setDisable(false);
 	}
 
 }

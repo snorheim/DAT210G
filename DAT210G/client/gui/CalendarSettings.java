@@ -15,18 +15,18 @@ public class CalendarSettings {
 		toDatePicker = to;
 	}
 
-
 	public void configFromDatePicker() {
-		final Callback<DatePicker, DateCell> limitDatesFrom = 
-				new Callback<DatePicker, DateCell>() {
+		final Callback<DatePicker, DateCell> limitDatesFrom = new Callback<DatePicker, DateCell>() {
 			@Override
 			public DateCell call(final DatePicker datePicker) {
 				return new DateCell() {
 					@Override
 					public void updateItem(LocalDate item, boolean empty) {
 						super.updateItem(item, empty);
-						if (fromDatePicker.getValue().isAfter(toDatePicker.getValue())) {
-							toDatePicker.setValue(fromDatePicker.getValue().plusDays(1));
+						if (fromDatePicker.getValue().isAfter(
+								toDatePicker.getValue())) {
+							toDatePicker.setValue(fromDatePicker.getValue()
+									.plusDays(1));
 						}
 					}
 				};
@@ -36,8 +36,7 @@ public class CalendarSettings {
 	}
 
 	public void configToDatePicker() {
-		final Callback<DatePicker, DateCell> limitDatesTo = 
-				new Callback<DatePicker, DateCell>() {
+		final Callback<DatePicker, DateCell> limitDatesTo = new Callback<DatePicker, DateCell>() {
 			@Override
 			public DateCell call(final DatePicker datePicker) {
 				return new DateCell() {
@@ -47,7 +46,7 @@ public class CalendarSettings {
 						if (item.isBefore(fromDatePicker.getValue().plusDays(1))) {
 							setDisable(true);
 							setStyle("-fx-background-color: #ffc0cb;");
-						} 
+						}
 					}
 				};
 			}

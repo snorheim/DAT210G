@@ -67,8 +67,7 @@ public class SingleViewController {
 		if (!hasFullImageInMemory) {
 			imageToDisplay = currentImage.getFullImage();
 			hasFullImageInMemory = true;
-			System.out.println("ImageView imageToDisplay er nå: "
-					+ currentImage.getImageId());
+
 		}
 
 		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
@@ -104,7 +103,7 @@ public class SingleViewController {
 			@Override
 			public void changed(ObservableValue<? extends Number> ov, Number t,
 					Number t1) {
-				System.out.println("Rating = " + t1);
+
 			}
 		});
 
@@ -257,25 +256,23 @@ public class SingleViewController {
 	private void descTextFieldAction() {
 
 		disableButtons();
-		
+
 		if (descTextField.getText() == null) {
-			currentImage.modifyDesc("");			
+			currentImage.modifyDesc("");
 		} else {
 			currentImage.modifyDesc(descTextField.getText());
 		}
-		
-		
+
 		enableButtons();
 
 	}
 
 	private void titleTextFieldAction() {
 		disableButtons();
-		
-		
+
 		if (titleTextField.getText() == null) {
-			
-			currentImage.modifyTitle("");			
+
+			currentImage.modifyTitle("");
 		} else {
 			currentImage.modifyTitle(titleTextField.getText());
 		}
@@ -311,8 +308,6 @@ public class SingleViewController {
 
 	private void disableButtons() {
 
-		System.out.println("disabling buttons");
-
 		homeBtn.setDisable(true);
 		nextBtn.setDisable(true);
 		prevBtn.setDisable(true);
@@ -323,8 +318,6 @@ public class SingleViewController {
 	}
 
 	private void enableButtons() {
-
-		System.out.println("enabling buttons");
 
 		homeBtn.setDisable(false);
 		nextBtn.setDisable(false);

@@ -10,7 +10,6 @@ public class FolderNode {
 	private ArrayList<OneImage> imageList = null;
 	private int folderId;
 	private String folderName;
-	
 
 	public FolderNode(ArrayList<OneImage> imageList, int folderId,
 			String folderName) {
@@ -50,12 +49,6 @@ public class FolderNode {
 		child.setParent(this);
 		this.children.add(child);
 	}
-
-	
-
-	
-
-	
 
 	public ArrayList<OneImage> getImageList() {
 		return imageList;

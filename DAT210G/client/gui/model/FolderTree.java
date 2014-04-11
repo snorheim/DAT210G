@@ -19,8 +19,6 @@ public class FolderTree {
 	private static int rootFolderId = 1;
 	private static FolderNode rootNode;
 
-	private static OneImage tempImage;
-
 	private static TreeView<FolderNode> treeView;
 	private static TreeItem<FolderNode> treeItemRoot;
 
@@ -31,7 +29,7 @@ public class FolderTree {
 	private static ArrayList<OneImage> imagesInThisFolderAndDown;
 	private static ArrayList<OneImage> allImagesList;
 	private static OneImage tempImage;
-	
+
 	private static ManyViewController manyViewController;
 	private static Main main;
 	private static Task<Void> task;
@@ -178,12 +176,6 @@ public class FolderTree {
 						progress++;
 
 						updateProgress((progress / progressGoal) * 100, 100);
-						System.out
-								.println("***************************** Progress: "
-										+ (progress / progressGoal)
-										* 100
-										+ " / " + "100");
-						System.out.println(progress + " - " + progressGoal);
 
 						allImagesList.add(tempImage);
 					}
@@ -360,7 +352,7 @@ public class FolderTree {
 	}
 
 	public static Main getMain() {
-		System.out.println("in foldertree");
+
 		return main;
 	}
 
