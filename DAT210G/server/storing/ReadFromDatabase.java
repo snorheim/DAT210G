@@ -1,6 +1,10 @@
 package storing;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -278,6 +282,7 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
+<<<<<<< HEAD
 	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
 		List<PictureDb> returnList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -285,11 +290,25 @@ public class ReadFromDatabase {
 		try {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
+=======
+	public static int[] getPicturesBasedOnDate(String[] timeDate, int folderId) {
+		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
+		Session dbSession = HibernateUtil.getSessionFactory().openSession();
+		Transaction dbTransaction = null;
+		try {
+			dbTransaction = dbSession.beginTransaction();			
+			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
+>>>>>>> origin/9.4-kalender
 					folderId, dbSession);
 			for (PictureDb picture : picList) {
 				if (picture.getDateTime() != null) {
+<<<<<<< HEAD
 					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
 						returnList.add(picture);
+=======
+					if (compareDates(picture.getDateTime(), timeDate[0], timeDate[1])) {
+						picturesMatchingCriteria.add(picture);
+>>>>>>> origin/9.4-kalender
 					}
 				}
 			}
@@ -302,6 +321,23 @@ public class ReadFromDatabase {
 		}
 		int[] pictureIdArray = idArrayFromPictureArray(returnList);
 		return pictureIdArray;
+	}
+	
+	private static boolean compareDates(String pictureDateString, String fromDateString, String toDateString) {
+		Date fromDate = null;
+		Date toDate = null;
+		Date pictureDate = null;
+			try {
+				String fromOnlyDate = fromDateString.substring(0, 10);
+				fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromOnlyDate);
+				String toOnlyDate = toDateString.substring(0, 10);
+				toDate = new SimpleDateFormat("yyyy-MM-dd").parse(toOnlyDate);
+				String pictureOnlyDate = pictureDateString.substring(0, 10);
+				pictureDate = new SimpleDateFormat("yyyy-MM-dd").parse(pictureOnlyDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return !pictureDate.before(fromDate) && !pictureDate.after(toDate);
 	}
 
 	public static PictureDb getPictureBasedOnId(int picId) {

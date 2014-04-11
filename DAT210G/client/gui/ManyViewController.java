@@ -1,8 +1,11 @@
 package gui;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.controlsfx.dialog.Dialogs;
 
@@ -14,6 +17,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -24,6 +29,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 public class ManyViewController {
 
@@ -42,7 +48,11 @@ public class ManyViewController {
 	@FXML
 	private TextField ratingTextField;
 	@FXML
-	private TextField dateTextField;
+	private HBox dateFromField;
+	@FXML
+	private HBox dateToField;
+	@FXML
+	private Button searchByDateButton;
 	@FXML
 	private TextField tagsTextField;
 	@FXML
@@ -58,6 +68,9 @@ public class ManyViewController {
 	private FlowPane drawPane;
 
 	private ZoomLevel currentZooom;
+
+	private DatePicker datePickerFromDate;
+	private DatePicker datePickerToDate;
 
 	private enum ZoomLevel {
 		SMALL, MEDIUM
@@ -221,8 +234,11 @@ public class ManyViewController {
 
 	}
 
+
+
 	@FXML
 	private void dateSearchAl() {
+<<<<<<< HEAD
 		String dateTime = dateTextField.getText();
 
 		if (!dateTime.isEmpty()) {
@@ -237,6 +253,18 @@ public class ManyViewController {
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
+=======
+		int[] pictureIds = null;
+		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
+			String fromDate = datePickerFromDate.getValue().toString();
+			String toDate = datePickerToDate.getValue().toString();
+			String dateValues = fromDate + ";" + toDate;
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, folderTreeModel.getCurrentFolder().getFolderId());
+		} else System.out.println("dialog boks me forklaring paa error yo");
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+>>>>>>> origin/9.4-kalender
 		}
 	}
 
@@ -244,6 +272,7 @@ public class ManyViewController {
 	private void tagSearchAl() {
 		// TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
+<<<<<<< HEAD
 
 		if (!tags.isEmpty()) {
 
@@ -258,6 +287,16 @@ public class ManyViewController {
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
+=======
+		int[] pictureIds = null;
+		if (!tags.equals("")) {
+			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
+		}
+
+		//TODO: update gui
+		for (int i: pictureIds) {
+			System.out.println(i);
+>>>>>>> origin/9.4-kalender
 		}
 
 	}
@@ -272,12 +311,32 @@ public class ManyViewController {
 
 	public void start() {
 
+<<<<<<< HEAD
 		if (!FolderTree.isReady()) {
 
 			ProgressIndicator bar = new ProgressIndicator(0);
 			bar.setMaxSize(50, 50);
 			bar.progressProperty()
 					.bind(FolderTree.getTask().progressProperty());
+=======
+		if (!folderTreeModel.isReady()) {
+			
+			//TODO: flytt koden
+			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
+			dateFromField.getChildren().add(datePickerFromDate);
+
+			datePickerToDate = new DatePicker(LocalDate.now());
+			dateToField.getChildren().add(datePickerToDate);
+
+			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
+			calendarSettings.configFromDatePicker();
+			calendarSettings.configToDatePicker();
+			/////////////////////////////
+			
+			ProgressIndicator bar = new ProgressIndicator();
+			bar.progressProperty().bind(
+					folderTreeModel.getTask().progressProperty());
+>>>>>>> origin/9.4-kalender
 
 			setupScrollingArea();
 
@@ -356,11 +415,19 @@ public class ManyViewController {
 		drawPane.setVgap(4);
 		drawPane.setHgap(4);
 
+<<<<<<< HEAD
 		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
 
 		if (filterImages) {
+=======
+		ArrayList<String> fileTypes = new ArrayList<>();
+		fileTypes.add("*.jpg");
+		fileTypes.add("*.jpeg");
+		fileTypes.add("*.png");
+		fileTypes.add("*.bmp");
+>>>>>>> origin/9.4-kalender
 
 			imagesToBeDisplayed = filteredImages;
 
@@ -391,7 +458,7 @@ public class ManyViewController {
 	private void setModel() {
 
 		updateFolderTree();
-
+		
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override
