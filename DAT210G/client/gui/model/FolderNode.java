@@ -10,6 +10,7 @@ public class FolderNode {
 	private ArrayList<OneImage> imageList = null;
 	private int folderId;
 	private String folderName;
+	
 
 	public FolderNode(ArrayList<OneImage> imageList, int folderId,
 			String folderName) {

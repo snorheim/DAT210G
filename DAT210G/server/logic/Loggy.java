@@ -13,6 +13,8 @@ import communication.HttpServer;
 
 public class Loggy extends JFrame {
 
+	
+	private static final long serialVersionUID = 1L;
 	static final Dimension SIZE = new Dimension(500, 340);
 	static JTextArea console;
 	static JScrollBar scroll;

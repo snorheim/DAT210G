@@ -14,19 +14,20 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 
 public class ManyViewController {
 
-	private FolderTree folderTreeModel;
+	
 
 	private Main main;
 
@@ -56,6 +57,7 @@ public class ManyViewController {
 	
 
 	private ScrollPane scrollPane;
+	private StackPane stackPane;
 	private FlowPane drawPane;
 
 	private ZoomLevel currentZooom;
@@ -68,6 +70,7 @@ public class ManyViewController {
 	
 		scrollPane = new ScrollPane();
 		drawPane = new FlowPane();
+		stackPane = new StackPane();
 		
 	}
 
@@ -90,7 +93,7 @@ public class ManyViewController {
 
 
 
-		folderTreeModel.update();
+		FolderTree.update();
 
 
 		start();
@@ -115,9 +118,9 @@ public class ManyViewController {
 
 			if (!newDirectoryName.isEmpty()) {
 				ServerCommHandler.sendNewDirReqToServer(newDirectoryName,
-						folderTreeModel.getCurrentFolder().getFolderId());
+						FolderTree.getCurrentFolder().getFolderId());
 
-				folderTreeModel.update();
+				FolderTree.update();
 				start();
 
 			}
@@ -132,7 +135,7 @@ public class ManyViewController {
 
 		for (int i: pictureIds) {
 
-			for (OneImage image : folderTreeModel.getAllImagesList()) {
+			for (OneImage image : FolderTree.getAllImagesList()) {
 				if (image.getImageId() == i) {
 					filteredImages.add(image);
 				}
@@ -158,7 +161,7 @@ public class ManyViewController {
 		
 		int[] pictureIds = null;
 		if (!titleText.equals("")) {
-			pictureIds = ServerCommHandler.searchTilePictures(titleText, folderTreeModel.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchTilePictures(titleText, FolderTree.getCurrentFolder().getFolderId());
 		}
 
 		findImagesMatchingFilter(pictureIds);
@@ -180,7 +183,7 @@ public class ManyViewController {
 		int ratingCheck = Integer.parseInt(rating);
 		int[] pictureIds = null;
 		if (ratingCheck > 0 && ratingCheck < 6) {
-			pictureIds = ServerCommHandler.searchRatingPictures(rating, folderTreeModel.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchRatingPictures(rating, FolderTree.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
 		
@@ -198,7 +201,7 @@ public class ManyViewController {
 		
 		int[] pictureIds = null;
 		if (!description.equals("")) {
-			pictureIds = ServerCommHandler.searchDescriptionPictures(description, folderTreeModel.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchDescriptionPictures(description, FolderTree.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
 		
@@ -217,7 +220,7 @@ public class ManyViewController {
 		
 		int[] pictureIds = null;
 		if (!dateTime.equals("")) {
-			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, folderTreeModel.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, FolderTree.getCurrentFolder().getFolderId());
 		}
 		findImagesMatchingFilter(pictureIds);
 		
@@ -236,7 +239,7 @@ public class ManyViewController {
 		
 		int[] pictureIds = null;
 		if (!tags.equals("")) {
-			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
+			pictureIds = ServerCommHandler.searchTagsPictures(tags, FolderTree.getCurrentFolder().getFolderId());
 		}
 
 		findImagesMatchingFilter(pictureIds);
@@ -252,22 +255,27 @@ public class ManyViewController {
 
 		hboxForTree.getChildren().clear();
 
-		hboxForTree.getChildren().add(folderTreeModel.getTree());
+		hboxForTree.getChildren().add(FolderTree.getTree());
 
 	}
 
 	public void start() {
 
-		if (!folderTreeModel.isReady()) {
+		if (!FolderTree.isReady()) {
 
-			ProgressIndicator bar = new ProgressIndicator();
+			ProgressIndicator bar = new ProgressIndicator(0);
+			bar.setMaxSize(50, 50);
 			bar.progressProperty().bind(
-					folderTreeModel.getTask().progressProperty());
+					FolderTree.getTask().progressProperty());
 
 			
 			setupScrollingArea();
 			
-			anchorPaneForMany.getChildren().add(bar);
+			
+			
+			stackPane.getChildren().addAll(scrollPane, bar);
+			
+			
 			
 			
 			
@@ -278,7 +286,7 @@ public class ManyViewController {
 
 			beginDrawingImages();
 
-			folderTreeModel.setManyViewController(this);
+			FolderTree.setManyViewController(this);
 
 		}
 
@@ -296,19 +304,32 @@ public class ManyViewController {
 		
 		
 		
-		
+		drawPane.setEffect(new GaussianBlur());
 		
 		scrollPane.setContent(drawPane);
 		
-		anchorPaneForMany.getChildren().add(scrollPane);
+		anchorPaneForMany.getChildren().add(stackPane);
 		
 	}
 	
 	public void addImageDuringLoading(OneImage image) {
 		
-		System.out.println("**********************++ " + image.getThumbnailImage().getImage().getHeight());
+		drawPane.setPadding(new Insets(5, 0, 5, 0));
+		drawPane.setVgap(4);
+		drawPane.setHgap(4);
+
+		drawPane.prefWrapLengthProperty().bind(
+				anchorPaneForMany.widthProperty());
 		
-		drawPane.getChildren().add(image.getThumbnailImage());
+		
+		
+		
+		if (currentZooom == ZoomLevel.SMALL) {
+			drawPane.getChildren().add(image.getThumbnailImageWithoutMouseHandler());
+		} else if (currentZooom == ZoomLevel.MEDIUM) {
+			drawPane.getChildren().add(image.getMediumImageWithoutMouseHandler());
+		}
+		
 		
 		
 	}
@@ -336,6 +357,7 @@ public class ManyViewController {
 		
 		
 		drawPane.getChildren().clear();
+		drawPane.setEffect(null);
 
 		drawPane.setPadding(new Insets(5, 0, 5, 0));
 		drawPane.setVgap(4);
@@ -350,7 +372,7 @@ public class ManyViewController {
 			imagesToBeDisplayed = filteredImages;
 
 		} else {
-			imagesToBeDisplayed = folderTreeModel
+			imagesToBeDisplayed = FolderTree
 					.getImagesInThisFolderAndDown();
 
 		}
@@ -377,7 +399,7 @@ public class ManyViewController {
 
 	private void openFileChooser() {
 
-		// TODO: hvordan få til importere directories?
+		
 
 		ArrayList<String> fileTypes = new ArrayList<>();
 		fileTypes.add("*.jpg");
@@ -396,7 +418,7 @@ public class ManyViewController {
 		if (fileList != null) {
 			for (File file : fileList) {
 
-				ServerCommHandler.SendImageToServer(file, folderTreeModel.getCurrentFolder().getFolderId());
+				ServerCommHandler.SendImageToServer(file, FolderTree.getCurrentFolder().getFolderId());
 
 			}
 		}
@@ -435,8 +457,6 @@ public class ManyViewController {
 
 	}
 
-	public void setFolderTreeModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
-	}
+	
 
 }

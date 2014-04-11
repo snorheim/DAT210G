@@ -17,13 +17,13 @@ public class OneImage {
 	private ImageView thumbnailImage;
 	private ImageView mediumImage;
 	
-	private FolderTree folderTree;
+	
 
-	public OneImage(int imageId, int folderId, FolderTree folderTree) {
+	public OneImage(int imageId, int folderId) {
 
 		this.setImageId(imageId);
 		this.setFolderId(folderId);
-		this.folderTree = folderTree;
+		
 
 		cacheMeta();
 		cacheImages();
@@ -45,28 +45,11 @@ public class OneImage {
 	private void cacheImages() {
 		thumbnailImage = ServerCommHandler.getThumbnail(imageId);
 
-		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				
-				folderTree.setCurrentImage(OneImage.this);
-				folderTree.getMainController().setSingleMode();
-
-			}
-		});
+		
 
 		mediumImage = ServerCommHandler.getMediumImage(imageId);
 
-		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
-
-			@Override
-			public void handle(Event event) {
-				
-				folderTree.setCurrentImage(OneImage.this);
-				folderTree.getMainController().setSingleMode();
-			}
-		});
+		
 
 	}
 
@@ -87,13 +70,55 @@ public class OneImage {
 	}
 
 	public ImageView getThumbnailImage() {
+		
+		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				FolderTree.setCurrentImage(OneImage.this);
+				
+				FolderTree.getMain().setSingleMode();
+
+			}
+		});
 
 		return thumbnailImage;
 	}
 
 	public ImageView getMediumImage() {
+		
+		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
+
+			@Override
+			public void handle(Event event) {
+				
+				FolderTree.setCurrentImage(OneImage.this);
+				
+				FolderTree.getMain().setSingleMode();
+			}
+		});
 
 		return mediumImage;
+	}
+	
+	public ImageView getThumbnailImageWithoutMouseHandler() {
+		
+		ImageView image = thumbnailImage;
+		
+		image.setOnMouseClicked(null);
+
+		return image;
+	}
+
+	public ImageView getMediumImageWithoutMouseHandler() {
+		
+		ImageView image = mediumImage;		
+		
+		image.setOnMouseClicked(null);
+
+
+		return image;
 	}
 
 	public ImageView getFullImage() {

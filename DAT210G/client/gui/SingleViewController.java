@@ -21,7 +21,7 @@ import javafx.scene.layout.HBox;
 public class SingleViewController {
 
 	private Main mainController;
-	private FolderTree folderTreeModel;
+	
 
 	@FXML
 	private AnchorPane anchorPaneForSingle;
@@ -73,7 +73,7 @@ public class SingleViewController {
 		
 				
 
-		currentImage = folderTreeModel.getCurrentImage();
+		currentImage = FolderTree.getCurrentImage();
 		
 		
 
@@ -106,7 +106,7 @@ public class SingleViewController {
 
 		updateMetaFields();
 
-		currentFolder.setText(folderTreeModel.getCurrentFolder()
+		currentFolder.setText(FolderTree.getCurrentFolder()
 				.getFolderName());
 	}
 	
@@ -197,7 +197,7 @@ public class SingleViewController {
 
 		hasFullImageInMemory = false;
 		
-		folderTreeModel.getNextImageInImageList(currentImage);
+		FolderTree.getNextImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
@@ -210,7 +210,7 @@ public class SingleViewController {
 		
 		hasFullImageInMemory = false;
 
-		folderTreeModel.getPrevImageInImageList(currentImage);
+		FolderTree.getPrevImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
@@ -223,7 +223,7 @@ public class SingleViewController {
 		
 		hasFullImageInMemory = false;
 
-		imageToDisplay = folderTreeModel.getCurrentImage().getRotRight();
+		imageToDisplay = FolderTree.getCurrentImage().getRotRight();
 
 		showScaledToScreenImage();
 
@@ -234,7 +234,7 @@ public class SingleViewController {
 		
 		hasFullImageInMemory = false;
 
-		imageToDisplay = folderTreeModel.getCurrentImage().getRotLeft();
+		imageToDisplay = FolderTree.getCurrentImage().getRotLeft();
 
 		showScaledToScreenImage();
 
@@ -272,10 +272,7 @@ public class SingleViewController {
 
 	}
 
-	public void setModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
 
-	}
 	
 	public void addTagBtnAction() {
 		

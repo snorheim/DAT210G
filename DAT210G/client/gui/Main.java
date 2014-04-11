@@ -17,8 +17,7 @@ public class Main extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private Boolean contactWithServer;
-	private FolderTree folderTreeModel;
+	private Boolean contactWithServer;	
 	private Rectangle2D screenBounds;	
 	private Scene scene;
 	private AnchorPane manyModePane;	
@@ -62,6 +61,7 @@ public class Main extends Application {
 			// Give the controller access to Main
 			MainController mainController = loader.getController();
 			mainController.setMain(this);
+			FolderTree.setMain(this);
 
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -97,8 +97,8 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 		
-		folderTreeModel = new FolderTree(this);
-		folderTreeModel.setManyViewController(manyViewController);
+		
+		FolderTree.setManyViewController(manyViewController);
 
 		setManyMode(true);;
 
@@ -125,7 +125,7 @@ public class Main extends Application {
 			}
 			
 
-			manyViewController.setFolderTreeModel(folderTreeModel);
+			
 
 			manyViewController.start();
 
@@ -134,7 +134,7 @@ public class Main extends Application {
 
 	public void update() {
 		
-		folderTreeModel.update();
+		FolderTree.update();
 	}
 
 	/**
@@ -142,16 +142,15 @@ public class Main extends Application {
 	 */
 	public void setSingleMode() {
 		
-			
+		
 
-			System.out.println("ImageId: " + folderTreeModel.getCurrentImage().getImageId());
+			System.out.println("ImageId: " + FolderTree.getCurrentImage().getImageId());
 
 			rootLayout.setCenter(singleModePane);
 
 			// Give the controller access to the mainController
 			
-			
-			singleViewController.setModel(folderTreeModel);
+						
 			singleViewController.showScaledToScreenImage();
 
 			
