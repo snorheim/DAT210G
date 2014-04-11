@@ -145,7 +145,7 @@ public class WriteExif {
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
 			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
 			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
-			new ExifRewriter().updateExifMetadataLossless(destImageFile,
+			new ExifRewriter().updateExifMetadataLossless(imageFile,
 					bufferedOutPutStream, metaDataOutPutSet);
 			imageFile.delete();
 			destImageFile.renameTo(imageFile);
