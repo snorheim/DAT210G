@@ -223,7 +223,7 @@ public class ManyViewController {
 			if (!description.equals("")) {
 				pictureIds = ServerCommHandler.searchDescriptionPictures(
 						description, FolderTree.getCurrentFolder()
-								.getFolderId());
+						.getFolderId());
 			}
 			findImagesMatchingFilter(pictureIds);
 
@@ -238,44 +238,22 @@ public class ManyViewController {
 
 	@FXML
 	private void dateSearchAl() {
-<<<<<<< HEAD
-		String dateTime = dateTextField.getText();
-
-		if (!dateTime.isEmpty()) {
-
-			int[] pictureIds = null;
-			if (!dateTime.equals("")) {
-				pictureIds = ServerCommHandler.searchDateTimePictures(dateTime,
-						FolderTree.getCurrentFolder().getFolderId());
-			}
-			findImagesMatchingFilter(pictureIds);
-
-		} else {
-			beginDrawingImages();
-			updateFolderTree();
-=======
 		int[] pictureIds = null;
 		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
 			String fromDate = datePickerFromDate.getValue().toString();
 			String toDate = datePickerToDate.getValue().toString();
 			String dateValues = fromDate + ";" + toDate;
-			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, folderTreeModel.getCurrentFolder().getFolderId());
-		} else System.out.println("dialog boks me forklaring paa error yo");
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
->>>>>>> origin/9.4-kalender
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, FolderTree.getCurrentFolder().getFolderId());
+		} else {
+			beginDrawingImages();
+			updateFolderTree();
 		}
 	}
 
 	@FXML
 	private void tagSearchAl() {
-		// TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
-<<<<<<< HEAD
-
 		if (!tags.isEmpty()) {
-
 			int[] pictureIds = null;
 			if (!tags.equals("")) {
 				pictureIds = ServerCommHandler.searchTagsPictures(tags,
@@ -287,16 +265,6 @@ public class ManyViewController {
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
-=======
-		int[] pictureIds = null;
-		if (!tags.equals("")) {
-			pictureIds = ServerCommHandler.searchTagsPictures(tags, folderTreeModel.getCurrentFolder().getFolderId());
-		}
-
-		//TODO: update gui
-		for (int i: pictureIds) {
-			System.out.println(i);
->>>>>>> origin/9.4-kalender
 		}
 
 	}
@@ -311,17 +279,14 @@ public class ManyViewController {
 
 	public void start() {
 
-<<<<<<< HEAD
+
 		if (!FolderTree.isReady()) {
 
 			ProgressIndicator bar = new ProgressIndicator(0);
 			bar.setMaxSize(50, 50);
 			bar.progressProperty()
-					.bind(FolderTree.getTask().progressProperty());
-=======
-		if (!folderTreeModel.isReady()) {
-			
-			//TODO: flytt koden
+			.bind(FolderTree.getTask().progressProperty());
+
 			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
 			dateFromField.getChildren().add(datePickerFromDate);
 
@@ -331,12 +296,6 @@ public class ManyViewController {
 			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
 			calendarSettings.configFromDatePicker();
 			calendarSettings.configToDatePicker();
-			/////////////////////////////
-			
-			ProgressIndicator bar = new ProgressIndicator();
-			bar.progressProperty().bind(
-					folderTreeModel.getTask().progressProperty());
->>>>>>> origin/9.4-kalender
 
 			setupScrollingArea();
 
@@ -415,20 +374,12 @@ public class ManyViewController {
 		drawPane.setVgap(4);
 		drawPane.setHgap(4);
 
-<<<<<<< HEAD
+
 		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
 
 		if (filterImages) {
-=======
-		ArrayList<String> fileTypes = new ArrayList<>();
-		fileTypes.add("*.jpg");
-		fileTypes.add("*.jpeg");
-		fileTypes.add("*.png");
-		fileTypes.add("*.bmp");
->>>>>>> origin/9.4-kalender
-
 			imagesToBeDisplayed = filteredImages;
 
 		} else {
@@ -458,7 +409,7 @@ public class ManyViewController {
 	private void setModel() {
 
 		updateFolderTree();
-		
+
 		zoomSlider.valueProperty().addListener(new ChangeListener<Number>() {
 
 			@Override

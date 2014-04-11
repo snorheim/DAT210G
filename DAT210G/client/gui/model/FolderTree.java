@@ -28,7 +28,8 @@ public class FolderTree {
 	private static OneImage currentImage;
 	private static ArrayList<OneImage> imagesInThisFolderAndDown;
 	private static ArrayList<OneImage> allImagesList;
-
+	private static OneImage tempImage;
+	
 	private static ManyViewController manyViewController;
 	private static Main main;
 	private static Task<Void> task;
@@ -105,7 +106,7 @@ public class FolderTree {
 				ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 				for (int i = 0; i < imageIdsHere.length; i++) {
-					OneImage tempImage = new OneImage(imageIdsHere[i], 1);
+					tempImage = new OneImage(imageIdsHere[i], 1);
 					tempArrayList.add(tempImage);
 					allImagesList.add(tempImage);
 
@@ -164,7 +165,7 @@ public class FolderTree {
 					ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 					for (int i = 0; i < imageIdsHere.length; i++) {
-						OneImage tempImage = new OneImage(imageIdsHere[i], id);
+						tempImage = new OneImage(imageIdsHere[i], id);
 						tempArrayList.add(tempImage);
 
 						// TODO: legg inn bilde i view her

@@ -282,15 +282,8 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-<<<<<<< HEAD
-	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
-		List<PictureDb> returnList = new ArrayList<>();
-		Session dbSession = HibernateUtil.getSessionFactory().openSession();
-		Transaction dbTransaction = null;
-		try {
-			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
-=======
+	
+	//TODO: her var d conflict
 	public static int[] getPicturesBasedOnDate(String[] timeDate, int folderId) {
 		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
@@ -298,17 +291,11 @@ public class ReadFromDatabase {
 		try {
 			dbTransaction = dbSession.beginTransaction();			
 			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
->>>>>>> origin/9.4-kalender
 					folderId, dbSession);
-			for (PictureDb picture : picList) {
+			for (PictureDb picture : pictureDbList) {
 				if (picture.getDateTime() != null) {
-<<<<<<< HEAD
-					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
-						returnList.add(picture);
-=======
 					if (compareDates(picture.getDateTime(), timeDate[0], timeDate[1])) {
 						picturesMatchingCriteria.add(picture);
->>>>>>> origin/9.4-kalender
 					}
 				}
 			}
@@ -319,7 +306,7 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(returnList);
+		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
 		return pictureIdArray;
 	}
 	
