@@ -13,7 +13,6 @@ import communication.HttpServer;
 
 public class Loggy extends JFrame {
 
-	
 	private static final long serialVersionUID = 1L;
 	static final Dimension SIZE = new Dimension(500, 340);
 	static JTextArea console;
@@ -39,7 +38,7 @@ public class Loggy extends JFrame {
 	}
 
 	public static void log(String s) {
-		if(console == null) {
+		if (console == null) {
 			System.out.println(s);
 		} else {
 			console.setText(console.getText() + "\n" + s);

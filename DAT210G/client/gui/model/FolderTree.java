@@ -33,43 +33,32 @@ public class FolderTree {
 	private static Main main;
 	private static Task<Void> task;
 	private static boolean ready;
-	
-	
-	
-	
 
 	public FolderTree(Main mainn) {
 
-	
-		
 		ready = false;
 
 		main = mainn;
-		
+
 		currentFolderId = rootFolderId;
-		
-		
 
 	}
 
 	public static void update() {
-		
+
 		allImagesList = new ArrayList<>();
-		
+
 		ready = false;
 
 		task = new Task<Void>() {
-			
+
 			double progress = 0;
 			double progressGoal = ServerCommHandler.getAllImageIds().length;
-			
 
 			@Override
 			public Void call() {
 
 				updateTask();
-
-				
 
 				return null;
 			}
@@ -80,81 +69,84 @@ public class FolderTree {
 				super.succeeded();
 
 				ready = true;
-				
-				
 
 				manyViewController.start();
 
 			}
-			
-			
+
 			public void updateTask() {
-				
+
 				updateProgress((progress / progressGoal) * 100, 100);
 				treeView = new TreeView<>();
-				treeView.getSelectionModel().selectedItemProperty()
-						.addListener(new ChangeListener<TreeItem<FolderNode>>() {
-							public void changed(
-									ObservableValue<? extends TreeItem<FolderNode>> observableValue,
-									TreeItem<FolderNode> oldItem,
-									TreeItem<FolderNode> newItem) {
+				treeView.getSelectionModel()
+						.selectedItemProperty()
+						.addListener(
+								new ChangeListener<TreeItem<FolderNode>>() {
+									public void changed(
+											ObservableValue<? extends TreeItem<FolderNode>> observableValue,
+											TreeItem<FolderNode> oldItem,
+											TreeItem<FolderNode> newItem) {
 
-								
-								
-								currentFolder = newItem.getValue();
-								
-								currentFolderId = currentFolder.getFolderId();
-								
-								getImagesFromFolderAndDown(currentFolder.getFolderId());
-								manyViewController.beginDrawingImages();
+										currentFolder = newItem.getValue();
 
-							}
-						});
+										currentFolderId = currentFolder
+												.getFolderId();
 
-				
-				
+										getImagesFromFolderAndDown(currentFolder
+												.getFolderId());
+										manyViewController.beginDrawingImages();
+
+									}
+								});
+
 				rootNode = new FolderNode(null, rootFolderId, "/");
 				int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(1);
-				
+
 				ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 				for (int i = 0; i < imageIdsHere.length; i++) {
 					OneImage tempImage = new OneImage(imageIdsHere[i], 1);
 					tempArrayList.add(tempImage);
 					allImagesList.add(tempImage);
+
+					
+					Platform.runLater(new Runnable() {
+						@Override
+						public void run() {
+							manyViewController
+									.addImageDuringLoading(tempImage);
+						}
+					});
+					
 					
 					progress++;
-					
+
 					updateProgress((progress / progressGoal) * 100, 100);
-					System.out.println("***************************** Progress: " + (progress / progressGoal) * 100 + " / " + "100");
-					System.out.println(progress + " - " + progressGoal);
 					
+
 				}
-				rootNode.setImageList(tempArrayList);		
+				rootNode.setImageList(tempArrayList);
 
 				treeItemRoot = new TreeItem<FolderNode>(rootNode);
-				
+
 				treeItemRoot.setExpanded(true);
-						
+
 				if (currentFolder == null) {
 					currentFolder = rootNode;
 				}
 
-				
-				
 				buildTree(rootFolderId, rootNode, treeItemRoot);
 
 				treeView.setRoot(treeItemRoot);
-				
+
 				if (currentTreeItem == null) {
 					currentTreeItem = treeItemRoot;
 				}
-				
 
 				getImagesFromFolderAndDown(currentFolder.getFolderId());
-				
+
 				traverseUpRecursiveTreeItems(currentTreeItem);
-						
+
 			}
 
 			private void buildTree(int parentFolder, FolderNode parentNode,
@@ -167,73 +159,64 @@ public class FolderTree {
 
 				for (Integer id : subFolderIdAndName.keySet()) {
 
-					int[] imageIdsHere = ServerCommHandler.getAllImagesInFolder(id);
+					int[] imageIdsHere = ServerCommHandler
+							.getAllImagesInFolder(id);
 					ArrayList<OneImage> tempArrayList = new ArrayList<>();
 
 					for (int i = 0; i < imageIdsHere.length; i++) {
 						OneImage tempImage = new OneImage(imageIdsHere[i], id);
 						tempArrayList.add(tempImage);
-						
+
 						// TODO: legg inn bilde i view her
-						
-						
-						
-								
-								Platform.runLater(new Runnable() {
-				                    @Override public void run() {
-				                    	manyViewController.addImageDuringLoading(tempImage);
-				                    }
-				                });
-								
-								progress++;
-								
-								updateProgress((progress / progressGoal) * 100, 100);
-								System.out.println("***************************** Progress: " + (progress / progressGoal) * 100 + " / " + "100");
-								System.out.println(progress + " - " + progressGoal);
-						
-						
+
+						Platform.runLater(new Runnable() {
+							@Override
+							public void run() {
+								manyViewController
+										.addImageDuringLoading(tempImage);
+							}
+						});
+
+						progress++;
+
+						updateProgress((progress / progressGoal) * 100, 100);
+						System.out
+								.println("***************************** Progress: "
+										+ (progress / progressGoal)
+										* 100
+										+ " / " + "100");
+						System.out.println(progress + " - " + progressGoal);
+
 						allImagesList.add(tempImage);
 					}
 
-					tempNode = new FolderNode(null, id, subFolderIdAndName.get(id));
+					tempNode = new FolderNode(null, id,
+							subFolderIdAndName.get(id));
 
 					tempNode.setImageList(tempArrayList);
 
 					TreeItem<FolderNode> tempTreeItem = new TreeItem<FolderNode>(
 							tempNode);
-					
+
 					if (tempNode.getFolderId() == currentFolderId) {
 						currentTreeItem = tempTreeItem;
 					}
-					
 
 					parentTreeItem.getChildren().add(tempTreeItem);
 
 					parentNode.addChild(tempNode);
-					
-					
 
 					buildTree(id, tempNode, tempTreeItem);
 
 				}
 
 			}
-			
-			
+
 		};
-			
-			
 
 		new Thread(task).start();
 
 	}
-
-	
-
-		
-		
-	
-	
 
 	private static void getImagesFromFolderAndDown(int id) {
 
@@ -275,10 +258,10 @@ public class FolderTree {
 			traverseRecursive(child, returnList);
 		}
 	}
-	
+
 	private static void traverseUpRecursiveTreeItems(TreeItem<FolderNode> node) {
 
-		node.setExpanded(true);		
+		node.setExpanded(true);
 
 		if (node.getParent() != null) {
 			traverseUpRecursiveTreeItems(node.getParent());
@@ -360,7 +343,8 @@ public class FolderTree {
 		return treeItemRoot;
 	}
 
-	public static void setManyViewController(ManyViewController manyViewControllerr) {
+	public static void setManyViewController(
+			ManyViewController manyViewControllerr) {
 		manyViewController = manyViewControllerr;
 	}
 
@@ -381,7 +365,7 @@ public class FolderTree {
 		System.out.println("in foldertree");
 		return main;
 	}
-	
+
 	public static void setMain(Main mainn) {
 		main = mainn;
 	}

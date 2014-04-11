@@ -27,8 +27,6 @@ import javafx.stage.FileChooser;
 
 public class ManyViewController {
 
-	
-
 	private Main main;
 
 	@FXML
@@ -54,7 +52,6 @@ public class ManyViewController {
 
 	private boolean filterImages = false;
 	private ArrayList<OneImage> filteredImages;
-	
 
 	private ScrollPane scrollPane;
 	private StackPane stackPane;
@@ -65,13 +62,13 @@ public class ManyViewController {
 	private enum ZoomLevel {
 		SMALL, MEDIUM
 	}
-	
+
 	public ManyViewController() {
-	
+
 		scrollPane = new ScrollPane();
 		drawPane = new FlowPane();
 		stackPane = new StackPane();
-		
+
 	}
 
 	@FXML
@@ -87,32 +84,43 @@ public class ManyViewController {
 	@FXML
 	private void handleImportBtn() {
 
+		ArrayList<String> fileTypes = new ArrayList<>();
+		fileTypes.add("*.jpg");
+		fileTypes.add("*.jpeg");
+		fileTypes.add("*.png");
+		fileTypes.add("*.bmp");
 
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle("Import images");
+		fileChooser.getExtensionFilters().addAll(
+				new FileChooser.ExtensionFilter("All Images", fileTypes));
 
-		openFileChooser();
+		List<File> fileList = fileChooser.showOpenMultipleDialog(main
+				.getPrimaryStage());
 
+		if (fileList != null) {
+			for (File file : fileList) {
 
+				ServerCommHandler.SendImageToServer(file, FolderTree
+						.getCurrentFolder().getFolderId());
 
-		FolderTree.update();
+			}
 
+			FolderTree.update();
 
-		start();
+			start();
+
+		}
 
 	}
-
-
 
 	@FXML
 	private void handleNewDirectoryBtn() {
 
-
-		String newDirectoryName = Dialogs.create()
-				.masthead(null)
+		String newDirectoryName = Dialogs.create().masthead(null)
 				.title("Add a directory")
 
-				.message( "Enter name of new directory!")
-				.showTextInput();
-
+				.message("Enter name of new directory!").showTextInput();
 
 		if (newDirectoryName != null) {
 
@@ -131,9 +139,7 @@ public class ManyViewController {
 	private void findImagesMatchingFilter(int[] pictureIds) {
 		filteredImages = new ArrayList<>();
 
-
-
-		for (int i: pictureIds) {
+		for (int i : pictureIds) {
 
 			for (OneImage image : FolderTree.getAllImagesList()) {
 				if (image.getImageId() == i) {
@@ -146,9 +152,8 @@ public class ManyViewController {
 		filterImages = true;
 
 		beginDrawingImages();
-		
+
 		hboxForTree.getChildren().clear();
-		
 
 		filterImages = false;
 	}
@@ -156,16 +161,17 @@ public class ManyViewController {
 	@FXML
 	private void titleSearchAl() {
 		String titleText = titleTextField.getText();
-		
-		if (!titleText.isEmpty()) {
-		
-		int[] pictureIds = null;
-		if (!titleText.equals("")) {
-			pictureIds = ServerCommHandler.searchTilePictures(titleText, FolderTree.getCurrentFolder().getFolderId());
-		}
 
-		findImagesMatchingFilter(pictureIds);
-		
+		if (!titleText.isEmpty()) {
+
+			int[] pictureIds = null;
+			if (!titleText.equals("")) {
+				pictureIds = ServerCommHandler.searchTilePictures(titleText,
+						FolderTree.getCurrentFolder().getFolderId());
+			}
+
+			findImagesMatchingFilter(pictureIds);
+
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -175,18 +181,19 @@ public class ManyViewController {
 
 	@FXML
 	private void ratingSearchAl() {
-		//TODO: sjekke input
+		// TODO: sjekke input
 		String rating = ratingTextField.getText();
-		
+
 		if (!rating.isEmpty()) {
-		
-		int ratingCheck = Integer.parseInt(rating);
-		int[] pictureIds = null;
-		if (ratingCheck > 0 && ratingCheck < 6) {
-			pictureIds = ServerCommHandler.searchRatingPictures(rating, FolderTree.getCurrentFolder().getFolderId());
-		}
-		findImagesMatchingFilter(pictureIds);
-		
+
+			int ratingCheck = Integer.parseInt(rating);
+			int[] pictureIds = null;
+			if (ratingCheck > 0 && ratingCheck < 6) {
+				pictureIds = ServerCommHandler.searchRatingPictures(rating,
+						FolderTree.getCurrentFolder().getFolderId());
+			}
+			findImagesMatchingFilter(pictureIds);
+
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -196,15 +203,17 @@ public class ManyViewController {
 	@FXML
 	private void descSearchAl() {
 		String description = descTextField.getText();
-		
+
 		if (!description.isEmpty()) {
-		
-		int[] pictureIds = null;
-		if (!description.equals("")) {
-			pictureIds = ServerCommHandler.searchDescriptionPictures(description, FolderTree.getCurrentFolder().getFolderId());
-		}
-		findImagesMatchingFilter(pictureIds);
-		
+
+			int[] pictureIds = null;
+			if (!description.equals("")) {
+				pictureIds = ServerCommHandler.searchDescriptionPictures(
+						description, FolderTree.getCurrentFolder()
+								.getFolderId());
+			}
+			findImagesMatchingFilter(pictureIds);
+
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -215,15 +224,16 @@ public class ManyViewController {
 	@FXML
 	private void dateSearchAl() {
 		String dateTime = dateTextField.getText();
-		
+
 		if (!dateTime.isEmpty()) {
-		
-		int[] pictureIds = null;
-		if (!dateTime.equals("")) {
-			pictureIds = ServerCommHandler.searchDateTimePictures(dateTime, FolderTree.getCurrentFolder().getFolderId());
-		}
-		findImagesMatchingFilter(pictureIds);
-		
+
+			int[] pictureIds = null;
+			if (!dateTime.equals("")) {
+				pictureIds = ServerCommHandler.searchDateTimePictures(dateTime,
+						FolderTree.getCurrentFolder().getFolderId());
+			}
+			findImagesMatchingFilter(pictureIds);
+
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -232,18 +242,19 @@ public class ManyViewController {
 
 	@FXML
 	private void tagSearchAl() {
-		//TODO: bug ved nytt sok
+		// TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
-		
-		if (!tags.isEmpty()) {
-		
-		int[] pictureIds = null;
-		if (!tags.equals("")) {
-			pictureIds = ServerCommHandler.searchTagsPictures(tags, FolderTree.getCurrentFolder().getFolderId());
-		}
 
-		findImagesMatchingFilter(pictureIds);
-		
+		if (!tags.isEmpty()) {
+
+			int[] pictureIds = null;
+			if (!tags.equals("")) {
+				pictureIds = ServerCommHandler.searchTagsPictures(tags,
+						FolderTree.getCurrentFolder().getFolderId());
+			}
+
+			findImagesMatchingFilter(pictureIds);
+
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -265,20 +276,12 @@ public class ManyViewController {
 
 			ProgressIndicator bar = new ProgressIndicator(0);
 			bar.setMaxSize(50, 50);
-			bar.progressProperty().bind(
-					FolderTree.getTask().progressProperty());
+			bar.progressProperty()
+					.bind(FolderTree.getTask().progressProperty());
 
-			
 			setupScrollingArea();
-			
-			
-			
+
 			stackPane.getChildren().addAll(scrollPane, bar);
-			
-			
-			
-			
-			
 
 		} else {
 
@@ -291,55 +294,47 @@ public class ManyViewController {
 		}
 
 	}
-	
+
 	public void setupScrollingArea() {
 		anchorPaneForMany.getChildren().clear();
-		
+
 		drawPane.getChildren().clear();
-		
+
 		scrollPane.prefViewportWidthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		scrollPane.prefViewportHeightProperty().bind(
 				anchorPaneForMany.heightProperty());
-		
-		
-		
+
 		drawPane.setEffect(new GaussianBlur());
-		
+
 		scrollPane.setContent(drawPane);
-		
+
 		anchorPaneForMany.getChildren().add(stackPane);
-		
+
 	}
-	
+
 	public void addImageDuringLoading(OneImage image) {
-		
+
 		drawPane.setPadding(new Insets(5, 0, 5, 0));
 		drawPane.setVgap(4);
 		drawPane.setHgap(4);
 
 		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
-		
-		
-		
-		
-		if (currentZooom == ZoomLevel.SMALL) {
-			drawPane.getChildren().add(image.getThumbnailImageWithoutMouseHandler());
-		} else if (currentZooom == ZoomLevel.MEDIUM) {
-			drawPane.getChildren().add(image.getMediumImageWithoutMouseHandler());
-		}
-		
-		
-		
-	}
 
+		if (currentZooom == ZoomLevel.SMALL) {
+			drawPane.getChildren().add(
+					image.getThumbnailImageWithoutMouseHandler());
+		} else if (currentZooom == ZoomLevel.MEDIUM) {
+			drawPane.getChildren().add(
+					image.getMediumImageWithoutMouseHandler());
+		}
+
+	}
 
 	public void beginDrawingImages() {
 
 		anchorPaneForMany.getChildren().clear();
-
-		
 
 		scrollPane.setContent(drawImages());
 
@@ -352,10 +347,8 @@ public class ManyViewController {
 
 	}
 
-	
 	private FlowPane drawImages() {
-		
-		
+
 		drawPane.getChildren().clear();
 		drawPane.setEffect(null);
 
@@ -367,13 +360,12 @@ public class ManyViewController {
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
 
-		if (filterImages) { 
+		if (filterImages) {
 
 			imagesToBeDisplayed = filteredImages;
 
 		} else {
-			imagesToBeDisplayed = FolderTree
-					.getImagesInThisFolderAndDown();
+			imagesToBeDisplayed = FolderTree.getImagesInThisFolderAndDown();
 
 		}
 
@@ -384,46 +376,10 @@ public class ManyViewController {
 			} else if (currentZooom == ZoomLevel.MEDIUM) {
 				drawPane.getChildren().add(image.getMediumImage());
 			}
-			
 
 		}
 
 		return drawPane;
-		
-		
-	}
-
-	
-	
-	
-
-	private void openFileChooser() {
-
-		
-
-		ArrayList<String> fileTypes = new ArrayList<>();
-		fileTypes.add("*.jpg");
-		fileTypes.add("*.jpeg");
-		fileTypes.add("*.png");
-		fileTypes.add("*.bmp");
-
-		FileChooser fileChooser = new FileChooser();
-		fileChooser.setTitle("Import images");
-		fileChooser.getExtensionFilters().addAll(
-				new FileChooser.ExtensionFilter("All Images", fileTypes));
-
-		List<File> fileList = fileChooser.showOpenMultipleDialog(main
-				.getPrimaryStage());
-
-		if (fileList != null) {
-			for (File file : fileList) {
-
-				ServerCommHandler.SendImageToServer(file, FolderTree.getCurrentFolder().getFolderId());
-
-			}
-		}
-
-		
 
 	}
 
@@ -456,7 +412,5 @@ public class ManyViewController {
 		});
 
 	}
-
-	
 
 }

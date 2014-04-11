@@ -16,14 +16,11 @@ public class OneImage {
 
 	private ImageView thumbnailImage;
 	private ImageView mediumImage;
-	
-	
 
 	public OneImage(int imageId, int folderId) {
 
 		this.setImageId(imageId);
 		this.setFolderId(folderId);
-		
 
 		cacheMeta();
 		cacheImages();
@@ -45,11 +42,7 @@ public class OneImage {
 	private void cacheImages() {
 		thumbnailImage = ServerCommHandler.getThumbnail(imageId);
 
-		
-
 		mediumImage = ServerCommHandler.getMediumImage(imageId);
-
-		
 
 	}
 
@@ -70,14 +63,14 @@ public class OneImage {
 	}
 
 	public ImageView getThumbnailImage() {
-		
+
 		thumbnailImage.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
-				
+
 				FolderTree.setCurrentImage(OneImage.this);
-				
+
 				FolderTree.getMain().setSingleMode();
 
 			}
@@ -87,36 +80,35 @@ public class OneImage {
 	}
 
 	public ImageView getMediumImage() {
-		
+
 		mediumImage.setOnMouseClicked(new EventHandler<Event>() {
 
 			@Override
 			public void handle(Event event) {
-				
+
 				FolderTree.setCurrentImage(OneImage.this);
-				
+
 				FolderTree.getMain().setSingleMode();
 			}
 		});
 
 		return mediumImage;
 	}
-	
+
 	public ImageView getThumbnailImageWithoutMouseHandler() {
-		
+
 		ImageView image = thumbnailImage;
-		
+
 		image.setOnMouseClicked(null);
 
 		return image;
 	}
 
 	public ImageView getMediumImageWithoutMouseHandler() {
-		
-		ImageView image = mediumImage;		
-		
-		image.setOnMouseClicked(null);
 
+		ImageView image = mediumImage;
+
+		image.setOnMouseClicked(null);
 
 		return image;
 	}
@@ -188,7 +180,7 @@ public class OneImage {
 		Boolean success = ServerCommHandler.modifyTitle(imageId, string);
 
 		if (success) {
-			
+
 			cacheMeta();
 		}
 	}

@@ -21,7 +21,6 @@ import javafx.scene.layout.HBox;
 public class SingleViewController {
 
 	private Main mainController;
-	
 
 	@FXML
 	private AnchorPane anchorPaneForSingle;
@@ -41,7 +40,7 @@ public class SingleViewController {
 	private TextField titleTextField;
 	@FXML
 	private TextField descTextField;
-	
+
 	@FXML
 	private TextField dateTextField;
 	@FXML
@@ -50,37 +49,26 @@ public class SingleViewController {
 	private Label currentFolder;
 	@FXML
 	private HBox ratingHBox;
-	
-	
+
 	private Rating ratingStars;
 
 	private ImageView imageToDisplay;
 
 	private OneImage currentImage;
-	
+
 	private boolean hasFullImageInMemory = false;
-	
-	
-	
 
 	public void showScaledToScreenImage() {
-		
-		
-		
-		
+
 		anchorPaneForSingle.getChildren().clear();
-		
-		
-				
 
 		currentImage = FolderTree.getCurrentImage();
-		
-		
 
 		if (!hasFullImageInMemory) {
 			imageToDisplay = currentImage.getFullImage();
 			hasFullImageInMemory = true;
-			System.out.println("ImageView imageToDisplay er nå: " + currentImage.getImageId());
+			System.out.println("ImageView imageToDisplay er nå: "
+					+ currentImage.getImageId());
 		}
 
 		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
@@ -99,41 +87,29 @@ public class SingleViewController {
 				anchorPaneForSingle.heightProperty());
 		imageToDisplay.setPreserveRatio(true);
 
-		
-		
-		
 		anchorPaneForSingle.getChildren().add(imageToDisplay);
 
 		updateMetaFields();
 
-		currentFolder.setText(FolderTree.getCurrentFolder()
-				.getFolderName());
+		currentFolder.setText(FolderTree.getCurrentFolder().getFolderName());
 	}
-	
+
 	private void makeRatingStars() {
-		
-	
-		
+
 		ratingStars = new Rating(5);
-		
+
 		ratingStars.setId("ratingStars");
-		
-		
-		
-       
-        
-        
-        ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
-            @Override public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                System.out.println("Rating = " + t1);
-            }
-        });
-		
+
+		ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number t,
+					Number t1) {
+				System.out.println("Rating = " + t1);
+			}
+		});
+
 		ratingHBox.getChildren().addAll(ratingStars);
-		
-		
-		
-		
+
 	}
 
 	private void showFullImage() {
@@ -195,18 +171,22 @@ public class SingleViewController {
 	@FXML
 	private void nextBtnAction() {
 
+		disableButtons();
 		hasFullImageInMemory = false;
-		
+
 		FolderTree.getNextImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
 		showScaledToScreenImage();
 
+		enableButtons();
 	}
 
 	@FXML
 	private void prevBtnAction() {
+
+		disableButtons();
 		
 		hasFullImageInMemory = false;
 
@@ -216,10 +196,13 @@ public class SingleViewController {
 
 		showScaledToScreenImage();
 
+		enableButtons();
 	}
 
 	@FXML
 	private void rotRightBtnAction() {
+
+		disableButtons();
 		
 		hasFullImageInMemory = false;
 
@@ -227,80 +210,114 @@ public class SingleViewController {
 
 		showScaledToScreenImage();
 
+		enableButtons();
 	}
 
 	@FXML
 	private void rotLeftBtnAction() {
+
+		disableButtons();
 		
 		hasFullImageInMemory = false;
 
 		imageToDisplay = FolderTree.getCurrentImage().getRotLeft();
 
 		showScaledToScreenImage();
-
+		
+		enableButtons();
 	}
 
 	@FXML
 	private void storeMetaBtnAction() {
 
+		disableButtons();
+		
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
 		
+		enableButtons();
 
 	}
-
-	
 
 	private void ratingTextFieldAction() {
 		
+		disableButtons();
+
 		int rating = (int) ratingStars.getRating();
-		
+
 		String stringOfRating = String.valueOf(rating);
-		
+
 		currentImage.modifyRating(stringOfRating);
 
+		enableButtons();
+		
 	}
 
 	private void descTextFieldAction() {
+		
+		disableButtons();
 		currentImage.modifyDesc(descTextField.getText());
-
+		enableButtons();
+		
 	}
 
 	private void titleTextFieldAction() {
+		disableButtons();
 		currentImage.modifyTitle(titleTextField.getText());
 
+		enableButtons();
 	}
 
-
-	
 	public void addTagBtnAction() {
-		
-		
-		String tagToAdd = Dialogs.create()
-			     .masthead(null)
-			      .title("Add a tag")
-			 
-			      .message( "Enter a tag!")
-			      .showTextInput();
-		
-		
+
+		disableButtons();
+		String tagToAdd = Dialogs.create().masthead(null).title("Add a tag")
+
+		.message("Enter a tag!").showTextInput();
+
 		if (tagToAdd != null) {
-		 
+
 			if (!tagToAdd.isEmpty()) {
 				currentImage.addTag(tagToAdd);
 				updateMetaFields();
-				
+
 			}
 		}
 		
+		enableButtons();
+
+	}
+
+	public void addTag(String tag) {
+
+		currentImage.addTag(tag);
+
+	}
+	
+	private void disableButtons() {
+		
+		System.out.println("diabling buttons");
+		
+		homeBtn.setDisable(true);
+		nextBtn.setDisable(true);
+		prevBtn.setDisable(true);
+		rotLeftBtn.setDisable(true);
+		rotRightBtn.setDisable(true);
+		storeMetaBtn.setDisable(true);
 		
 	}
 	
-	public void addTag(String tag) {
+	private void enableButtons() {
 		
-		currentImage.addTag(tag);
+		System.out.println("enabling buttons");
 		
+		homeBtn.setDisable(false);
+		nextBtn.setDisable(false);
+		prevBtn.setDisable(false);
+		rotLeftBtn.setDisable(false);
+		rotRightBtn.setDisable(false);
+		storeMetaBtn.setDisable(false);
 	}
 
 }

@@ -17,18 +17,16 @@ public class Main extends Application {
 
 	private Stage primaryStage;
 	private BorderPane rootLayout;
-	private Boolean contactWithServer;	
-	private Rectangle2D screenBounds;	
+	private Boolean contactWithServer;
+	private Rectangle2D screenBounds;
 	private Scene scene;
-	private AnchorPane manyModePane;	
+	private AnchorPane manyModePane;
 	private AnchorPane singleModePane;
 	private ManyViewController manyViewController;
 	private SingleViewController singleViewController;
 
 	@Override
 	public void init() {
-
-		
 
 		System.out.println("Contact with server: " + contactWithServer);
 
@@ -53,10 +51,9 @@ public class Main extends Application {
 			scene = new Scene(rootLayout, screenBounds.getWidth() / 2,
 					screenBounds.getHeight() / 2);
 
-			
 			// TODO: Lag bedre css style sheet!!!!!!!
-			//scene.getStylesheets().add(
-			//		getClass().getResource("view/style.css").toExternalForm());
+			// scene.getStylesheets().add(
+			// getClass().getResource("view/style.css").toExternalForm());
 
 			// Give the controller access to Main
 			MainController mainController = loader.getController();
@@ -70,9 +67,7 @@ public class Main extends Application {
 			// Exception if fxml file isn't loaded
 			e.printStackTrace();
 		}
-		
-		
-		
+
 		try {
 			FXMLLoader loader = new FXMLLoader(
 					Main.class.getResource("view/ManyView.fxml"));
@@ -83,7 +78,7 @@ public class Main extends Application {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		try {
 			// Load the fxml file and set into the center of the main layout
 			FXMLLoader loader = new FXMLLoader(
@@ -96,44 +91,33 @@ public class Main extends Application {
 			// Exception gets thrown if the fxml file could not be loaded
 			e.printStackTrace();
 		}
-		
-		
+
 		FolderTree.setManyViewController(manyViewController);
 
-		setManyMode(true);;
+		setManyMode(true);
+		;
 
 	}
-	
-	
-	
-
 
 	/**
 	 * Shows the thumbnails scene.
 	 */
 	public void setManyMode(boolean doUpdate) {
-	
-			rootLayout.setCenter(manyModePane);
 
-			// Give the controller access to the mainController
-			
-			
+		rootLayout.setCenter(manyModePane);
 
-			
-			if (doUpdate) {
-				update();
-			}
-			
+		// Give the controller access to the mainController
 
-			
+		if (doUpdate) {
+			update();
+		}
 
-			manyViewController.start();
+		manyViewController.start();
 
-	
 	}
 
 	public void update() {
-		
+
 		FolderTree.update();
 	}
 
@@ -141,19 +125,16 @@ public class Main extends Application {
 	 * Shows the single image scene.
 	 */
 	public void setSingleMode() {
-		
-		
 
-			System.out.println("ImageId: " + FolderTree.getCurrentImage().getImageId());
+		System.out.println("ImageId: "
+				+ FolderTree.getCurrentImage().getImageId());
 
-			rootLayout.setCenter(singleModePane);
+		rootLayout.setCenter(singleModePane);
 
-			// Give the controller access to the mainController
-			
-						
-			singleViewController.showScaledToScreenImage();
+		// Give the controller access to the mainController
 
-			
+		singleViewController.showScaledToScreenImage();
+
 	}
 
 	public Stage getPrimaryStage() {
