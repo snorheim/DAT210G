@@ -1,8 +1,11 @@
 package gui;
 
 import java.io.File;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.controlsfx.dialog.Dialogs;
 
@@ -14,6 +17,8 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -24,6 +29,7 @@ import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
+import javafx.util.Callback;
 
 public class ManyViewController {
 
@@ -42,7 +48,11 @@ public class ManyViewController {
 	@FXML
 	private TextField ratingTextField;
 	@FXML
-	private TextField dateTextField;
+	private HBox dateFromField;
+	@FXML
+	private HBox dateToField;
+	@FXML
+	private Button searchByDateButton;
 	@FXML
 	private TextField tagsTextField;
 	@FXML
@@ -58,6 +68,9 @@ public class ManyViewController {
 	private FlowPane drawPane;
 
 	private ZoomLevel currentZooom;
+
+	private DatePicker datePickerFromDate;
+	private DatePicker datePickerToDate;
 
 	private enum ZoomLevel {
 		SMALL, MEDIUM
@@ -181,7 +194,6 @@ public class ManyViewController {
 
 	@FXML
 	private void ratingSearchAl() {
-		// TODO: sjekke input
 		String rating = ratingTextField.getText();
 
 		if (!rating.isEmpty()) {
@@ -210,7 +222,7 @@ public class ManyViewController {
 			if (!description.equals("")) {
 				pictureIds = ServerCommHandler.searchDescriptionPictures(
 						description, FolderTree.getCurrentFolder()
-								.getFolderId());
+						.getFolderId());
 			}
 			findImagesMatchingFilter(pictureIds);
 
@@ -221,19 +233,17 @@ public class ManyViewController {
 
 	}
 
+
+
 	@FXML
 	private void dateSearchAl() {
-		String dateTime = dateTextField.getText();
-
-		if (!dateTime.isEmpty()) {
-
-			int[] pictureIds = null;
-			if (!dateTime.equals("")) {
-				pictureIds = ServerCommHandler.searchDateTimePictures(dateTime,
-						FolderTree.getCurrentFolder().getFolderId());
-			}
+		int[] pictureIds = null;
+		if (datePickerFromDate.getValue() != null && datePickerToDate.getValue() != null) {
+			String fromDate = datePickerFromDate.getValue().toString();
+			String toDate = datePickerToDate.getValue().toString();
+			String dateValues = fromDate + ";" + toDate;
+			pictureIds = ServerCommHandler.searchDateTimePictures(dateValues, FolderTree.getCurrentFolder().getFolderId());
 			findImagesMatchingFilter(pictureIds);
-
 		} else {
 			beginDrawingImages();
 			updateFolderTree();
@@ -242,11 +252,8 @@ public class ManyViewController {
 
 	@FXML
 	private void tagSearchAl() {
-		// TODO: bug ved nytt sok
 		String tags = tagsTextField.getText().toLowerCase();
-
 		if (!tags.isEmpty()) {
-
 			int[] pictureIds = null;
 			if (!tags.equals("")) {
 				pictureIds = ServerCommHandler.searchTagsPictures(tags,
@@ -272,19 +279,30 @@ public class ManyViewController {
 
 	public void start() {
 
+
 		if (!FolderTree.isReady()) {
 
 			ProgressIndicator bar = new ProgressIndicator(0);
 			bar.setMaxSize(50, 50);
 			bar.progressProperty()
-					.bind(FolderTree.getTask().progressProperty());
+			.bind(FolderTree.getTask().progressProperty());
 
 			setupScrollingArea();
 
 			stackPane.getChildren().addAll(scrollPane, bar);
 
 		} else {
-
+			dateFromField.getChildren().clear();
+			dateToField.getChildren().clear();
+			
+			datePickerFromDate = new DatePicker(LocalDate.now().minusDays(1));
+			dateFromField.getChildren().add(datePickerFromDate);
+			datePickerToDate = new DatePicker(LocalDate.now());
+			dateToField.getChildren().add(datePickerToDate);
+			CalendarSettings calendarSettings = new CalendarSettings(datePickerFromDate, datePickerToDate);
+			calendarSettings.configFromDatePicker();
+			calendarSettings.configToDatePicker();
+			
 			setModel();
 
 			beginDrawingImages();
@@ -356,12 +374,12 @@ public class ManyViewController {
 		drawPane.setVgap(4);
 		drawPane.setHgap(4);
 
+
 		drawPane.prefWrapLengthProperty().bind(
 				anchorPaneForMany.widthProperty());
 		ArrayList<OneImage> imagesToBeDisplayed;
 
 		if (filterImages) {
-
 			imagesToBeDisplayed = filteredImages;
 
 		} else {

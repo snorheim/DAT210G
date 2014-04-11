@@ -30,7 +30,8 @@ public class FolderTree {
 	private static OneImage currentImage;
 	private static ArrayList<OneImage> imagesInThisFolderAndDown;
 	private static ArrayList<OneImage> allImagesList;
-
+	private static OneImage tempImage;
+	
 	private static ManyViewController manyViewController;
 	private static Main main;
 	private static Task<Void> task;
