@@ -249,6 +249,8 @@ public class ManyViewController {
 		enableNodes(ratingStars);
 
 	}
+	
+	
 
 	@FXML
 	private void descSearchAl() {
@@ -483,6 +485,7 @@ public class ManyViewController {
 
 	}
 
+	// De to neste metodene trengs kanskje ikke
 	private void disableNodes(Node doNotDisableThis) {
 
 		if (!titleTextField.equals(doNotDisableThis)) {
@@ -523,6 +526,17 @@ public class ManyViewController {
 
 		if (!searchByDateButton.equals(doNotDisableThis))
 			searchByDateButton.setDisable(false);
+	}
+	
+	@FXML
+	private void clearSearch() {
+		
+		ratingStars.setRating(0);
+		titleTextField.clear();
+		descTextField.clear();
+		tagsTextField.clear();
+		main.setManyMode(false);
+		
 	}
 
 }
