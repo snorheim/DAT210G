@@ -200,17 +200,19 @@ public class Loggy extends JFrame implements ActionListener {
 
 	public static void main(String[] args) {
 		getInstance();
+		Thread t2 = new Thread() {
+			public void run() {
+				HttpServer.main(null);
+			}
+		};
+		for (int i = 0; i < 100000; i++)
+			System.out.println("VENTER " + i);
 		Thread t1 = new Thread() {
 			public void run() {
 				Main.main(null);
 			}
 		};
 		t1.start();
-		Thread t2 = new Thread() {
-			public void run() {
-				HttpServer.main(null);
-			}
-		};
 		t2.start();
 
 		while (true) {
