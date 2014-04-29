@@ -5,7 +5,8 @@ import gui.Main;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -52,13 +53,6 @@ public class Loggy extends JFrame implements ActionListener {
 		console.setAutoscrolls(true);
 
 		scrollpane = new JScrollPane(console);
-		scrollpane.getVerticalScrollBar().addAdjustmentListener(
-				new AdjustmentListener() {
-					public void adjustmentValueChanged(AdjustmentEvent e) {
-						e.getAdjustable().setValue(
-								e.getAdjustable().getMaximum());
-					}
-				});
 		add(scrollpane, BorderLayout.CENTER);
 
 		filterPanel = new JPanel();
@@ -189,6 +183,7 @@ public class Loggy extends JFrame implements ActionListener {
 			sb.append(sourceName + ":\t" + le.getMessage() + "\n");
 		}
 		console.setText(sb.toString());
+		console.setCaretPosition(console.getDocument().getLength());
 	}
 
 	public static void log(String message, int source) {
