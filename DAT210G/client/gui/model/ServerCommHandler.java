@@ -12,15 +12,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import logic.RequestClient;
 import logic.ResponseClient;
-
 import communication.JsonClient;
 
-/**
- * Created by Ronnie on 12.02.14.
- * 
- * Denne snakker med HttpClient og JsonClient
- * 
- */
+
 public class ServerCommHandler {
 
 	public static int[] getAllImageIds() {
@@ -41,44 +35,6 @@ public class ServerCommHandler {
 	}
 
 
-
-	public static ImageView getThumbnail(int imageID) {
-
-		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
-				"getThumbnail", imageID));
-		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson
-					.receiveJsonFromServer();
-			if (getThumbnailResponse.getSuccess()) {
-				bufImage = getThumbnailJson.receiveImageFromServer();
-
-			}
-			getThumbnailJson.closeHttpConnection();
-		}
-
-		Image image = null;
-
-		if (bufImage != null) {
-			// TODO: FOR DEBUG
-
-			Graphics2D g = (Graphics2D) bufImage.createGraphics();
-			Font font = new Font("Verdana", Font.ITALIC, 24);
-			g.setFont(font);
-			g.setColor(Color.RED);
-			g.drawString(String.valueOf(imageID), 15, 15);
-
-			image = SwingFXUtils.toFXImage(bufImage, null);
-		}
-
-		// For testing
-		if (image == null) {
-			image = new Image("testthumbnail.png");
-		}
-
-		return new ImageView(image);
-
-	}
 
 	public static boolean sendNewDirReqToServer(String dirName, int parentId) {
 		boolean success = false;
@@ -103,7 +59,7 @@ public class ServerCommHandler {
 		}
 		return pictureIdArray;		
 	}
-	
+
 	public static int[] searchRatingPictures(String rating, int parentId) {
 		int[] pictureIdArray = null;
 		JsonClient sendRating = new JsonClient(new RequestClient("getImagesWithMinRating", parentId, rating));
@@ -125,7 +81,7 @@ public class ServerCommHandler {
 		}
 		return pictureIdArray;
 	}
-	
+
 	public static int[] searchDateTimePictures(String dateTime, int parentId) {
 		int[] pictureIdArray = null;
 		JsonClient sendDateTime = new JsonClient(new RequestClient("getImagesWithDateTime", parentId, dateTime));
@@ -136,7 +92,7 @@ public class ServerCommHandler {
 		}
 		return pictureIdArray;
 	}
-	
+
 	public static int[] searchTagsPictures(String tag, int parentId) {
 		int[] pictureIdArray = null;
 		JsonClient sendTag = null;
@@ -152,7 +108,7 @@ public class ServerCommHandler {
 		}
 		return pictureIdArray;
 	}
-	
+
 	public static boolean SendImageToServer(File fileToSend, int parentId) {
 
 		boolean success = false;
@@ -271,11 +227,7 @@ public class ServerCommHandler {
 		if (bufImage != null) {
 			// TODO: FOR DEBUG
 
-			Graphics2D g = (Graphics2D) bufImage.createGraphics();
-			Font font = new Font("Verdana", Font.ITALIC, 24);
-			g.setFont(font);
-			g.setColor(Color.RED);
-			g.drawString(String.valueOf(imageID), 15, 15);
+			addDebugNumber(imageID, bufImage);
 
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
@@ -306,11 +258,7 @@ public class ServerCommHandler {
 		if (bufImage != null) {
 			// TODO: FOR DEBUG
 
-			Graphics2D g = (Graphics2D) bufImage.createGraphics();
-			Font font = new Font("Verdana", Font.ITALIC, 24);
-			g.setFont(font);
-			g.setColor(Color.RED);
-			g.drawString(String.valueOf(imageID), 15, 15);
+			addDebugNumber(imageID, bufImage);
 
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
@@ -322,6 +270,51 @@ public class ServerCommHandler {
 
 		return new ImageView(image);
 	}
+
+	public static ImageView getThumbnail(int imageID) {
+	
+		BufferedImage bufImage = null;
+		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
+				"getThumbnail", imageID));
+		if (getThumbnailJson.sendJsonToServer()) {
+			ResponseClient getThumbnailResponse = getThumbnailJson
+					.receiveJsonFromServer();
+			if (getThumbnailResponse.getSuccess()) {
+				bufImage = getThumbnailJson.receiveImageFromServer();
+	
+			}
+			getThumbnailJson.closeHttpConnection();
+		}
+	
+		Image image = null;
+	
+		if (bufImage != null) {
+			// TODO: FOR DEBUG
+	
+			addDebugNumber(imageID, bufImage);
+	
+			image = SwingFXUtils.toFXImage(bufImage, null);
+		}
+	
+		// For testing
+		if (image == null) {
+			image = new Image("testthumbnail.png");
+		}
+	
+		return new ImageView(image);
+	
+	}
+	
+	private static void addDebugNumber(int imageID, BufferedImage bufImage) {
+		Graphics2D g = (Graphics2D) bufImage.createGraphics();
+		Font font = new Font("Verdana", Font.ITALIC, 24);
+		g.setFont(font);
+		g.setColor(Color.RED);
+		g.drawString(String.valueOf(imageID), 15, 15);
+		
+	}
+
+
 
 	public static String[] getMetaData(int imageID) {
 
@@ -489,6 +482,7 @@ public class ServerCommHandler {
 
 		return new ImageView(image);
 	}
+
 
 
 

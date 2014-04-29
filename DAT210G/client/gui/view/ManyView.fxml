@@ -21,8 +21,8 @@
       <left>
         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="600.0" prefWidth="288.0">
           <children>
-            <Button fx:id="importBtn" layoutX="30.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleImportBtn" text="Import" />
-            <Button fx:id="dirButton" layoutX="120.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleNewDirectoryBtn" text="Add Directory" />
+            <Button fx:id="importBtn" layoutX="19.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleImportBtn" text="Import" />
+            <Button fx:id="dirButton" layoutX="166.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleNewDirectoryBtn" text="Add Directory" />
             <GridPane layoutX="14.0" layoutY="87.0" prefWidth="267.0">
               <children>
                 <Label text="Title" GridPane.columnIndex="0" GridPane.rowIndex="0" />
@@ -69,6 +69,7 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
               </rowConstraints>
             </GridPane>
+            <Button fx:id="refreshBtn" layoutX="96.0" layoutY="14.0" mnemonicParsing="false" onAction="#handleRefreshBtn" text="Refresh" />
           </children>
           <padding>
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" fx:id="x1" />

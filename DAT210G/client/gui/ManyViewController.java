@@ -128,6 +128,15 @@ public class ManyViewController {
 		}
 
 	}
+	
+	@FXML
+	private void handleRefreshBtn() {
+		
+		FolderTree.update();
+		
+		start();
+		
+	}
 
 	private void makeRatingStars() {
 
