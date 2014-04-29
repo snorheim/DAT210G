@@ -40,41 +40,7 @@ public class ServerCommHandler {
 		return allImageId;
 	}
 
-	public static int[] getImagesInFolderAndSubfolders(int id) {
-		int[] allImageId = null;
-		JsonClient getAllImagesJson = new JsonClient(new RequestClient(
-				"getImagesInFolderAndSubfolders", id));
-		if (getAllImagesJson.sendJsonToServer()) {
-			ResponseClient getAllImagesResponse = getAllImagesJson
-					.receiveJsonFromServer();
-			if (getAllImagesResponse.getSuccess()) {
-				allImageId = getAllImagesResponse.getImageIdArray();
-			}
-			getAllImagesJson.closeHttpConnection();
-		} else {
-			return null;
-		}
 
-		return allImageId;
-	}
-
-	public static int[] getImagesInFolder(int id) {
-		int[] allImageId = null;
-		JsonClient getAllImagesJson = new JsonClient(new RequestClient(
-				"getImagesInFolder", id));
-		if (getAllImagesJson.sendJsonToServer()) {
-			ResponseClient getAllImagesResponse = getAllImagesJson
-					.receiveJsonFromServer();
-			if (getAllImagesResponse.getSuccess()) {
-				allImageId = getAllImagesResponse.getImageIdArray();
-			}
-			getAllImagesJson.closeHttpConnection();
-		} else {
-			return null;
-		}
-
-		return allImageId;
-	}
 
 	public static ImageView getThumbnail(int imageID) {
 
@@ -255,33 +221,7 @@ public class ServerCommHandler {
 
 	}
 
-	public static int[] getSubFoldersIdArray(int id) {
 
-		int[] subFoldersId = null;
-
-		JsonClient json = new JsonClient(new RequestClient("getSubFolders", id,
-				null));
-
-		if (json.sendJsonToServer()) {
-
-			ResponseClient response = json.receiveJsonFromServer();
-
-			System.out.println(response.toString());
-
-			if (response.getSuccess()) {
-				System.out.println("sucess");
-				subFoldersId = response.getImageIdArray();
-
-			}
-			json.closeHttpConnection();
-		} else {
-			System.out.println("fail2");
-
-		}
-
-		return subFoldersId;
-
-	}
 
 	public static int[] getAllImagesInFolder(int id) {
 
