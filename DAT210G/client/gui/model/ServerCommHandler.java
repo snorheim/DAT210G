@@ -1,7 +1,6 @@
 package gui.model;
 
-import java.awt.Color;
-import java.awt.Font;
+
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -208,26 +207,16 @@ public class ServerCommHandler {
 	}
 
 	public static ImageView getFullImage(int imageID) {
-		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
-				"getFullImage", imageID));
-		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson
-					.receiveJsonFromServer();
-			if (getThumbnailResponse.getSuccess()) {
-				bufImage = getThumbnailJson.receiveImageFromServer();
-			}
-			getThumbnailJson.closeHttpConnection();
-		}
 
-		// TODO: FOR DEBUG
+
+		BufferedImage bufImage = getImageWithCommand("getFullImage", imageID);
 
 		Image image = null;
 
 		if (bufImage != null) {
 			// TODO: FOR DEBUG
 
-			addDebugNumber(imageID, bufImage);
+
 
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
@@ -241,24 +230,16 @@ public class ServerCommHandler {
 	}
 
 	public static ImageView getMediumImage(int imageID) {
-		BufferedImage bufImage = null;
-		JsonClient getMediumJson = new JsonClient(new RequestClient(
-				"getFullImageWithDimensions", imageID, "500;500"));
-		if (getMediumJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getMediumJson
-					.receiveJsonFromServer();
-			if (getThumbnailResponse.getSuccess()) {
-				bufImage = getMediumJson.receiveImageFromServer();
-			}
-			getMediumJson.closeHttpConnection();
-		}
+
+		
+		BufferedImage bufImage = getImageWithCommand("getFullImageWithDimensions", imageID);
 
 		Image image = null;
 
 		if (bufImage != null) {
 			// TODO: FOR DEBUG
 
-			addDebugNumber(imageID, bufImage);
+
 
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
@@ -272,48 +253,72 @@ public class ServerCommHandler {
 	}
 
 	public static ImageView getThumbnail(int imageID) {
-	
-		BufferedImage bufImage = null;
-		JsonClient getThumbnailJson = new JsonClient(new RequestClient(
-				"getThumbnail", imageID));
-		if (getThumbnailJson.sendJsonToServer()) {
-			ResponseClient getThumbnailResponse = getThumbnailJson
-					.receiveJsonFromServer();
-			if (getThumbnailResponse.getSuccess()) {
-				bufImage = getThumbnailJson.receiveImageFromServer();
-	
-			}
-			getThumbnailJson.closeHttpConnection();
-		}
-	
+
+
+		
+		BufferedImage bufImage = getImageWithCommand("getThumbnail", imageID);
+
 		Image image = null;
-	
+
 		if (bufImage != null) {
-			// TODO: FOR DEBUG
-	
-			addDebugNumber(imageID, bufImage);
-	
+			// TODO: FOR DEBUG		
+
 			image = SwingFXUtils.toFXImage(bufImage, null);
 		}
-	
+
 		// For testing
 		if (image == null) {
 			image = new Image("testthumbnail.png");
 		}
-	
+
 		return new ImageView(image);
-	
-	}
-	
-	private static void addDebugNumber(int imageID, BufferedImage bufImage) {
-		Graphics2D g = (Graphics2D) bufImage.createGraphics();
-		Font font = new Font("Verdana", Font.ITALIC, 24);
-		g.setFont(font);
-		g.setColor(Color.RED);
-		g.drawString(String.valueOf(imageID), 15, 15);
-		
+
 	}
 
+
+	private static BufferedImage getImageWithCommand(String command, int imageID) {
+
+		BufferedImage bufImage = null;
+
+		if (command.equals("getFullImageWithDimensions")) {
+
+			
+			JsonClient getMediumJson = new JsonClient(new RequestClient(
+					"getFullImageWithDimensions", imageID, "500;500"));
+			if (getMediumJson.sendJsonToServer()) {
+				ResponseClient getThumbnailResponse = getMediumJson
+						.receiveJsonFromServer();
+				if (getThumbnailResponse.getSuccess()) {
+					bufImage = getMediumJson.receiveImageFromServer();
+				}
+				getMediumJson.closeHttpConnection();
+			}
+
+
+		} else {
+
+			
+			JsonClient getJson = new JsonClient(new RequestClient(
+					command, imageID));
+			if (getJson.sendJsonToServer()) {
+				ResponseClient getResponse = getJson
+						.receiveJsonFromServer();
+				if (getResponse.getSuccess()) {
+					bufImage = getJson.receiveImageFromServer();
+
+				}
+				getJson.closeHttpConnection();
+				
+				
+			}
+
+
+
+		}
+
+
+		return bufImage;
+	}
 
 
 	public static String[] getMetaData(int imageID) {
@@ -425,23 +430,15 @@ public class ServerCommHandler {
 			getThumbnailJson.closeHttpConnection();
 		}
 
-		// TODO: FOR DEBUG
 
-		// String text = String.valueOf(imageID)
-		// + " rotated left: Ikkje klart på serveren ennå";
 		Graphics2D g = null;
 		try {
 			g = (Graphics2D) bufImage.createGraphics();
 		} catch (Exception e) {
 			return null;
 		}
-		Font font = new Font("Verdana", Font.ITALIC, 24);
-		g.setFont(font);
-		g.setColor(Color.RED);
-		// g.drawString(text, 20, 20);
 
-		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
-		// blander swing og JavaFX?
+
 		Image image = SwingFXUtils.toFXImage(bufImage, null);
 
 		return new ImageView(image);
@@ -460,10 +457,7 @@ public class ServerCommHandler {
 			getThumbnailJson.closeHttpConnection();
 		}
 
-		// TODO: FOR DEBUG
 
-		// String text = String.valueOf(imageID)
-		// + " rotated right: Ikkje klart på serveren ennå";
 
 		Graphics2D g;
 		try {
@@ -471,13 +465,8 @@ public class ServerCommHandler {
 		} catch (Exception e) {
 			return null;
 		}
-		Font font = new Font("Verdana", Font.ITALIC, 24);
-		g.setFont(font);
-		g.setColor(Color.RED);
-		// g.drawString(text, 20, 20);
 
-		// TODO: Kommer avogtil nullpointerexception her. Kanskje fordi jeg
-		// blander swing og JavaFX?
+
 		Image image = SwingFXUtils.toFXImage(bufImage, null);
 
 		return new ImageView(image);
