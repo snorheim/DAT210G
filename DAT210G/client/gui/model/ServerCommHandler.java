@@ -316,6 +316,17 @@ public class ServerCommHandler {
 
 		}
 
+		// If gui doesnt get image, try again.
+		if (bufImage == null) {
+			bufImage = getImageWithCommand(command, imageID);
+			
+//			try {
+//				Thread.sleep(100);
+//			} catch (InterruptedException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+		}
 
 		return bufImage;
 	}

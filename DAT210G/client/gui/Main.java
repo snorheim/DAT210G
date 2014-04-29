@@ -15,6 +15,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	private static final String TITLE = "Exceptional Photo Gallery";
+	
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private Boolean contactWithServer;
@@ -38,7 +40,7 @@ public class Main extends Application {
 
 		screenBounds = Screen.getPrimary().getVisualBounds();
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("DAT210G Photo Gallery");
+		this.primaryStage.setTitle(TITLE);
 
 		try {
 			// Load the root layout from the fxml file
