@@ -231,7 +231,7 @@ public class RequestMethods {
 	public static void addNewDirectory(RequestServer request, int id,
 			String detail) {
 
-		DirectoryPoop.addNewDirectory(detail, id);
+		DirectoryMethods.addNewDirectory(detail, id);
 
 		log("skulle lagt til dir nå, parentid: " + id + ", foldername: "
 				+ detail);
@@ -276,9 +276,9 @@ public class RequestMethods {
 		if (writePictureToFile) {
 			String fullName = path + detail;
 			String mediumName = path
-					+ DirectoryPoop.getMediumName(tempImage.getName());
+					+ DirectoryMethods.getMediumName(tempImage.getName());
 			String thumbName = path
-					+ DirectoryPoop.getThumbnailName(tempImage.getName());
+					+ DirectoryMethods.getThumbnailName(tempImage.getName());
 			PictureDb pictureDb = new PictureDb(exif.getExifTitle(),
 					exif.getExifComment(), exif.getExifRating(),
 					exif.getExifDateTimeTaken(), fullName, mediumName,

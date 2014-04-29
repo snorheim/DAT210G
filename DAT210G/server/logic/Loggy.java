@@ -114,7 +114,6 @@ public class Loggy extends JFrame implements ActionListener {
 
 		setMinimumSize(SIZE);
 		setPreferredSize(SIZE);
-
 		setVisible(true);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
@@ -200,7 +199,7 @@ public class Loggy extends JFrame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
-		new Loggy();
+		getInstance();
 		Thread t1 = new Thread() {
 			public void run() {
 				Main.main(null);

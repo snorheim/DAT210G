@@ -155,7 +155,6 @@ public class WriteExif {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (ImageReadException e) {
-			e.printStackTrace();
 		} catch (ImageWriteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
