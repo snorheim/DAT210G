@@ -36,6 +36,8 @@ public class FileWatcher implements FileAlterationListener {
 		try {
 			log("Stopped.");
 			monitor.stop();
+		} catch (IllegalStateException e) {
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

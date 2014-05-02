@@ -179,7 +179,6 @@ public class HttpServer implements Runnable {
 			log("Not able to open server on port " + port);
 		} finally {
 			dispose();
-
 		}
 	}
 
@@ -191,26 +190,20 @@ public class HttpServer implements Runnable {
 			HibernateUtil.shutdown();
 		} catch (IOException e) {
 			log("Not able to close server on port " + port);
+		} catch (IllegalStateException e) {
+
 		} catch (Exception e) {
 			log("Not able to close server on port " + port);
+			System.exit(0);
 		}
-		System.exit(0);
+
 	}
 
 	static class AvsluttLytter implements ActionListener {
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
-			try {
-				serverConnection.close();
-				HibernateUtil.shutdown();
-			} catch (IOException e) {
-				log("Not able to close server on port " + port);
-			} catch (Exception e) {
-				log("Not able to close server on port " + port);
-			}
-		};
-
+			dispose();
+		}
 	}
-
 }
