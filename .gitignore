@@ -1,6 +1,7 @@
 # Package Files #
 *.war
 *.ear
+*.class
 .metadata
 .settings
 .classpath
