@@ -21,7 +21,6 @@ import javafx.scene.layout.HBox;
 public class SingleViewController {
 
 	private Main mainController;
-	private FolderTree folderTreeModel;
 
 	@FXML
 	private AnchorPane anchorPaneForSingle;
@@ -41,7 +40,7 @@ public class SingleViewController {
 	private TextField titleTextField;
 	@FXML
 	private TextField descTextField;
-	
+
 	@FXML
 	private TextField dateTextField;
 	@FXML
@@ -50,29 +49,25 @@ public class SingleViewController {
 	private Label currentFolder;
 	@FXML
 	private HBox ratingHBox;
-	@FXML
-	private Button addTagBtn;
-	
+
 	private Rating ratingStars;
 
 	private ImageView imageToDisplay;
 
 	private OneImage currentImage;
-	
-	
 
-	public void displayImage() {
-		
-		
-		
-		
+	private boolean hasFullImageInMemory = false;
+
+	public void showScaledToScreenImage() {
+
 		anchorPaneForSingle.getChildren().clear();
-		
 
-		currentImage = folderTreeModel.getCurrentImage();
+		currentImage = FolderTree.getCurrentImage();
 
-		if (imageToDisplay == null) {
+		if (!hasFullImageInMemory) {
 			imageToDisplay = currentImage.getFullImage();
+			hasFullImageInMemory = true;
+
 		}
 
 		imageToDisplay.setOnMouseClicked(new EventHandler<Event>() {
@@ -80,7 +75,7 @@ public class SingleViewController {
 			@Override
 			public void handle(Event event) {
 
-				showFull();
+				showFullImage();
 
 			}
 		});
@@ -95,37 +90,28 @@ public class SingleViewController {
 
 		updateMetaFields();
 
-		currentFolder.setText(folderTreeModel.getCurrentFolder()
-				.getFolderName());
-	}
-	
-	private void makeRatingStars() {
-		
-	
-		
-		ratingStars = new Rating(5);
-		
-		ratingStars.setId("ratingStars");
-		
-		
-		
-       
-        
-        
-        ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
-            @Override public void changed(ObservableValue<? extends Number> ov, Number t, Number t1) {
-                System.out.println("Rating = " + t1);
-            }
-        });
-		
-		ratingHBox.getChildren().addAll(ratingStars);
-		
-		
-		
-		
+		currentFolder.setText(FolderTree.getCurrentFolder().getFolderName());
 	}
 
-	private void showFull() {
+	private void makeRatingStars() {
+
+		ratingStars = new Rating(5);
+
+		ratingStars.setId("ratingStars");
+
+		ratingStars.ratingProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> ov, Number t,
+					Number t1) {
+
+			}
+		});
+
+		ratingHBox.getChildren().addAll(ratingStars);
+
+	}
+
+	private void showFullImage() {
 
 		ScrollPane scrollPane = new ScrollPane();
 
@@ -142,7 +128,7 @@ public class SingleViewController {
 			@Override
 			public void handle(Event event) {
 
-				displayImage();
+				showScaledToScreenImage();
 
 			}
 		});
@@ -171,6 +157,7 @@ public class SingleViewController {
 	@FXML
 	private void homeBtnAction() {
 
+		hasFullImageInMemory = false;
 		mainController.setManyMode(false);
 
 	}
@@ -183,102 +170,161 @@ public class SingleViewController {
 	@FXML
 	private void nextBtnAction() {
 
-		folderTreeModel.getNextImageInImageList(currentImage);
+		disableButtons();
+		hasFullImageInMemory = false;
+
+		FolderTree.getNextImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
-		displayImage();
+		showScaledToScreenImage();
 
+		enableButtons();
 	}
 
 	@FXML
 	private void prevBtnAction() {
 
-		folderTreeModel.getPrevImageInImageList(currentImage);
+		disableButtons();
+
+		hasFullImageInMemory = false;
+
+		FolderTree.getPrevImageInImageList(currentImage);
 
 		imageToDisplay = null;
 
-		displayImage();
+		showScaledToScreenImage();
 
+		enableButtons();
 	}
 
 	@FXML
 	private void rotRightBtnAction() {
 
-		imageToDisplay = folderTreeModel.getCurrentImage().getRotRight();
+		disableButtons();
 
-		displayImage();
+		hasFullImageInMemory = false;
 
+		imageToDisplay = FolderTree.getCurrentImage().getRotRight();
+
+		showScaledToScreenImage();
+
+		enableButtons();
 	}
 
 	@FXML
 	private void rotLeftBtnAction() {
 
-		imageToDisplay = folderTreeModel.getCurrentImage().getRotLeft();
+		disableButtons();
 
-		displayImage();
+		hasFullImageInMemory = false;
 
+		imageToDisplay = FolderTree.getCurrentImage().getRotLeft();
+
+		showScaledToScreenImage();
+
+		enableButtons();
 	}
 
 	@FXML
 	private void storeMetaBtnAction() {
 
+		disableButtons();
+
 		titleTextFieldAction();
 		descTextFieldAction();
 		ratingTextFieldAction();
-		
+
+		enableButtons();
 
 	}
 
-	
-
 	private void ratingTextFieldAction() {
-		currentImage.modifyRating(Double.toString(ratingStars.getRating()));
+
+		disableButtons();
+
+		int rating = (int) ratingStars.getRating();
+
+		String stringOfRating = String.valueOf(rating);
+
+		currentImage.modifyRating(stringOfRating);
+
+		enableButtons();
 
 	}
 
 	private void descTextFieldAction() {
-		currentImage.modifyDesc(descTextField.getText());
+
+		disableButtons();
+
+		if (descTextField.getText() == null) {
+			currentImage.modifyDesc("");
+		} else {
+			currentImage.modifyDesc(descTextField.getText());
+		}
+
+		enableButtons();
 
 	}
 
 	private void titleTextFieldAction() {
-		currentImage.modifyTitle(titleTextField.getText());
+		disableButtons();
 
+		if (titleTextField.getText() == null) {
+
+			currentImage.modifyTitle("");
+		} else {
+			currentImage.modifyTitle(titleTextField.getText());
+		}
+
+		enableButtons();
 	}
 
-	public void setModel(FolderTree folderTreeModel) {
-		this.folderTreeModel = folderTreeModel;
-
-	}
-	
 	public void addTagBtnAction() {
-		
-		
-		String tagToAdd = Dialogs.create()
-			     .masthead(null)
-			      .title("Add a tag")
-			 
-			      .message( "Enter a tag!")
-			      .showTextInput();
-		
-		
+
+		disableButtons();
+		String tagToAdd = Dialogs.create().masthead(null).title("Add a tag")
+
+		.message("Enter a tag!").showTextInput();
+
 		if (tagToAdd != null) {
-		 
+
 			if (!tagToAdd.isEmpty()) {
 				currentImage.addTag(tagToAdd);
 				updateMetaFields();
-				
+
 			}
 		}
-		
-		
+
+		enableButtons();
+
 	}
-	
+
 	public void addTag(String tag) {
-		
+
 		currentImage.addTag(tag);
-		
+
+	}
+
+	private void disableButtons() {
+
+		homeBtn.setDisable(true);
+		nextBtn.setDisable(true);
+		prevBtn.setDisable(true);
+		rotLeftBtn.setDisable(true);
+		rotRightBtn.setDisable(true);
+		storeMetaBtn.setDisable(true);
+
+	}
+
+	private void enableButtons() {
+
+		homeBtn.setDisable(false);
+		nextBtn.setDisable(false);
+		prevBtn.setDisable(false);
+		rotLeftBtn.setDisable(false);
+		rotRightBtn.setDisable(false);
+		storeMetaBtn.setDisable(false);
 	}
 
 }

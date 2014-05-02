@@ -51,7 +51,7 @@ public class FileWatcher implements FileAlterationListener {
 	}
 
 	private static void log(String string) {
-		Loggy.log("FW@ " + string);
+		Loggy.log(string, Loggy.FILE_WATCHER);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class FileWatcher implements FileAlterationListener {
 		}
 
 		log("New directory: " + directory.getName());
-		DirectoryPoop.addNewDirectory(directory);
+		DirectoryMethods.addNewDirectory(directory);
 
 	}
 
@@ -97,6 +97,22 @@ public class FileWatcher implements FileAlterationListener {
 	@Override
 	public void onFileChange(File file) {
 		log(file + " was changed (File)");
+		if (isIgnored(file)) {
+			log("was ignored");
+			unignore(file);
+			return;
+		}
+		// if (ImageHandler.isImageFile(file)) {
+		// log("is imagefile");
+		// String name = DirectoryMethods.getFileNameWithoutExtension(file);
+		// log("Name: " + name);
+		// if (!name.endsWith("_medium") && !name.endsWith("_thumb")) {
+		// deleteRemaining(file);
+		// ImageHandler.saveMediumImageToFile(file);
+		// ImageHandler.saveThumbnailImageToFile(file);
+		// log("ALL OK???");
+		// }
+		// }
 	}
 
 	@Override
@@ -108,16 +124,16 @@ public class FileWatcher implements FileAlterationListener {
 		log("New file: " + file);
 		if (ImageHandler.isImageFile(file)) {
 
-			String parentPath = DirectoryPoop.getRelativePath(file.toPath()
+			String parentPath = DirectoryMethods.getRelativePath(file.toPath()
 					.getParent()) + "\\";
 
 			int parentID = ReadFromDatabase.getFolderID(parentPath);
 
 			String fullPath = parentPath.substring(4) + file.getName();
 			String mediumPath = parentPath.substring(4)
-					+ DirectoryPoop.getMediumName(file.getName());
+					+ DirectoryMethods.getMediumName(file.getName());
 			String thumbPath = parentPath.substring(4)
-					+ DirectoryPoop.getThumbnailName(file.getName());
+					+ DirectoryMethods.getThumbnailName(file.getName());
 
 			ReadExif read = new ReadExif(file.getPath().toString());
 			PictureDb pictureDb = new PictureDb(read.getExifTitle(),

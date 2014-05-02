@@ -1,13 +1,15 @@
 package storing;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import org.hibernate.Criteria;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import logic.Loggy;
+
+import org.hibernate.*;
 import org.hibernate.criterion.Restrictions;
 
 public class ReadFromDatabase {
@@ -37,7 +39,8 @@ public class ReadFromDatabase {
 		Transaction dbTransaction = null;
 		try {
 			dbTransaction = dbSession.beginTransaction();
-			Query query = dbSession.createQuery("SELECT MAX(id) FROM PictureDb");
+			Query query = dbSession
+					.createQuery("SELECT MAX(id) FROM PictureDb");
 			picId = (int) query.uniqueResult();
 			dbTransaction.commit();
 		} catch (HibernateException e) {
@@ -171,8 +174,7 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	public static int[] getPicturesBasedOnManyTags(String[] tag,
-			int folderId) {
+	public static int[] getPicturesBasedOnManyTags(String[] tag, int folderId) {
 		List<PictureDb> tmpPictureList = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
@@ -180,9 +182,9 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: picList) {
-				for (TagDb t: picture.getTags()) {
-					for (String tagString: tag) {
+			for (PictureDb picture : picList) {
+				for (TagDb t : picture.getTags()) {
+					for (String tagString : tag) {
 						if (t.getTag().equals(tagString)) {
 							if (!tmpPictureList.contains(picture)) {
 								tmpPictureList.add(picture);
@@ -210,7 +212,7 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: pictureDbList) {
+			for (PictureDb picture : pictureDbList) {
 				if (picture.getTitle() != null) {
 					if (picture.getTitle().equals(title)) {
 						picList.add(picture);
@@ -236,9 +238,10 @@ public class ReadFromDatabase {
 			dbTransaction = dbSession.beginTransaction();
 			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture: picList) {
+			for (PictureDb picture : picList) {
 				if (picture.getDescription() != null) {
-					if (picture.getDescription().matches(".*" + description + ".*")) {
+					if (picture.getDescription().matches(
+							".*" + description + ".*")) {
 						returnList.add(picture);
 					}
 				}
@@ -278,18 +281,20 @@ public class ReadFromDatabase {
 		return pictureIdArray;
 	}
 
-	public static int[] getPicturesBasedOnDate(String timeDate, int folderId) {
-		List<PictureDb> returnList = new ArrayList<>();
+	
+	//TODO: her var d conflict
+	public static int[] getPicturesBasedOnDate(String[] timeDate, int folderId) {
+		List<PictureDb> picturesMatchingCriteria = new ArrayList<>();
 		Session dbSession = HibernateUtil.getSessionFactory().openSession();
 		Transaction dbTransaction = null;
 		try {
-			dbTransaction = dbSession.beginTransaction();
-			List<PictureDb> picList = getPictureFolderSubfolderMetaData(
+			dbTransaction = dbSession.beginTransaction();			
+			List<PictureDb> pictureDbList = getPictureFolderSubfolderMetaData(
 					folderId, dbSession);
-			for (PictureDb picture : picList) {
+			for (PictureDb picture : pictureDbList) {
 				if (picture.getDateTime() != null) {
-					if (picture.getDateTime().matches(".*" + timeDate + ".*")) {
-						returnList.add(picture);
+					if (compareDates(picture.getDateTime(), timeDate[0], timeDate[1])) {
+						picturesMatchingCriteria.add(picture);
 					}
 				}
 			}
@@ -300,8 +305,25 @@ public class ReadFromDatabase {
 		} finally {
 			dbSession.close();
 		}
-		int[] pictureIdArray = idArrayFromPictureArray(returnList);
+		int[] pictureIdArray = idArrayFromPictureArray(picturesMatchingCriteria);
 		return pictureIdArray;
+	}
+	
+	private static boolean compareDates(String pictureDateString, String fromDateString, String toDateString) {
+		Date fromDate = null;
+		Date toDate = null;
+		Date pictureDate = null;
+			try {
+				String fromOnlyDate = fromDateString.substring(0, 10);
+				fromDate = new SimpleDateFormat("yyyy-MM-dd").parse(fromOnlyDate);
+				String toOnlyDate = toDateString.substring(0, 10);
+				toDate = new SimpleDateFormat("yyyy-MM-dd").parse(toOnlyDate);
+				String pictureOnlyDate = pictureDateString.substring(0, 10);
+				pictureDate = new SimpleDateFormat("yyyy-MM-dd").parse(pictureOnlyDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			return !pictureDate.before(fromDate) && !pictureDate.after(toDate);
 	}
 
 	public static PictureDb getPictureBasedOnId(int picId) {
@@ -514,7 +536,7 @@ public class ReadFromDatabase {
 		int[] folderIds = getFolderAndSubFolderId(startFolderId);
 		List<PictureDb> tmp = null;
 		try {
-			
+
 			for (int i : folderIds) {
 				Query query = dbSession
 						.createQuery("FROM PictureDb WHERE parentId=:folderId ORDER BY dateTime DESC");
@@ -523,7 +545,7 @@ public class ReadFromDatabase {
 				picturesFromDb.addAll(tmp);
 			}
 		} catch (HibernateException e) {
-			
+
 		}
 		return picturesFromDb;
 	}
@@ -667,6 +689,10 @@ public class ReadFromDatabase {
 			this.isOnlyChild = isOnlyChild;
 		}
 
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.DB_READ);
 	}
 
 }

@@ -5,7 +5,7 @@ import java.nio.file.Path;
 
 import storing.ReadFromDatabase.IsNotOnlyChildObject;
 
-public class DirectoryPoop {
+public class DirectoryMethods {
 
 	public static Path getRelativePath(File file) {
 		return getRelativePath(file.toPath());
@@ -47,6 +47,20 @@ public class DirectoryPoop {
 		writeDirectoryToDatabase(directory, parentId);
 	}
 
+	public static String getFileNameWithoutExtension(File file) {
+		String fullName = file.getName();
+		String[] elements = fullName.split("[.]");
+		String name = elements[0];
+		return name;
+	}
+
+	public static String getFileExtension(File file) {
+		String name = file.getName();
+		String[] elements = name.split("[.]");
+		String extension = elements[elements.length - 1];
+		return extension;
+	}
+
 	public static void writeDirectoryToDatabase(File directory, int parentId) {
 		String folderPath = getRelativePath(directory.toPath()) + "\\";
 
@@ -66,7 +80,6 @@ public class DirectoryPoop {
 	}
 
 	public static String getFilenameWithSuffix(String original, String suffix) {
-		System.out.println(original);
 		String name = original.split("[.]")[0];
 		String extension = original.split("[.]")[1];
 

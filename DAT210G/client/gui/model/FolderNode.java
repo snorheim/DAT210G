@@ -50,21 +50,6 @@ public class FolderNode {
 		this.children.add(child);
 	}
 
-	public boolean isRoot() {
-		return (this.parent == null);
-	}
-
-	public boolean isLeaf() {
-		if (this.children.size() == 0)
-			return true;
-		else
-			return false;
-	}
-
-	public void removeParent() {
-		this.parent = null;
-	}
-
 	public ArrayList<OneImage> getImageList() {
 		return imageList;
 	}

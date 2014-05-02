@@ -15,21 +15,20 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+	private static final String TITLE = "Exceptional Photo Gallery";
+	
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private Boolean contactWithServer;
-	private FolderTree folderTreeModel;
 	private Rectangle2D screenBounds;
-	private FXMLLoader loader;
 	private Scene scene;
-	private AnchorPane thumbnailsMode;
-	private AnchorPane singleMode;
+	private AnchorPane manyModePane;
+	private AnchorPane singleModePane;
 	private ManyViewController manyViewController;
+	private SingleViewController singleViewController;
 
 	@Override
 	public void init() {
-
-		
 
 		System.out.println("Contact with server: " + contactWithServer);
 
@@ -41,12 +40,12 @@ public class Main extends Application {
 
 		screenBounds = Screen.getPrimary().getVisualBounds();
 		this.primaryStage = primaryStage;
-		this.primaryStage.setTitle("DAT210G Photo Gallery");
+		this.primaryStage.setTitle(TITLE);
 
 		try {
 			// Load the root layout from the fxml file
 
-			loader = new FXMLLoader(
+			FXMLLoader loader = new FXMLLoader(
 					Main.class.getResource("view/MainView.fxml"));
 
 			rootLayout = (BorderPane) loader.load();
@@ -54,14 +53,14 @@ public class Main extends Application {
 			scene = new Scene(rootLayout, screenBounds.getWidth() / 2,
 					screenBounds.getHeight() / 2);
 
-			
 			// TODO: Lag bedre css style sheet!!!!!!!
-			//scene.getStylesheets().add(
-			//		getClass().getResource("view/style.css").toExternalForm());
+			// scene.getStylesheets().add(
+			// getClass().getResource("view/style.css").toExternalForm());
 
 			// Give the controller access to Main
 			MainController mainController = loader.getController();
 			mainController.setMain(this);
+			FolderTree.setMain(this);
 
 			primaryStage.setScene(scene);
 			primaryStage.show();
@@ -71,6 +70,32 @@ public class Main extends Application {
 			e.printStackTrace();
 		}
 
+		try {
+			FXMLLoader loader = new FXMLLoader(
+					Main.class.getResource("view/ManyView.fxml"));
+			manyModePane = (AnchorPane) loader.load();
+			manyViewController = loader.getController();
+			manyViewController.setMainController(this);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		try {
+			// Load the fxml file and set into the center of the main layout
+			FXMLLoader loader = new FXMLLoader(
+					Main.class.getResource("view/SingleView.fxml"));
+			singleModePane = (AnchorPane) loader.load();
+			singleViewController = loader.getController();
+			singleViewController.setMainController(this);
+
+		} catch (IOException e) {
+			// Exception gets thrown if the fxml file could not be loaded
+			e.printStackTrace();
+		}
+
+		FolderTree.setManyViewController(manyViewController);
+
 		setManyMode(true);
 
 	}
@@ -79,65 +104,35 @@ public class Main extends Application {
 	 * Shows the thumbnails scene.
 	 */
 	public void setManyMode(boolean doUpdate) {
-		try {
 
-			// Load the fxml file and set into the center of the main layout
-			loader = new FXMLLoader(
-					Main.class.getResource("view/ManyView.fxml"));
-			thumbnailsMode = (AnchorPane) loader.load();
+		rootLayout.setCenter(manyModePane);
 
-			rootLayout.setCenter(thumbnailsMode);
+		// Give the controller access to the mainController
 
-			// Give the controller access to the mainController
-			manyViewController = loader.getController();
-			manyViewController.setMainController(this);
-
-			if (doUpdate) {
-				update();
-			}
-
-			manyViewController.setFolderTreeModel(folderTreeModel);
-
-			manyViewController.start();
-
-			// folderTreeModel = new FolderTree(this);
-
-			// manyViewController.start(folderTreeModel);
-
-		} catch (IOException e) {
-			// Exception gets thrown if the fxml file could not be loaded
-			e.printStackTrace();
+		if (doUpdate) {
+			update();
 		}
+
+		manyViewController.start();
+
 	}
 
 	public void update() {
-		folderTreeModel = new FolderTree(this);
-		folderTreeModel.setManyViewController(manyViewController);
-		folderTreeModel.update();
+
+		FolderTree.update();
 	}
 
 	/**
 	 * Shows the single image scene.
 	 */
 	public void setSingleMode() {
-		try {
-			// Load the fxml file and set into the center of the main layout
-			FXMLLoader loader = new FXMLLoader(
-					Main.class.getResource("view/SingleView.fxml"));
-			singleMode = (AnchorPane) loader.load();
 
-			rootLayout.setCenter(singleMode);
+		rootLayout.setCenter(singleModePane);
 
-			// Give the controller access to the mainController
-			SingleViewController singleViewController = loader.getController();
-			singleViewController.setMainController(this);
-			singleViewController.setModel(folderTreeModel);
-			singleViewController.displayImage();
+		// Give the controller access to the mainController
 
-		} catch (IOException e) {
-			// Exception gets thrown if the fxml file could not be loaded
-			e.printStackTrace();
-		}
+		singleViewController.showScaledToScreenImage();
+
 	}
 
 	public Stage getPrimaryStage() {

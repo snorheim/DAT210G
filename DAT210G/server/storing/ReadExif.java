@@ -5,6 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import logic.Loggy;
+
 import org.apache.commons.imaging.Imaging;
 import org.apache.commons.imaging.common.IImageMetadata;
 import org.apache.commons.imaging.formats.jpeg.JpegImageMetadata;
@@ -18,7 +20,7 @@ public class ReadExif {
 	private TiffImageMetadata exifMetaData;
 	private TiffOutputSet metaDataOutPutSet;
 
-	public ReadExif(String imageLocation){
+	public ReadExif(String imageLocation) {
 		imageFile = new File(imageLocation);
 		try {
 			IImageMetadata metadata = Imaging.getMetadata(imageFile);
@@ -35,82 +37,102 @@ public class ReadExif {
 			return;
 		}
 	}
-	public TiffOutputSet getMetadataOutputSet(){
+
+	public TiffOutputSet getMetadataOutputSet() {
 		return metaDataOutPutSet;
 	}
-	public String getExifTitle(){
+
+	public String getExifTitle() {
 		String str = null;
 		try {
-			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPTITLE);
+			str = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPTITLE);
 		} catch (Exception e) {
 			return null;
 		}
 		return str;
 	}
-	public int getExifRating(){
+
+	public int getExifRating() {
 		short[] shortRating = null;
 		try {
-			shortRating = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_RATING);
+			shortRating = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_RATING);
 		} catch (Exception e) {
 			return -1;
 		}
-		if (shortRating == null){
+		if (shortRating == null) {
 			return -1;
 		}
 		return shortRating[0];
 	}
-	public String getExifComment(){
+
+	public String getExifComment() {
 		String str = null;
 		try {
-			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPCOMMENT);
+			str = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPCOMMENT);
 		} catch (Exception e) {
 			return null;
 		}
 		return str;
 	}
-	public String getExifAuthor(){
+
+	public String getExifAuthor() {
 		String str = null;
 		try {
-			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPAUTHOR);
+			str = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPAUTHOR);
 		} catch (Exception e) {
 			return null;
 		}
 		return str;
 	}
-	public String getExifSubject(){
+
+	public String getExifSubject() {
 		String str = null;
 		try {
-			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPSUBJECT);
+			str = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPSUBJECT);
 		} catch (Exception e) {
 			return null;
 		}
 		return str;
 	}
-	public String getExifTags(){
+
+	public String getExifTags() {
 		String str = null;
 		try {
-			str = exifMetaData.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPKEYWORDS);
+			str = exifMetaData
+					.getFieldValue(MicrosoftTagConstants.EXIF_TAG_XPKEYWORDS);
 		} catch (Exception e) {
 			return null;
 		}
 		return str;
 	}
-	public String getExifDateTimeTaken(){
+
+	public String getExifDateTimeTaken() {
 		String[] str = null;
 		try {
-			str = exifMetaData.getFieldValue(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
+			str = exifMetaData
+					.getFieldValue(ExifTagConstants.EXIF_TAG_DATE_TIME_ORIGINAL);
 		} catch (Exception e) {
 			return null;
 		}
-		if (str == null){
+		if (str == null) {
 			return null;
 		}
 		try {
-			Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss").parse(str[0]);
+			Date date = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss")
+					.parse(str[0]);
 			str[0] = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date);
 		} catch (ParseException e) {
 			return null;
 		}
 		return str[0];
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.EXIF_READ);
 	}
 }

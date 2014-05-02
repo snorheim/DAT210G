@@ -47,7 +47,7 @@ public class ImageHandler {
 	}
 
 	private static void log(String string) {
-		Loggy.log("IH@ " + string);
+		Loggy.log(string, Loggy.IMG_HANDLER);
 	}
 
 	private static boolean ensureLocation() throws FileNotFoundException {
@@ -173,7 +173,7 @@ public class ImageHandler {
 
 			FileWatcher.ignore(destFile);
 
-			hideImageFile(destFile);
+			hideImageFile(destFile, true);
 
 			return true;
 		} catch (IOException e) {
@@ -206,7 +206,7 @@ public class ImageHandler {
 
 			FileWatcher.ignore(destFile);
 
-			hideImageFile(destFile);
+			hideImageFile(destFile, true);
 
 			return true;
 		} catch (IOException e) {
@@ -254,12 +254,12 @@ public class ImageHandler {
 		System.out.println(getDefaultPathParentString());
 	}
 
-	private static void hideImageFile(File file) {
+	public static void hideImageFile(File file, boolean hide) {
 		try {
 			Object hidden = Files.getAttribute(file.toPath(), "dos:hidden",
 					LinkOption.NOFOLLOW_LINKS);
 			if (hidden != null) {
-				Files.setAttribute(file.toPath(), "dos:hidden", Boolean.TRUE,
+				Files.setAttribute(file.toPath(), "dos:hidden", hide,
 						LinkOption.NOFOLLOW_LINKS);
 			}
 		} catch (IOException e) {
@@ -267,8 +267,8 @@ public class ImageHandler {
 		}
 	}
 
-	public static boolean isImageFile(File arg0) {
-		String extension = arg0.getName().split("[.]")[1];
+	public static boolean isImageFile(File file) {
+		String extension = DirectoryMethods.getFileExtension(file);
 		for (String supportedExtension : SUPPORTED_EXTENSIONS)
 			if (extension.toLowerCase().equals(supportedExtension))
 				return true;

@@ -4,6 +4,8 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import logic.Loggy;
+
 import org.apache.commons.imaging.ImageReadException;
 import org.apache.commons.imaging.ImageWriteException;
 import org.apache.commons.imaging.Imaging;
@@ -15,6 +17,7 @@ import org.apache.commons.imaging.formats.tiff.constants.ExifTagConstants;
 import org.apache.commons.imaging.formats.tiff.constants.MicrosoftTagConstants;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputDirectory;
 import org.apache.commons.imaging.formats.tiff.write.TiffOutputSet;
+import org.apache.commons.imaging.util.IoUtils;
 
 public class WriteExif {
 	private File imageFile;
@@ -27,7 +30,8 @@ public class WriteExif {
 
 	public WriteExif(String imageFileString) {
 		imageFile = new File(imageFileString);
-		String destFileString = imageFileString + "TEMP";
+		String destFileString = DirectoryMethods.getFilenameWithSuffix(
+				imageFileString, "_TEMP");
 		destImageFile = new File(destFileString);
 		System.out.println("ImageFile: " + imageFileString);
 		System.out.println("destImageFile: " + destFileString);
@@ -55,7 +59,6 @@ public class WriteExif {
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.err.println("Not able to open file: " + imageFileString);
-			return;
 		}
 	}
 
@@ -143,8 +146,8 @@ public class WriteExif {
 		try {
 			outPutStream = new FileOutputStream(destImageFile);
 			bufferedOutPutStream = new BufferedOutputStream(outPutStream);
-			//ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
-			//ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
+			// ImageHandler.getInstance().directoryMonitor.ignore(destImageFile);
+			// ImageHandler.getInstance().directoryMonitor.ignore(imageFile);
 			new ExifRewriter().updateExifMetadataLossless(destImageFile,
 					bufferedOutPutStream, metaDataOutPutSet);
 			imageFile.delete();
@@ -153,18 +156,21 @@ public class WriteExif {
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (ImageReadException e) {
-			e.printStackTrace();
 		} catch (ImageWriteException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		} finally {
+			try {
+				IoUtils.closeQuietly(canThrow, outPutStream);
+				destImageFile.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		// finally {
-		// try {
-		// //IoUtils.closeQuietly(canThrow, outPutStream);
-		// } catch (IOException e) {
-		// e.printStackTrace();
-		// }
-		// }
+	}
+
+	private static void log(String message) {
+		Loggy.log(message, Loggy.EXIF_WRITE);
 	}
 }
