@@ -205,15 +205,17 @@ public class Loggy extends JFrame implements ActionListener {
 				HttpServer.main(null);
 			}
 		};
-		for (int i = 0; i < 100000; i++)
+		t2.start();
+
+		for (int i = 0; i < 300000; i++)
 			System.out.println("VENTER " + i);
+
 		Thread t1 = new Thread() {
 			public void run() {
 				Main.main(null);
 			}
 		};
 		t1.start();
-		t2.start();
 
 		while (true) {
 			if (!t1.isAlive() || !t2.isAlive()) {
