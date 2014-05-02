@@ -1,7 +1,4 @@
-*.class
-
 # Package Files #
-*.jar
 *.war
 *.ear
 .metadata
@@ -9,9 +6,6 @@
 .classpath
 .project
 /bin/*
-*.db
-*.db
 *.jpg
 *.png
-*.db
 
