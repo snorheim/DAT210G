@@ -279,6 +279,8 @@ public class SingleViewController {
 
 		enableButtons();
 	}
+	
+	
 
 	public void addTagBtnAction() {
 
