@@ -192,7 +192,7 @@ public class Loggy extends JFrame implements ActionListener {
 
 	public static void log(String message, int source) {
 		if (console == null) {
-			System.out.println(message);
+			System.out.println(source + ": " + message);
 		} else {
 			getInstance().addLogEntry(message, source);
 		}

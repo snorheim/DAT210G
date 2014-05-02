@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
 	private static final String TITLE = "Exceptional Photo Gallery";
-	
+
 	private Stage primaryStage;
 	private BorderPane rootLayout;
 	private Boolean contactWithServer;

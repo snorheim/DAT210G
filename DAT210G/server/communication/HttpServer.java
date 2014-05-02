@@ -1,11 +1,16 @@
 package communication;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 import javax.imageio.ImageIO;
+import javax.swing.*;
 
 import logic.Loggy;
 import storing.FileWatcher;
@@ -14,9 +19,14 @@ import storing.ImageHandler;
 
 public class HttpServer implements Runnable {
 
+	private static JFrame ramme;
+	private static JButton avslutt;
+	private static JLabel kjorer;
+	private static ServerSocket serverConnection;
 	private Socket connection;
 	private int id;
-	private int count = 0;
+	private static int port = 19999;
+	private static int count = 0;
 
 	public HttpServer(Socket socket, int id) {
 		this.connection = socket;
@@ -132,11 +142,33 @@ public class HttpServer implements Runnable {
 	public static void main(String[] args) {
 		new ImageHandler();
 		new FileWatcher(ImageHandler.getDefaultPath());
-		int port = 19999;
-		int count = 0;
-		ServerSocket serverConnection = null;
+
+		// GUI
+		{
+			ramme = new JFrame();
+
+			kjorer = new JLabel("Starter server...");
+			kjorer.setHorizontalAlignment(SwingConstants.CENTER);
+
+			avslutt = new JButton("Stopp Server");
+			avslutt.addActionListener(new AvsluttLytter());
+
+			ramme.setLayout(new BorderLayout());
+
+			ramme.add(kjorer, BorderLayout.CENTER);
+			ramme.add(avslutt, BorderLayout.SOUTH);
+
+			ramme.pack();
+			ramme.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			ramme.setLocationRelativeTo(null);
+			ramme.setVisible(true);
+			ramme.setSize(new Dimension(300, 100));
+		}
+
+		serverConnection = null;
 		try {
 			serverConnection = new ServerSocket(port);
+			kjorer.setText("Server oppe...");
 			while (true) {
 				Socket connection = serverConnection.accept();
 				Runnable runnable = new HttpServer(connection, ++count);
@@ -146,6 +178,29 @@ public class HttpServer implements Runnable {
 		} catch (IOException e) {
 			log("Not able to open server on port " + port);
 		} finally {
+			dispose();
+
+		}
+	}
+
+	public static void dispose() {
+		kjorer.setText("Server stoppet.");
+		try {
+			FileWatcher.stop();
+			serverConnection.close();
+			HibernateUtil.shutdown();
+		} catch (IOException e) {
+			log("Not able to close server on port " + port);
+		} catch (Exception e) {
+			log("Not able to close server on port " + port);
+		}
+		System.exit(0);
+	}
+
+	static class AvsluttLytter implements ActionListener {
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
 			try {
 				serverConnection.close();
 				HibernateUtil.shutdown();
@@ -154,8 +209,8 @@ public class HttpServer implements Runnable {
 			} catch (Exception e) {
 				log("Not able to close server on port " + port);
 			}
+		};
 
-		}
 	}
 
 }
