@@ -1,4 +1,0 @@
-For å legge til external libraries i Eclipse:
-
-1. Høyreklikk på prosjektet og finn "Build Path" -> "Add External Archives.."
-2. Legg til de du trenger
